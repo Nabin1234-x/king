@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>NEXORA CAPITAL | Premium Investment Platform</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -10,8 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0A0E1A; color: #FFFFFF; overflow-x: hidden; padding-bottom: 70px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background: #0A0E1A; color: #FFFFFF; overflow-x: hidden; padding-bottom: 70px; -webkit-text-size-adjust: 100%; touch-action: pan-x pan-y; }
         
         .glass-card { background: rgba(18, 25, 45, 0.75); backdrop-filter: blur(12px); border-radius: 28px; border: 1px solid rgba(245, 176, 65, 0.25); transition: all 0.3s; }
         .glass-card:hover { border-color: rgba(245, 176, 65, 0.6); transform: translateY(-3px); }
@@ -22,47 +22,13 @@
         .btn-gold:hover { transform: scale(1.02); }
         .btn-outline { background: transparent; border: 1px solid rgba(245, 176, 65, 0.5); color: #F5B041; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
         
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(10, 14, 26, 0.98);
-            backdrop-filter: blur(20px);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 20px 22px;
-            border-top: 1px solid rgba(245, 176, 65, 0.2);
-            z-index: 1000;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10, 14, 26, 0.98); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 10px 20px 22px; border-top: 1px solid rgba(245, 176, 65, 0.2); z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #6B7280; cursor: pointer; font-size: 11px; position: relative; }
         .nav-item i { font-size: 22px; }
         .nav-item.active, .nav-item:hover { color: #F5B041; }
-        .nav-badge {
-            position: absolute;
-            top: -5px;
-            right: -10px;
-            background: #EF4444;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 10px;
-            min-width: 18px;
-            text-align: center;
-        }
+        .nav-badge { position: absolute; top: -5px; right: -10px; background: #EF4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; min-width: 18px; text-align: center; }
         
-        .top-header {
-            background: rgba(10, 14, 26, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(245, 176, 65, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        .top-header { background: rgba(10, 14, 26, 0.95); backdrop-filter: blur(10px); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(245, 176, 65, 0.2); position: sticky; top: 0; z-index: 100; }
         .avatar { width: 42px; height: 42px; background: linear-gradient(135deg, #F5B041, #D4AF37); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
         .wallet-card { background: linear-gradient(135deg, #1A2340, #0F1428); border-radius: 28px; padding: 22px; margin: 12px 0; border: 1px solid rgba(245, 176, 65, 0.3); }
@@ -78,7 +44,7 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(14px); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: #0F1422; width: 90%; max-width: 480px; border-radius: 32px; padding: 28px; border: 1px solid #F5B041; max-height: 80vh; overflow-y: auto; }
         
-        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; background: #1A1F30; border: 1px solid #2A3148; border-radius: 30px; color: white; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; background: #1A1F30; border: 1px solid #2A3148; border-radius: 30px; color: white; font-size: 16px; }
         input:focus, textarea:focus { border-color: #F5B041; outline: none; }
         textarea { border-radius: 20px; resize: none; }
         
@@ -113,32 +79,13 @@
         
         .banner-slide { height: 160px; border-radius: 24px; background-size: cover; background-position: center; transition: background-image 0.8s; }
         
-        .message-item {
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 20px;
-            max-width: 85%;
-        }
+        .message-item { padding: 12px; margin: 8px 0; border-radius: 20px; max-width: 85%; }
         .message-user { background: #1A2340; align-self: flex-start; }
         .message-agent { background: #F5B041; color: #0A0E1A; align-self: flex-end; margin-left: auto; }
         .chat-container { display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; padding: 10px; }
-        .support-icon {
-            position: fixed;
-            bottom: 80px;
-            right: 16px;
-            background: #F5B041;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 99;
-            box-shadow: 0 4px 15px rgba(245,176,65,0.4);
-        }
+        .support-icon { position: fixed; bottom: 80px; right: 16px; background: #F5B041; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 99; box-shadow: 0 4px 15px rgba(245,176,65,0.4); }
         
-        @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr 1fr; } .wallet-amount { font-size: 26px; } .toast { white-space: normal; text-align: center; width: 90%; } .admin-table { font-size: 10px; } }
+        @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr 1fr; } .wallet-amount { font-size: 26px; } .toast { white-space: normal; text-align: center; width: 90%; } .admin-table { font-size: 10px; } .banner-slide { height: 140px; } }
         
         .loader { display: inline-block; width: 18px; height: 18px; border: 2px solid #0A0E1A; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 8px; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -146,82 +93,35 @@
         .file-upload { border: 2px dashed #F5B041; border-radius: 20px; padding: 15px; text-align: center; margin: 10px 0; cursor: pointer; }
         .role-badge { background: rgba(245,176,65,0.2); padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-left: 10px; }
         
-        .login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at top, #0F1428, #050814);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            transition: all 0.5s ease;
-        }
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at top, #0F1428, #050814); display: flex; justify-content: center; align-items: center; z-index: 10000; transition: all 0.5s ease; }
         .login-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        .login-box {
-            background: rgba(18, 25, 45, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 48px;
-            padding: 40px 30px;
-            width: 90%;
-            max-width: 440px;
-            border: 1px solid rgba(245, 176, 65, 0.4);
-            animation: fadeIn 0.5s ease;
-        }
+        .login-box { background: rgba(18, 25, 45, 0.95); backdrop-filter: blur(20px); border-radius: 48px; padding: 40px 30px; width: 90%; max-width: 440px; border: 1px solid rgba(245, 176, 65, 0.4); animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
         .login-logo { text-align: center; margin-bottom: 30px; }
         .login-logo h1 { font-size: 2rem; font-weight: 800; }
-        .login-input {
-            width: 100%;
-            padding: 14px 18px;
-            margin: 10px 0;
-            background: #1A1F30;
-            border: 1.5px solid rgba(245, 176, 65, 0.3);
-            border-radius: 50px;
-            color: white;
-            font-size: 14px;
-        }
+        .login-input { width: 100%; padding: 14px 18px; margin: 10px 0; background: #1A1F30; border: 1.5px solid rgba(245, 176, 65, 0.3); border-radius: 50px; color: white; font-size: 16px; }
         .login-input:focus { border-color: #F5B041; outline: none; }
         
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #F5B041, #D4AF37);
-            border: none;
-            border-radius: 50px;
-            color: #0A0E1A;
-            font-weight: 800;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.3s;
-        }
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #F5B041, #D4AF37); border: none; border-radius: 50px; color: #0A0E1A; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 15px; transition: all 0.3s; }
         .btn-primary:hover { transform: scale(1.02); }
         
         .auth-switch { text-align: center; margin-top: 15px; color: #8A8F9E; font-size: 13px; }
         .auth-switch a { color: #F5B041; cursor: pointer; text-decoration: none; }
         
-        .security-badge {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(16, 185, 129, 0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 10px;
-            color: #10B981;
-            z-index: 1000;
-        }
+        .security-badge { position: fixed; top: 10px; right: 10px; background: rgba(16, 185, 129, 0.2); padding: 4px 12px; border-radius: 20px; font-size: 10px; color: #10B981; z-index: 1000; }
+        
+        .balance-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
+        .balance-item { flex: 1; min-width: 100px; text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 20px; }
+        .balance-label { font-size: 12px; opacity: 0.7; }
+        .balance-value { font-size: 18px; font-weight: 700; color: #F5B041; }
     </style>
 </head>
 <body>
 
 <div class="security-badge" id="securityBadge">
-    <i class="fas fa-shield-alt"></i> Secure Manual Login
+    <i class="fas fa-shield-alt"></i> Cloud Sync
 </div>
 
 <!-- LOGIN OVERLAY -->
@@ -229,7 +129,7 @@
     <div class="login-box">
         <div class="login-logo">
             <h1><span class="gold-text">NEXORA</span> CAPITAL</h1>
-            <p>Secure Investment Platform</p>
+            <p>Multi-Device Cloud Platform</p>
         </div>
         
         <div id="loginForm">
@@ -269,6 +169,16 @@
         <div class="wallet-card" style="margin: 0 16px;">
             <div><i class="fas fa-wallet"></i> Electronic Wallet (USDT)</div>
             <div class="wallet-amount" id="userBalance">$0.00</div>
+            <div class="balance-row">
+                <div class="balance-item">
+                    <div class="balance-label">Today's Profit</div>
+                    <div class="balance-value" id="todayProfit">$0.00</div>
+                </div>
+                <div class="balance-item">
+                    <div class="balance-label">Est. Daily</div>
+                    <div class="balance-value" id="dailyEstimate">$0.00</div>
+                </div>
+            </div>
             <div style="display: flex; gap: 15px; margin-top: 15px;">
                 <button class="btn-gold" style="flex:1;" onclick="openDepositModal()"><i class="fas fa-plus-circle"></i> Deposit</button>
                 <button class="btn-outline" style="flex:1;" onclick="openWithdrawModal()"><i class="fas fa-hand-holding-usd"></i> Withdraw</button>
@@ -316,7 +226,7 @@
         <div class="glass-card" style="padding: 16px; margin: 16px;"><button class="btn-outline" style="width:100%; padding: 14px; color: #EF4444;" onclick="logout()">Logout</button></div>
     </div>
 
-    <!-- CHAT PAGE FOR USERS -->
+    <!-- CHAT PAGE -->
     <div id="chatPage" class="page">
         <h2 class="gold-text" style="padding: 0 16px;"><i class="fas fa-headset"></i> Support Chat</h2>
         <div class="glass-card" style="padding: 16px; margin: 0 16px;">
@@ -350,7 +260,6 @@
         <div style="padding: 0 16px;"><button class="btn-outline" style="width:100%; padding: 14px; color: #EF4444;" onclick="logout()">Logout</button></div>
     </div>
 
-    <!-- Support Chat Floating Icon (For Users) -->
     <div class="support-icon" id="supportIcon" onclick="openChatPage()">
         <i class="fas fa-headset" style="font-size: 24px; color: #0A0E1A;"></i>
     </div>
@@ -385,7 +294,7 @@
     <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitDeposit()">Submit</button>
 </div></div>
 
-<!-- Withdraw Modal with QR Upload -->
+<!-- Withdraw Modal -->
 <div id="withdrawModal" class="modal"><div class="modal-content">
     <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('withdrawModal')">&times;</span>
     <h3>Withdraw Funds</h3>
@@ -425,6 +334,7 @@
     let selectedScreenshot = null;
     let selectedWithdrawQr = null;
     let chatUnsubscribe = null;
+    let profitCheckInterval = null;
     
     // Create Agent
     async function createAgent() {
@@ -545,15 +455,15 @@
     
     window.logout = async () => { 
         if (chatUnsubscribe) chatUnsubscribe();
+        if (profitCheckInterval) clearInterval(profitCheckInterval);
         await signOut(auth);
-        localStorage.clear();
-        sessionStorage.clear();
         showToast("Logged out successfully.");
     };
     
     window.openChatPage = function() {
         changePage('chatPage', null);
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        loadChatMessages();
     };
     
     window.sendMessage = async () => {
@@ -572,6 +482,7 @@
         });
         document.getElementById("chatInput").value = "";
         showToast("Message sent to Agent!");
+        setTimeout(() => loadChatMessages(), 500);
     };
     
     async function loadChatMessages() {
@@ -618,7 +529,7 @@
                         <p>${data.message}</p>
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <button class="approve-btn" onclick="replyToUser('${docMsg.id}', '${data.userId}')">Reply</button>
-                            <button class="view-btn" onclick="markAsRead('${docMsg.id}')">Mark as Read</button>
+                            <button class="view-btn" onclick="markAsRead('${docMsg.id}')">Mark Read</button>
                         </div>
                         <div style="font-size: 10px; opacity: 0.7; margin-top: 5px;">${data.createdAt?.toDate?.().toLocaleString() || 'Just now'}</div>
                      </div>`;
@@ -641,7 +552,6 @@
         await updateDoc(doc(db, "supportMessages", msgId), { isRead: true });
         showToast("Reply sent to user!");
         loadAgentMessages();
-        if (currentUserData?.role === "agent") loadAgentMessages();
     };
     
     window.markAsRead = async (msgId) => {
@@ -790,6 +700,55 @@
         loadAgentPanel();
     };
     
+    // DAILY PROFIT - ONCE PER DAY (Cloud Storage)
+    async function checkDailyProfit() {
+        if (!currentUserData || currentUserData.role !== "user") return;
+        
+        const today = new Date().toDateString();
+        const profitRef = doc(db, "userDailyProfit", currentUserData.uid);
+        const profitSnap = await getDoc(profitRef);
+        
+        // Check if already credited today
+        if (profitSnap.exists() && profitSnap.data().lastProfitDate === today) {
+            // Update today's profit display from cloud
+            document.getElementById("todayProfit").innerHTML = `$${(profitSnap.data().todayProfit || 0).toFixed(2)}`;
+            return;
+        }
+        
+        const investments = await getDocs(query(collection(db, "investments"), where("userId", "==", currentUserData.uid), where("status", "==", "active")));
+        if (investments.empty) return;
+        
+        let totalProfit = 0;
+        let dailyBonusAmount = 0;
+        
+        for (const docSnap of investments.docs) {
+            const inv = docSnap.data();
+            const percent = (Math.random() * 6 + 5).toFixed(2);
+            const profit = inv.amount * (percent / 100);
+            totalProfit += profit;
+            dailyBonusAmount += profit;
+            await updateDoc(doc(db, "investments", docSnap.id), { profitEarned: increment(profit) });
+        }
+        
+        if (totalProfit > 0) {
+            await updateDoc(doc(db, "users", currentUserData.uid), { 
+                balance: increment(totalProfit), 
+                totalIncome: increment(totalProfit) 
+            });
+            
+            // Store in Cloud
+            await setDoc(profitRef, {
+                userId: currentUserData.uid,
+                lastProfitDate: today,
+                todayProfit: dailyBonusAmount,
+                updatedAt: serverTimestamp()
+            });
+            
+            showToast(`✨ Daily profit credited: +$${totalProfit.toFixed(2)}`);
+            loadUserDashboard();
+        }
+    }
+    
     async function loadUserDashboard() {
         if (!currentUserData || currentUserData.role !== "user") return;
         document.getElementById("userBalance").innerHTML = `$${(currentUserData.balance || 0).toFixed(2)}`;
@@ -797,8 +756,22 @@
         document.getElementById("totalCommission").innerHTML = `$${(currentUserData.totalCommission || 0).toFixed(2)}`;
         document.getElementById("totalDeposits").innerHTML = `$${(currentUserData.totalDeposits || 0).toFixed(2)}`;
         document.getElementById("totalWithdrawals").innerHTML = `$${(currentUserData.totalWithdrawals || 0).toFixed(2)}`;
-        const inv = await getDocs(query(collection(db, "investments"), where("userId", "==", currentUserData.uid), where("status", "==", "active")));
-        document.getElementById("vipPreview").innerHTML = inv.docs.slice(0,2).map(d => `<div class="glass-card" style="padding:10px; margin:5px 0;">⭐ ${d.data().plan} - $${d.data().amount}</div>`).join("") || "<p>No active VIP</p>";
+        
+        // Get today's profit from cloud
+        const profitRef = doc(db, "userDailyProfit", currentUserData.uid);
+        const profitSnap = await getDoc(profitRef);
+        if (profitSnap.exists()) {
+            document.getElementById("todayProfit").innerHTML = `$${(profitSnap.data().todayProfit || 0).toFixed(2)}`;
+        } else {
+            document.getElementById("todayProfit").innerHTML = `$0.00`;
+        }
+        
+        const investments = await getDocs(query(collection(db, "investments"), where("userId", "==", currentUserData.uid), where("status", "==", "active")));
+        const dailyEst = investments.docs.reduce((sum, inv) => sum + (inv.data().amount * 0.007), 0);
+        document.getElementById("dailyEstimate").innerHTML = `$${dailyEst.toFixed(2)}`;
+        
+        const vipPreview = investments.docs.slice(0,2).map(d => `<div class="glass-card" style="padding:10px; margin:5px 0;">⭐ ${d.data().plan} - $${d.data().amount}</div>`).join("");
+        document.getElementById("vipPreview").innerHTML = vipPreview || "<p>No active VIP</p>";
     }
     
     async function loadMePage() {
@@ -893,27 +866,6 @@
     window.copyRefLink = () => { const inp = document.getElementById("refLinkInput"); inp.select(); document.execCommand("copy"); showToast("Link copied!"); };
     window.copyUserRefCode = () => { navigator.clipboard.writeText(document.getElementById("userRefCode").innerText); showToast("Code copied!"); };
     
-    async function dailyProfit() {
-        if (!currentUserData || currentUserData.role !== "user") return;
-        const today = new Date().toDateString();
-        if (localStorage.getItem(`profit_${currentUserData.uid}_${today}`)) return;
-        localStorage.setItem(`profit_${currentUserData.uid}_${today}`, "done");
-        const invs = await getDocs(query(collection(db, "investments"), where("userId", "==", currentUserData.uid), where("status", "==", "active")));
-        let total = 0;
-        for (const d of invs.docs) {
-            const inv = d.data();
-            const percent = (Math.random() * 6 + 5).toFixed(2);
-            const profit = inv.amount * (percent / 100);
-            total += profit;
-            await updateDoc(doc(db, "investments", d.id), { profitEarned: increment(profit) });
-        }
-        if (total > 0) {
-            await updateDoc(doc(db, "users", currentUserData.uid), { balance: increment(total), totalIncome: increment(total) });
-            showToast(`✨ Daily profit: +$${total.toFixed(2)}`);
-            loadUserDashboard(); loadMePage();
-        }
-    }
-    
     window.openDepositModal = () => document.getElementById("depositModal").style.display = "flex";
     window.openWithdrawModal = () => document.getElementById("withdrawModal").style.display = "flex";
     window.closeModal = (id) => document.getElementById(id).style.display = "none";
@@ -952,13 +904,23 @@
                     changePage('userDashboard', document.querySelectorAll('.nav-item')[0]);
                     loadUserDashboard();
                     loadMePage();
-                    dailyProfit();
-                    setInterval(() => dailyProfit(), 60000);
+                    
+                    // Check daily profit (Cloud based)
+                    setTimeout(() => checkDailyProfit(), 2000);
+                    if (profitCheckInterval) clearInterval(profitCheckInterval);
+                    profitCheckInterval = setInterval(() => checkDailyProfit(), 3600000);
+                    
+                    // Real-time listeners for cloud data sync across devices
                     onSnapshot(doc(db, "users", user.uid), () => {
                         getDoc(doc(db, "users", user.uid)).then(s => {
                             if (s.exists()) { currentUserData = { uid: user.uid, ...s.data() }; loadUserDashboard(); loadMePage(); }
                         });
                     });
+                    
+                    onSnapshot(doc(db, "userDailyProfit", user.uid), () => {
+                        loadUserDashboard();
+                    });
+                    
                     if (chatUnsubscribe) chatUnsubscribe();
                     chatUnsubscribe = onSnapshot(query(collection(db, "supportMessages"), orderBy("createdAt", "asc")), () => {
                         if (document.getElementById("chatPage").classList.contains("active")) loadChatMessages();
@@ -967,6 +929,7 @@
             }
         } else {
             if (chatUnsubscribe) chatUnsubscribe();
+            if (profitCheckInterval) clearInterval(profitCheckInterval);
             currentUser = null;
             currentUserData = null;
             document.getElementById("loginOverlay").classList.remove("hide");
