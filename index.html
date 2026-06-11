@@ -1,341 +1,1039 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>NEXORA CAPITAL | Premium Investment Platform</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-  <!-- Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged, updateProfile, signOut, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NEXORA CAPITAL | Premium Investment Platform</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0A0C15;
+            color: #F0F3FA;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #11161F; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #F5B041, #D4AF37); border-radius: 10px; }
 
-    // Firebase Config - Timro config!
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxSWI_Uh_hYJvSBMhKLw-bvcoqwzvdhN4",
-      authDomain: "wallat-6fc9f.firebaseapp.com",
-      projectId: "wallat-6fc9f",
-      storageBucket: "wallat-6fc9f.firebasestorage.app",
-      messagingSenderId: "528621844279",
-      appId: "1:528621844279:web:7cec7ca51f3fb7cdfd0cb2",
-      measurementId: "G-1X4HPJD5VG"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-
-    let currentUser = null;
-    let userData = null;
-
-    // ============ UI ROUTING ============
-    const pages = {
-      home: document.getElementById('homePage'),
-      about: document.getElementById('aboutPage'),
-      contact: document.getElementById('contactPage'),
-      login: document.getElementById('loginPage'),
-      register: document.getElementById('registerPage'),
-      forgot: document.getElementById('forgotPage'),
-      dashboard: document.getElementById('dashboardPage'),
-      deposit: document.getElementById('depositPage'),
-      withdraw: document.getElementById('withdrawPage'),
-      investment: document.getElementById('investmentPage'),
-      referral: document.getElementById('referralPage'),
-      profile: document.getElementById('profilePage'),
-      settings: document.getElementById('settingsPage')
-    };
-
-    function showPage(pageId) {
-      Object.keys(pages).forEach(key => {
-        if (pages[key]) pages[key].style.display = 'none';
-      });
-      if (pages[pageId]) pages[pageId].style.display = 'block';
-    }
-
-    // ============ PASSWORD STRENGTH ============
-    window.checkPasswordStrength = function(pw) {
-      let strength = 0;
-      if (pw.length >= 8) strength++;
-      if (/[A-Z]/.test(pw)) strength++;
-      if (/[a-z]/.test(pw)) strength++;
-      if (/[0-9]/.test(pw)) strength++;
-      if (/[^A-Za-z0-9]/.test(pw)) strength++;
-      const meter = document.getElementById('strengthMeter');
-      const text = document.getElementById('strengthText');
-      if (!meter) return;
-      const width = (strength / 5) * 100;
-      meter.style.width = width + '%';
-      if (strength <= 2) { meter.style.backgroundColor = '#ff4444'; text.innerText = 'Weak'; }
-      else if (strength <= 4) { meter.style.backgroundColor = '#ffaa44'; text.innerText = 'Medium'; }
-      else { meter.style.backgroundColor = '#00c851'; text.innerText = 'Strong'; }
-    };
-
-    // ============ REGISTER ============
-    window.registerUser = async function() {
-      const fullName = document.getElementById('regFullName').value;
-      const username = document.getElementById('regUsername').value;
-      const email = document.getElementById('regEmail').value;
-      const phone = document.getElementById('regPhone').value;
-      const country = document.getElementById('regCountry').value;
-      const password = document.getElementById('regPassword').value;
-      const confirm = document.getElementById('regConfirm').value;
-      const referralCode = document.getElementById('regReferral').value;
-
-      if (password !== confirm) { Swal.fire('Error', 'Passwords do not match', 'error'); return; }
-      if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
-        Swal.fire('Error', 'Password must have 8+ chars, uppercase, lowercase, number & special', 'error');
-        return;
-      }
-
-      try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        await updateProfile(userCred.user, { displayName: fullName });
-        await sendEmailVerification(userCred.user);
-        
-        // Generate unique referral code
-        const myReferralCode = username + Math.random().toString(36).substr(2, 6);
-        let bonus = 0;
-        if (referralCode) {
-          const q = query(collection(db, 'users'), where('referralCode', '==', referralCode));
-          const snap = await getDocs(q);
-          if (!snap.empty) {
-            const referrer = snap.docs[0];
-            await updateDoc(doc(db, 'users', referrer.id), {
-              referralEarnings: (referrer.data().referralEarnings || 0) + 50,
-              balance: (referrer.data().balance || 0) + 50
-            });
-            bonus = 50;
-          }
+        .glass-card {
+            background: rgba(18, 25, 45, 0.7);
+            backdrop-filter: blur(14px);
+            border-radius: 28px;
+            border: 1px solid rgba(245, 176, 65, 0.25);
+            transition: all 0.4s ease;
+            box-shadow: 0 20px 35px -15px rgba(0,0,0,0.5);
+        }
+        .glass-card:hover {
+            border-color: rgba(245, 176, 65, 0.7);
+            transform: translateY(-6px);
         }
 
-        await setDoc(doc(db, 'users', userCred.user.uid), {
-          fullName, username, email, phone, country,
-          referralCode: myReferralCode,
-          balance: 100 + bonus,
-          totalDeposit: 0,
-          totalWithdraw: 0,
-          dailyProfit: 0,
-          activeInvestment: 0,
-          referralEarnings: bonus,
-          createdAt: serverTimestamp()
-        });
-
-        Swal.fire('Success', 'Registration successful! Please verify your email.', 'success');
-        showPage('login');
-      } catch (err) { Swal.fire('Error', err.message, 'error'); }
-    };
-
-    // ============ LOGIN ============
-    window.loginUser = async function() {
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-      try {
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-        if (!cred.user.emailVerified) {
-          await signOut(auth);
-          Swal.fire('Email Not Verified', 'Please verify your email first. Check your inbox.', 'warning');
-          return;
+        .gold-text {
+            background: linear-gradient(135deg, #F5B041 0%, #E6B800 35%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        Swal.fire('Welcome!', 'Login successful', 'success');
-      } catch (err) { Swal.fire('Login Failed', err.message, 'error'); }
-    };
 
-    window.forgotPassword = async function() {
-      const email = document.getElementById('forgotEmail').value;
-      if (!email) { Swal.fire('Error', 'Enter your email', 'error'); return; }
-      try {
-        await sendPasswordResetEmail(auth, email);
-        Swal.fire('Reset Email Sent', 'Check your inbox', 'success');
-        showPage('login');
-      } catch (err) { Swal.fire('Error', err.message, 'error'); }
-    };
+        .btn-gold {
+            background: linear-gradient(95deg, #F5B041 0%, #E6A800 100%);
+            border: none;
+            color: #0A0C15;
+            font-weight: 700;
+            padding: 12px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(245,176,65,0.4);
+        }
+        .btn-gold:hover { transform: scale(1.03); }
 
-    window.logoutUser = async function() {
-      await signOut(auth);
-      showPage('home');
-    };
+        .btn-outline-gold {
+            background: transparent;
+            border: 1.5px solid #F5B041;
+            color: #F5B041;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-outline-gold:hover { background: rgba(245,176,65,0.15); }
 
-    // ============ DEPOSIT WITH SCREENSHOT ============
-    window.submitDeposit = async function() {
-      const amount = parseFloat(document.getElementById('depositAmount').value);
-      const method = document.getElementById('depositMethod').value;
-      const file = document.getElementById('depositScreenshot').files[0];
-      if (!amount || !file) { Swal.fire('Error', 'Amount and screenshot required', 'error'); return; }
-      
-      const user = auth.currentUser;
-      if (!user) return;
-      const storageRef = ref(storage, `deposits/${user.uid}/${Date.now()}_${file.name}`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      
-      await addDoc(collection(db, 'deposits'), {
-        userId: user.uid,
-        amount,
-        method,
-        screenshotUrl: url,
-        status: 'pending',
-        createdAt: serverTimestamp()
-      });
-      Swal.fire('Request Sent', 'Deposit request pending approval', 'success');
-      document.getElementById('depositAmount').value = '';
-    };
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 5%;
+            background: rgba(10, 12, 21, 0.98);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(245,176,65,0.3);
+        }
+        .logo h2 { font-size: 1.8rem; font-weight: 800; }
+        .logo p { font-size: 10px; opacity: 0.7; }
+        .nav-links { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+        .nav-links a {
+            color: #E2E8F0;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-links a:hover { color: #F5B041; }
 
-    // ============ LOAD DASHBOARD DATA ============
-    async function loadDashboard() {
-      const user = auth.currentUser;
-      if (!user) return;
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        document.getElementById('dashBalance').innerText = `$${data.balance || 0}`;
-        document.getElementById('dashTotalDeposit').innerText = `$${data.totalDeposit || 0}`;
-        document.getElementById('dashTotalWithdraw').innerText = `$${data.totalWithdraw || 0}`;
-        document.getElementById('dashDailyProfit').innerText = `$${((data.balance || 0) * 0.02).toFixed(2)}`;
-        document.getElementById('dashActiveInv').innerText = `$${data.activeInvestment || 0}`;
-        document.getElementById('dashReferralEarn').innerText = `$${data.referralEarnings || 0}`;
-        document.getElementById('profileName').innerText = data.fullName;
-        document.getElementById('profileEmail').innerText = data.email;
-        document.getElementById('profilePhone').innerText = data.phone;
-        document.getElementById('profileCountry').innerText = data.country;
-        document.getElementById('referralLinkDisplay').value = `${window.location.origin}?ref=${data.referralCode}`;
-        document.getElementById('referralCodeDisplay').innerText = data.referralCode;
+        .banner-container {
+            width: 100%;
+            height: 320px;
+            position: relative;
+            overflow: hidden;
+        }
+        .banner-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .banner-slide.active { opacity: 1; }
+        .banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(125deg, rgba(5,8,20,0.6), rgba(0,0,0,0.4));
+        }
+        .banner-text {
+            position: absolute;
+            bottom: 30px;
+            left: 5%;
+            z-index: 10;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            padding: 12px 28px;
+            border-radius: 60px;
+            border-left: 3px solid #F5B041;
+        }
+
+        .stats-bar {
+            background: linear-gradient(90deg, #10141F, #0A0C15);
+            padding: 12px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 1px solid rgba(245,176,65,0.2);
+            font-size: 0.8rem;
+        }
+        .stats-bar i { color: #F5B041; margin-right: 5px; }
+
+        .app-main { padding: 40px 5%; display: none; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin: 30px 0; }
+        .stat-card { padding: 26px; border-radius: 28px; text-align: center; }
+        .stat-card i { font-size: 2.5rem; color: #F5B041; margin-bottom: 12px; }
+
+        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; margin: 35px 0; }
+        .plan-card {
+            background: linear-gradient(145deg, rgba(22, 30, 50, 0.95), rgba(14, 18, 32, 0.98));
+            border-radius: 28px;
+            padding: 1.8rem;
+            border: 1px solid rgba(245,176,65,0.35);
+            transition: all 0.35s;
+            position: relative;
+        }
+        .plan-card:hover { transform: translateY(-8px); border-color: #F5B041; }
+        .plan-price { font-size: 2rem; font-weight: 800; color: #F5B041; margin: 12px 0; }
+        .badge-owned { position: absolute; top: 15px; right: 15px; background: #F5B041; color: #0A0C15; padding: 5px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; }
+        .badge-coming { position: absolute; top: 15px; right: 15px; background: #6B7280; color: white; padding: 5px 14px; border-radius: 30px; font-size: 11px; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(16px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: #0F1422;
+            max-width: 550px;
+            width: 90%;
+            border-radius: 32px;
+            padding: 32px;
+            border: 1px solid #F5B041;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 12px 0;
+            background: #1A1F30;
+            border: 1px solid #2A3148;
+            border-radius: 30px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        input:focus { border-color: #F5B041; outline: none; }
+
+        .method-chip {
+            display: inline-block;
+            background: #1A1F30;
+            padding: 10px 18px;
+            margin: 5px;
+            border-radius: 50px;
+            cursor: pointer;
+            border: 1px solid #2A3148;
+            transition: 0.2s;
+        }
+        .method-chip.active, .method-chip:hover { border-color: #F5B041; background: rgba(245,176,65,0.2); color: #F5B041; }
+
+        .qr-big { text-align: center; margin: 15px 0; }
+        .qr-big img { width: 180px; border-radius: 20px; background: white; padding: 10px; }
+        .wallet-address { background: #0B0E18; padding: 12px; border-radius: 20px; text-align: center; font-family: monospace; word-break: break-all; margin: 10px 0; }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1E243C;
+            border-left: 5px solid #F5B041;
+            padding: 14px 24px;
+            border-radius: 16px;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(80px); } to { opacity: 1; transform: translateX(0); } }
+
+        .admin-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid #2A3148; }
+        .admin-table th { color: #F5B041; }
+        .action-btn { padding: 5px 12px; margin: 0 3px; border-radius: 20px; cursor: pointer; border: none; }
+        .approve-btn { background: #10B981; color: white; }
+        .reject-btn { background: #EF4444; color: white; }
+        .pending-badge { background: #F59E0B; color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+
+        footer {
+            background: #070A12;
+            padding: 40px 5% 25px;
+            margin-top: 60px;
+            border-top: 1px solid #F5B04120;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 35px; flex-wrap: wrap; margin: 20px 0; }
+        .footer-links a { color: #aaa; text-decoration: none; cursor: pointer; }
+        .risk-warning { text-align: center; font-size: 0.7rem; color: #F5B04199; margin-top: 20px; }
+
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; gap: 12px; }
+            .banner-container { height: 250px; }
+            .stats-bar { flex-direction: column; text-align: center; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .plans-grid { grid-template-columns: 1fr; }
+        }
         
-        // Recent transactions mock
-        const txList = document.getElementById('recentTransactions');
-        if (txList) txList.innerHTML = '<li><i class="fas fa-plus-circle"></i> Deposit $100 - Pending</li><li><i class="fas fa-chart-line"></i> Daily ROI +2%</li>';
-      }
-    }
-
-    // ============ UPDATE PROFILE PICTURE ============
-    window.uploadProfilePic = async function() {
-      const file = document.getElementById('profilePicInput').files[0];
-      if (!file) return;
-      const user = auth.currentUser;
-      const storageRef = ref(storage, `profiles/${user.uid}/photo`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      await updateDoc(doc(db, 'users', user.uid), { photoURL: url });
-      Swal.fire('Updated', 'Profile picture updated', 'success');
-    };
-
-    // ============ AUTH STATE ============
-    onAuthStateChanged(auth, async (user) => {
-      if (user && user.emailVerified) {
-        currentUser = user;
-        await loadDashboard();
-        showPage('dashboard');
-        document.querySelectorAll('.auth-only').forEach(el => el.style.display = 'flex');
-        document.querySelectorAll('.guest-only').forEach(el => el.style.display = 'none');
-      } else if (user && !user.emailVerified) {
-        await signOut(auth);
-        showPage('login');
-        Swal.fire('Verify Email', 'Please verify your email before logging in', 'info');
-      } else {
-        currentUser = null;
-        showPage('home');
-        document.querySelectorAll('.auth-only').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.guest-only').forEach(el => el.style.display = 'flex');
-      }
-    });
-
-    window.resendVerification = async function() {
-      if (auth.currentUser) {
-        await sendEmailVerification(auth.currentUser);
-        Swal.fire('Sent', 'Verification email resent', 'success');
-      }
-    };
-
-    window.showPageGlobal = showPage;
-    window.copyReferralLink = function() {
-      const inp = document.getElementById('referralLinkDisplay');
-      inp.select();
-      document.execCommand('copy');
-      Swal.fire('Copied!', 'Referral link copied', 'success');
-    };
-    window.goToDashboard = () => showPage('dashboard');
-  </script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-    body { background: linear-gradient(135deg, #0a0f2a 0%, #0a1a3a 100%); min-height: 100vh; color: #fff; }
-    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; background: rgba(10, 20, 40, 0.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .logo { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #FFD166, #FF6B6B); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .nav-links a { color: #fff; margin: 0 1rem; text-decoration: none; font-weight: 500; transition: 0.3s; }
-    .nav-links a:hover { color: #FFD166; }
-    .btn-glow { background: linear-gradient(90deg, #FF6B6B, #FFD166); border: none; padding: 10px 24px; border-radius: 40px; font-weight: bold; color: #0a0f2a; cursor: pointer; transition: 0.3s; }
-    .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(14px); border-radius: 32px; padding: 28px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.3); margin: 20px auto; }
-    input, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 24px; border: none; background: rgba(255,255,255,0.1); color: white; outline: none; }
-    button { background: #FFD166; border: none; padding: 12px 28px; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    .strength-bar { height: 6px; width: 100%; background: #333; border-radius: 3px; margin-top: 5px; overflow: hidden; }
-    #strengthMeter { height: 100%; width: 0%; transition: 0.3s; }
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-top: 30px; }
-    .stat-card { background: rgba(255,255,255,0.08); border-radius: 28px; padding: 24px; text-align: center; backdrop-filter: blur(8px); }
-    @media (max-width: 768px) { .nav-links { display: none; } .navbar { flex-wrap: wrap; } .logo { font-size: 1.4rem; } .btn-glow { padding: 6px 16px; } }
-    .page { display: none; padding: 2rem 5%; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .auth-only { display: none; }
-    .guest-only { display: flex; }
-    footer { text-align: center; padding: 2rem; background: rgba(0,0,0,0.4); margin-top: 3rem; }
-  </style>
+        .notification-badge {
+            background: #EF4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar">
-  <div class="logo">NEXORA CAPITAL</div>
-  <div class="nav-links">
-    <a href="#" onclick="showPageGlobal('home')">Home</a>
-    <a href="#" onclick="showPageGlobal('about')">About</a>
-    <a href="#" onclick="showPageGlobal('contact')">Contact</a>
-    <a href="#" class="auth-only" onclick="showPageGlobal('dashboard')">Dashboard</a>
-    <a href="#" class="auth-only" onclick="showPageGlobal('deposit')">Deposit</a>
-    <a href="#" class="auth-only" onclick="showPageGlobal('withdraw')">Withdraw</a>
-    <a href="#" class="auth-only" onclick="showPageGlobal('profile')">Profile</a>
-  </div>
-  <div>
-    <button class="btn-glow guest-only" onclick="showPageGlobal('login')">Login</button>
-    <button class="btn-glow guest-only" onclick="showPageGlobal('register')">Register</button>
-    <button class="btn-glow auth-only" onclick="logoutUser()">Logout</button>
-  </div>
-</nav>
 
-<!-- HOME -->
-<div id="homePage" class="page"><div class="glass-card" style="text-align:center"><h1>Welcome to NEXORA CAPITAL</h1><p>Premium investment platform with 2% daily ROI. Secure, transparent, modern.</p><button onclick="showPageGlobal('register')">Get Started</button></div></div>
-<div id="aboutPage" class="page"><div class="glass-card"><h2>About Us</h2><p>Nexora Capital is a fintech leader providing daily returns and secure asset management.</p></div></div>
-<div id="contactPage" class="page"><div class="glass-card"><h2>Contact</h2><p>Email: support@nexoracapital.com | Phone: +1 888 555 1234</p></div></div>
+<div class="navbar">
+    <div class="logo">
+        <h2><span class="gold-text">NEXORA</span> CAPITAL</h2>
+        <p>Smart Investments. Stronger Futures.</p>
+    </div>
+    <div class="nav-links" id="navLinks">
+        <a onclick="showDashboard()" id="dashNav" style="display:none;"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a onclick="showInvestments()" id="investNav" style="display:none;"><i class="fas fa-crown"></i> VIP Plans</a>
+        <a onclick="showReferrals()" id="refNav" style="display:none;"><i class="fas fa-link"></i> Referrals</a>
+        <a onclick="showAgentPanel()" id="agentNav" style="display:none;"><i class="fas fa-user-tie"></i> Agent Panel <span id="agentPendingBadge" style="display:none;" class="notification-badge">0</span></a>
+        <a id="authBtn" onclick="openAuthModal()"><i class="fas fa-user-circle"></i> Login</a>
+    </div>
+</div>
 
-<!-- LOGIN -->
-<div id="loginPage" class="page"><div class="glass-card" style="max-width:500px"><h2>Login</h2><input type="email" id="loginEmail" placeholder="Email"><input type="password" id="loginPassword" placeholder="Password"><button onclick="loginUser()">Sign In</button><p><a href="#" onclick="showPageGlobal('forgot')">Forgot Password?</a></p></div></div>
+<div class="stats-bar">
+    <div><i class="fas fa-chart-line"></i> Daily Profit 5-11% • 45 Days Cycle • Auto-credit 12:00 AM</div>
+    <div><i class="fas fa-database"></i> $21M+ AUM &nbsp;|&nbsp; <i class="fas fa-users"></i> 9,000+ Members &nbsp;|&nbsp; <i class="fas fa-shield-alt"></i> Secure</div>
+</div>
 
-<!-- REGISTER -->
-<div id="registerPage" class="page"><div class="glass-card" style="max-width:600px"><h2>Create Account</h2><input id="regFullName" placeholder="Full Name"><input id="regUsername" placeholder="Username"><input id="regEmail" type="email" placeholder="Email"><input id="regPhone" placeholder="Phone"><input id="regCountry" placeholder="Country"><input id="regPassword" type="password" placeholder="Password" onkeyup="checkPasswordStrength(this.value)"><div class="strength-bar"><div id="strengthMeter"></div></div><span id="strengthText"></span><input id="regConfirm" type="password" placeholder="Confirm Password"><input id="regReferral" placeholder="Referral Code (optional)"><button onclick="registerUser()">Register</button><p>Already have account? <a href="#" onclick="showPageGlobal('login')">Login</a></p></div></div>
+<div class="banner-container" id="bannerSection">
+    <div class="banner-slide active" style="background-image: url('https://i.postimg.cc/J79RmYCT/company-countr.png');"></div>
+    <div class="banner-slide" style="background-image: url('https://i.postimg.cc/NjbhypZc/advatiesment-photo-company.png');"></div>
+    <div class="banner-slide" style="background-image: url('https://i.postimg.cc/bJtFRTVt/advaitiesment-photo.png');"></div>
+    <div class="banner-overlay"></div>
+    <div class="banner-text">
+        <h2 class="gold-text">Invest Smart. Grow Securely.</h2>
+        <p>Nexora Capital – Your Future Starts Today</p>
+        <button class="btn-gold" id="heroBtn" style="padding: 8px 20px; margin-top: 6px;">Start Investing →</button>
+    </div>
+</div>
 
-<div id="forgotPage" class="page"><div class="glass-card"><h2>Reset Password</h2><input id="forgotEmail" placeholder="Email"><button onclick="forgotPassword()">Send Reset Email</button></div></div>
+<div class="app-main" id="appMain">
+    <!-- User Dashboard -->
+    <div id="dashboardSection">
+        <h2><i class="fas fa-tachometer-alt gold-text"></i> Dashboard</h2>
+        <div class="stats-grid">
+            <div class="stat-card glass-card"><i class="fas fa-wallet"></i><h3>Total Balance</h3><h2 id="totalBalance">$0.00</h2></div>
+            <div class="stat-card glass-card"><i class="fas fa-chart-line"></i><h3>Active Investments</h3><h2 id="activeCount">0</h2></div>
+            <div class="stat-card glass-card"><i class="fas fa-sun"></i><h3>Daily Profit Est.</h3><h2 id="dailyEstimate">$0.00</h2></div>
+        </div>
+        <div class="glass-card" style="padding: 25px; margin-bottom: 30px;">
+            <h3><i class="fas fa-chart-line gold-text"></i> Profit Projection</h3>
+            <canvas id="profitChart" height="150"></canvas>
+        </div>
+        <div class="glass-card" style="padding: 28px;">
+            <h3><i class="fas fa-history"></i> My Investments</h3>
+            <div id="investHistoryList">No active investments yet.</div>
+            <div style="display: flex; gap: 15px; margin-top: 28px; flex-wrap: wrap;">
+                <button class="btn-gold" onclick="openDepositModal()"><i class="fas fa-plus-circle"></i> Deposit</button>
+                <button class="btn-outline-gold" onclick="openWithdrawModal()"><i class="fas fa-hand-holding-usd"></i> Withdraw</button>
+                <button class="btn-outline-gold" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+    </div>
 
-<!-- DASHBOARD -->
-<div id="dashboardPage" class="page"><div class="glass-card"><h2>Dashboard</h2><div class="dashboard-grid"><div class="stat-card"><i class="fas fa-wallet"></i><h3>Balance</h3><h2 id="dashBalance">$0</h2></div><div class="stat-card"><i class="fas fa-arrow-down"></i><h3>Total Deposit</h3><h2 id="dashTotalDeposit">$0</h2></div><div class="stat-card"><i class="fas fa-arrow-up"></i><h3>Total Withdraw</h3><h2 id="dashTotalWithdraw">$0</h2></div><div class="stat-card"><i class="fas fa-chart-line"></i><h3>Daily Profit (2%)</h3><h2 id="dashDailyProfit">$0</h2></div><div class="stat-card"><i class="fas fa-chart-pie"></i><h3>Active Investment</h3><h2 id="dashActiveInv">$0</h2></div><div class="stat-card"><i class="fas fa-users"></i><h3>Referral Earnings</h3><h2 id="dashReferralEarn">$0</h2></div></div><ul id="recentTransactions" style="margin-top:20px"></ul></div></div>
+    <!-- VIP Plans -->
+    <div id="investSection" style="display: none;">
+        <h2><i class="fas fa-gem gold-text"></i> VIP Investment Plans</h2>
+        <p style="margin-bottom: 20px;">Each plan can be purchased only once • 45 days • Daily 5-11% ROI</p>
+        <div class="plans-grid" id="plansGrid"></div>
+    </div>
 
-<!-- DEPOSIT -->
-<div id="depositPage" class="page"><div class="glass-card"><h2>Deposit Funds</h2><input id="depositAmount" type="number" placeholder="Amount USD"><select id="depositMethod"><option>Bank Transfer</option><option>USDT (TRC20)</option><option>Credit Card</option></select><input type="file" id="depositScreenshot" accept="image/*"><button onclick="submitDeposit()">Submit Request</button></div></div>
+    <!-- Referrals -->
+    <div id="referralSection" style="display: none;">
+        <div class="glass-card" style="padding: 35px;">
+            <h3><i class="fas fa-link gold-text"></i> Referral Program</h3>
+            <p>Earn 8% commission from your referrals' deposits!</p>
+            <div style="display: flex; gap: 12px; margin: 25px 0;">
+                <input type="text" id="refLinkInput" readonly style="background:#111725;">
+                <button class="btn-gold" onclick="copyRefLink()">Copy <i class="fas fa-copy"></i></button>
+            </div>
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="glass-card" style="padding: 20px;"><h4>Total Referrals</h4><h2 id="refCount">0</h2></div>
+                <div class="glass-card" style="padding: 20px;"><h4>Earnings</h4><h2 id="refEarnings">$0.00</h2></div>
+            </div>
+        </div>
+    </div>
 
-<!-- WITHDRAW (simplified) -->
-<div id="withdrawPage" class="page"><div class="glass-card"><h2>Withdraw</h2><input placeholder="Amount"><button onclick="Swal.fire('Info','OTP verification required in full version','info')">Request Withdraw</button></div></div>
+    <!-- Agent Panel (For Deposit/Withdrawal Verification) -->
+    <div id="agentSection" style="display: none;">
+        <h2><i class="fas fa-user-tie gold-text"></i> Agent Verification Panel</h2>
+        <p style="margin-bottom: 20px;">Verify and approve user deposit & withdrawal requests</p>
+        
+        <!-- Pending Deposits for Agent -->
+        <div class="glass-card" style="padding: 25px; margin: 20px 0;">
+            <h3><i class="fas fa-download gold-text"></i> Pending Deposit Requests</h3>
+            <div id="agentPendingDeposits">Loading...</div>
+        </div>
+        
+        <!-- Pending Withdrawals for Agent -->
+        <div class="glass-card" style="padding: 25px; margin: 20px 0;">
+            <h3><i class="fas fa-upload gold-text"></i> Pending Withdrawal Requests</h3>
+            <div id="agentPendingWithdrawals">Loading...</div>
+        </div>
+        
+        <!-- Recently Approved -->
+        <div class="glass-card" style="padding: 25px;">
+            <h3><i class="fas fa-check-circle gold-text"></i> Recently Verified</h3>
+            <div id="agentRecentActivity">No recent activity</div>
+        </div>
+    </div>
+</div>
 
-<!-- INVESTMENT -->
-<div id="investmentPage" class="page"><div class="glass-card"><h2>Investment Plans</h2><p>🔹 Daily ROI: 2% per day<br>🔹 Minimum $50<br>🔹 Instant profit credit</p><button onclick="Swal.fire('Coming Soon','Auto-invest activation','info')">Start Investing</button></div></div>
+<!-- Deposit Modal -->
+<div id="depositModal" class="modal">
+    <div class="modal-content">
+        <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('depositModal')">&times;</span>
+        <h3 class="gold-text"><i class="fas fa-coins"></i> Deposit Funds</h3>
+        <div id="methodChips" style="margin: 15px 0;">
+            <span class="method-chip" onclick="selectMethod('TRC20', 'TX8xL9QpVkY7m3n2b8cA1dEfG5hJkL9oP', 'https://i.postimg.cc/VNBFsVhR/trc20.jpg')">TRC20</span>
+            <span class="method-chip" onclick="selectMethod('SOL', 'SolanaAddressNexora9xQpVkY7m3n2b8c', 'https://i.postimg.cc/Jz3XjBQb/solona-SOL.jpg')">SOL</span>
+            <span class="method-chip" onclick="selectMethod('ERC20', '0xEf9d8C7aB5e2F1d9XyZ3wQrT6pLkMnBvCx', 'https://i.postimg.cc/T3x08x7D/erc20.jpg')">ERC20</span>
+            <span class="method-chip" onclick="selectMethod('BTC', 'bc1qxy2kg9z7x6lq5v4u3w2r1t0y8i7u6', 'https://i.postimg.cc/52pwZCQn/BTC.jpg')">BTC</span>
+            <span class="method-chip" onclick="selectMethod('BEP20', 'bnb1xqy9l8k7j6h5g4f3d2s1a0p9o8i7u6', 'https://i.postimg.cc/Z5YNF5sP/BEP-20.jpg')">BEP20</span>
+        </div>
+        <div id="qrDisplay" class="qr-big" style="display: none;">
+            <img id="qrImage" src="">
+            <div class="wallet-address" id="walletAddressDisplay"></div>
+        </div>
+        <input type="text" id="userWallet" placeholder="Your Wallet Address">
+        <input type="text" id="txnHash" placeholder="Transaction Hash (Optional)">
+        <input type="number" id="depositAmount" placeholder="Amount (USD)" value="100">
+        <button class="btn-gold" style="width:100%;" onclick="submitDeposit()">Submit Deposit Request</button>
+        <p class="risk-warning" style="margin-top: 12px;">Request will be verified by Agent. Funds added after approval.</p>
+    </div>
+</div>
 
-<!-- REFERRAL -->
-<div id="referralPage" class="page"><div class="glass-card"><h3>Your Referral Code: <strong id="referralCodeDisplay">-</strong></h3><input id="referralLinkDisplay" readonly><button onclick="copyReferralLink()">Copy Link</button><p>Earn $50 per referral + 5% of their earnings</p></div></div>
+<!-- Withdraw Modal -->
+<div id="withdrawModal" class="modal">
+    <div class="modal-content">
+        <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('withdrawModal')">&times;</span>
+        <h3 class="gold-text"><i class="fas fa-hand-holding-usd"></i> Withdraw Funds</h3>
+        <select id="withdrawMethod"><option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option></select>
+        <input type="text" id="withdrawAddress" placeholder="Withdrawal Address">
+        <input type="number" id="withdrawAmount" placeholder="Amount (USD) - Min $20">
+        <button class="btn-gold" style="width:100%;" onclick="submitWithdraw()">Request Withdrawal</button>
+        <p class="risk-warning" style="margin-top: 12px;">Request will be verified by Agent before processing.</p>
+    </div>
+</div>
 
-<!-- PROFILE -->
-<div id="profilePage" class="page"><div class="glass-card"><h2>Profile</h2><p><strong>Name:</strong> <span id="profileName"></span></p><p><strong>Email:</strong> <span id="profileEmail"></span></p><p><strong>Phone:</strong> <span id="profilePhone"></span></p><p><strong>Country:</strong> <span id="profileCountry"></span></p><input type="file" id="profilePicInput"><button onclick="uploadProfilePic()">Upload Photo</button><button onclick="showPageGlobal('settings')">Settings</button></div></div>
+<!-- Auth Modal -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('authModal')">&times;</span>
+        <h3 class="gold-text" id="authTitle">Login to Nexora</h3>
+        <div id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email Address">
+            <input type="password" id="loginPassword" placeholder="Password">
+        </div>
+        <div id="registerForm" style="display:none;">
+            <input type="text" id="regName" placeholder="Full Name">
+            <input type="email" id="regEmail" placeholder="Email Address">
+            <input type="password" id="regPassword" placeholder="Password">
+            <input type="password" id="regConfirm" placeholder="Confirm Password">
+            <input type="text" id="regRefCode" placeholder="Referral Code (Optional)">
+        </div>
+        <button class="btn-gold" style="width:100%;" onclick="handleAuth()" id="authActionBtn">Login</button>
+        <p style="margin-top: 15px; text-align:center;">
+            <a href="#" onclick="toggleAuthMode()" id="toggleAuthLink">Don't have an account? Register</a>
+        </p>
+    </div>
+</div>
 
-<div id="settingsPage" class="page"><div class="glass-card"><h2>Settings</h2><button onclick="logoutUser()">Logout All Devices</button><button onclick="resendVerification()">Resend Verification</button></div></div>
+<div id="toastContainer"></div>
 
-<footer>© 2026 NEXORA CAPITAL — Secure Investment Platform</footer>
+<footer>
+    <div style="text-align:center;"><h3 class="gold-text">NEXORA CAPITAL</h3><p>Global Fintech Ecosystem</p></div>
+    <div class="footer-links">
+        <a onclick="showLegalModal('terms')">Terms & Conditions</a>
+        <a onclick="showLegalModal('privacy')">Privacy Policy</a>
+        <a onclick="showLegalModal('risk')">Risk Disclosure</a>
+    </div>
+    <div class="risk-warning">⚠️ Investing involves risk. You may lose your capital.</div>
+    <div style="text-align:center; margin-top:25px;">© 2025 Nexora Capital — Premium Investment Platform</div>
+</footer>
+
+<script>
+    // ============ DATA STORAGE ============
+    let currentUser = JSON.parse(localStorage.getItem('nexora_current')) || null;
+    let users = JSON.parse(localStorage.getItem('nexora_users')) || [];
+    let deposits = JSON.parse(localStorage.getItem('nexora_deposits')) || [];
+    let withdrawals = JSON.parse(localStorage.getItem('nexora_withdrawals')) || [];
+    let investments = JSON.parse(localStorage.getItem('nexora_investments')) || [];
+    let referrals = JSON.parse(localStorage.getItem('nexora_referrals')) || [];
+    let profitLog = JSON.parse(localStorage.getItem('nexora_profit_log')) || {};
+
+    // Create Default Agent Account (Fixed Agent)
+    const AGENT_EMAIL = "agent@nexora.com";
+    const AGENT_PASSWORD = "Agent@123";
+    
+    // Check if agent exists, if not create
+    if (!users.find(u => u.email === AGENT_EMAIL)) {
+        users.push({
+            id: Date.now() + 1,
+            fullname: "Verification Agent",
+            email: AGENT_EMAIL,
+            password: AGENT_PASSWORD,
+            balance: 0,
+            refCode: "AGENT001",
+            referredBy: null,
+            purchasedPlans: [],
+            role: "agent",
+            createdAt: new Date()
+        });
+        localStorage.setItem('nexora_users', JSON.stringify(users));
+    }
+
+    // Create Default Admin Account
+    const ADMIN_EMAIL = "admin@nexora.com";
+    const ADMIN_PASSWORD = "Admin@123";
+    
+    if (!users.find(u => u.email === ADMIN_EMAIL)) {
+        users.push({
+            id: Date.now() + 2,
+            fullname: "System Admin",
+            email: ADMIN_EMAIL,
+            password: ADMIN_PASSWORD,
+            balance: 0,
+            refCode: "ADMIN001",
+            referredBy: null,
+            purchasedPlans: [],
+            role: "admin",
+            createdAt: new Date()
+        });
+        localStorage.setItem('nexora_users', JSON.stringify(users));
+    }
+
+    const plans = [
+        { name: "VIP 1", amount: 20, duration: 45, roi: "5-11%" },
+        { name: "VIP 2", amount: 82, duration: 45, roi: "5-11%" },
+        { name: "VIP 3", amount: 350, duration: 45, roi: "5-11%" },
+        { name: "VIP 4", amount: 555, duration: 45, roi: "5-11%" },
+        { name: "VIP 5", amount: 1111, duration: 45, roi: "5-11%" },
+        { name: "VIP 6", amount: 2500, coming: true },
+        { name: "VIP 7", amount: 5000, coming: true },
+        { name: "VIP 8", amount: 10000, coming: true }
+    ];
+
+    let selectedMethod = { name: '', address: '', qr: '' };
+
+    function saveData() {
+        localStorage.setItem('nexora_users', JSON.stringify(users));
+        localStorage.setItem('nexora_deposits', JSON.stringify(deposits));
+        localStorage.setItem('nexora_withdrawals', JSON.stringify(withdrawals));
+        localStorage.setItem('nexora_investments', JSON.stringify(investments));
+        localStorage.setItem('nexora_referrals', JSON.stringify(referrals));
+        localStorage.setItem('nexora_profit_log', JSON.stringify(profitLog));
+        if (currentUser) localStorage.setItem('nexora_current', JSON.stringify(currentUser));
+        else localStorage.removeItem('nexora_current');
+    }
+
+    function showToast(msg, type = 'success') {
+        let toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}" style="color:#F5B041;"></i> ${msg}`;
+        document.getElementById('toastContainer').appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+        
+        // Update agent badge if agent is logged in
+        if (currentUser?.role === 'agent') {
+            updateAgentBadge();
+        }
+    }
+
+    // Update agent pending count badge
+    function updateAgentBadge() {
+        if (currentUser?.role === 'agent') {
+            let pendingDeposits = deposits.filter(d => d.status === 'pending').length;
+            let pendingWithdrawals = withdrawals.filter(w => w.status === 'pending').length;
+            let total = pendingDeposits + pendingWithdrawals;
+            const badge = document.getElementById('agentPendingBadge');
+            if (badge) {
+                if (total > 0) {
+                    badge.style.display = 'inline-block';
+                    badge.innerText = total;
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+    }
+
+    // ============ AUTHENTICATION ============
+    let isLogin = true;
+    function toggleAuthMode() {
+        isLogin = !isLogin;
+        document.getElementById('authTitle').innerText = isLogin ? "Login to Nexora" : "Create Account";
+        document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
+        document.getElementById('authActionBtn').innerText = isLogin ? "Login" : "Register";
+        document.getElementById('toggleAuthLink').innerHTML = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
+    }
+
+    function handleAuth() {
+        if (isLogin) {
+            let email = document.getElementById('loginEmail').value;
+            let pwd = document.getElementById('loginPassword').value;
+            let user = users.find(u => u.email === email && u.password === pwd);
+            if (user) {
+                currentUser = { ...user };
+                saveData();
+                closeModal('authModal');
+                showToast(`Welcome ${user.fullname || user.email}`);
+                updateUI();
+            } else showToast("Invalid credentials", "error");
+        } else {
+            let name = document.getElementById('regName').value;
+            let email = document.getElementById('regEmail').value;
+            let pwd = document.getElementById('regPassword').value;
+            let confirm = document.getElementById('regConfirm').value;
+            let refCode = document.getElementById('regRefCode').value;
+            
+            if (!name || !email || !pwd || !confirm) return showToast("All fields required", "error");
+            if (pwd !== confirm) return showToast("Passwords don't match", "error");
+            if (users.find(u => u.email === email)) return showToast("Email already exists", "error");
+            
+            let referrer = null;
+            if (refCode) referrer = users.find(u => u.refCode === refCode);
+            
+            let newUser = {
+                id: Date.now(),
+                fullname: name,
+                email: email,
+                password: pwd,
+                balance: 0,
+                refCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
+                referredBy: referrer ? referrer.id : null,
+                purchasedPlans: [],
+                role: email === ADMIN_EMAIL ? 'admin' : 'user'
+            };
+            users.push(newUser);
+            currentUser = newUser;
+            saveData();
+            closeModal('authModal');
+            showToast("Registration successful!");
+            updateUI();
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        saveData();
+        updateUI();
+        showToast("Logged out");
+    }
+
+    function updateUI() {
+        const appMain = document.getElementById('appMain');
+        const authBtn = document.getElementById('authBtn');
+        const agentNav = document.getElementById('agentNav');
+        
+        if (currentUser) {
+            appMain.style.display = 'block';
+            authBtn.innerHTML = `<i class="fas fa-user-check"></i> ${currentUser.fullname || currentUser.email.split('@')[0]}`;
+            document.getElementById('dashNav').style.display = 'flex';
+            document.getElementById('investNav').style.display = 'flex';
+            document.getElementById('refNav').style.display = 'flex';
+            
+            if (currentUser.role === 'agent') {
+                agentNav.style.display = 'flex';
+                document.getElementById('agentNav').style.display = 'flex';
+                document.getElementById('dashNav').style.display = 'none';
+                document.getElementById('investNav').style.display = 'none';
+                document.getElementById('refNav').style.display = 'none';
+                showAgentPanel();
+                updateAgentBadge();
+            } else if (currentUser.role === 'admin') {
+                agentNav.style.display = 'none';
+                showDashboard();
+            } else {
+                agentNav.style.display = 'none';
+                showDashboard();
+            }
+            loadDashboard();
+            renderPlans();
+            loadReferralData();
+            checkDailyProfit();
+            // Start real-time sync
+            startRealTimeSync();
+        } else {
+            appMain.style.display = 'none';
+            authBtn.innerHTML = '<i class="fas fa-user-circle"></i> Login';
+            document.getElementById('dashNav').style.display = 'none';
+            document.getElementById('investNav').style.display = 'none';
+            document.getElementById('refNav').style.display = 'none';
+            agentNav.style.display = 'none';
+        }
+    }
+
+    // Real-time sync simulation (checks for updates every 2 seconds)
+    let syncInterval;
+    function startRealTimeSync() {
+        if (syncInterval) clearInterval(syncInterval);
+        syncInterval = setInterval(() => {
+            if (currentUser) {
+                // Reload data from localStorage (simulating real-time sync across devices)
+                let freshUser = users.find(u => u.id === currentUser.id);
+                if (freshUser) {
+                    let oldBalance = currentUser.balance;
+                    currentUser = { ...freshUser };
+                    if (oldBalance !== currentUser.balance) {
+                        loadDashboard();
+                        showToast(`Balance updated: $${currentUser.balance.toFixed(2)}`);
+                    }
+                    saveData();
+                }
+                // Reload deposits, withdrawals, investments
+                deposits = JSON.parse(localStorage.getItem('nexora_deposits')) || [];
+                withdrawals = JSON.parse(localStorage.getItem('nexora_withdrawals')) || [];
+                investments = JSON.parse(localStorage.getItem('nexora_investments')) || [];
+                
+                if (currentUser.role === 'agent') {
+                    loadAgentPanelData();
+                    updateAgentBadge();
+                } else if (currentUser.role === 'user') {
+                    loadDashboard();
+                }
+            }
+        }, 3000);
+    }
+
+    // ============ DASHBOARD ============
+    let chart;
+    function loadDashboard() {
+        if (!currentUser || currentUser.role !== 'user') return;
+        let userInvestments = investments.filter(i => i.userId === currentUser.id && i.status === 'active');
+        let totalBalance = currentUser.balance || 0;
+        let dailyEst = userInvestments.reduce((sum, inv) => sum + (inv.amount * 0.007), 0);
+        document.getElementById('totalBalance').innerText = `$${totalBalance.toFixed(2)}`;
+        document.getElementById('activeCount').innerText = userInvestments.length;
+        document.getElementById('dailyEstimate').innerText = `$${dailyEst.toFixed(2)}`;
+        
+        let historyHtml = userInvestments.map(inv => `<div class="glass-card" style="padding:12px; margin:8px 0;">💼 ${inv.plan} - $${inv.amount} | Daily ~$${(inv.amount * 0.007).toFixed(2)}</div>`).join('');
+        document.getElementById('investHistoryList').innerHTML = historyHtml || "<p>No active investments.</p>";
+        
+        let ctx = document.getElementById('profitChart')?.getContext('2d');
+        if (ctx) {
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: ['Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6', 'Day7'], 
+                        datasets: [{ label: 'Projected Profit ($)', data: [12, 27, 45, 68, 95, 128, 168], borderColor: '#F5B041', borderWidth: 3, fill: true, backgroundColor: 'rgba(245,176,65,0.1)' }] }
+            });
+        }
+    }
+
+    // ============ INVESTMENT PLANS ============
+    function renderPlans() {
+        let container = document.getElementById('plansGrid');
+        let purchased = currentUser?.purchasedPlans || [];
+        container.innerHTML = plans.map(plan => {
+            if (plan.coming) {
+                return `<div class="plan-card"><span class="badge-coming">Coming Soon</span><h3>${plan.name}</h3><div class="plan-price">$${plan.amount}+</div><p>✨ Premium Tier</p><button class="btn-outline-gold" disabled style="width:100%;">Coming Soon</button></div>`;
+            }
+            let owned = purchased.includes(plan.name);
+            return `<div class="plan-card">${owned ? '<span class="badge-owned">ACTIVE</span>' : ''}<h3>${plan.name}</h3><div class="plan-price">$${plan.amount}</div><p>⏱️ ${plan.duration} days</p><p>📈 Daily ROI: ${plan.roi}</p>${!owned ? `<button class="btn-gold" style="width:100%; margin-top:15px;" onclick="buyPlan(${plan.amount}, '${plan.name}')">Invest Now →</button>` : `<button class="btn-outline-gold" disabled style="width:100%;">Already Purchased</button>`}</div>`;
+        }).join('');
+    }
+
+    function buyPlan(amount, planName) {
+        if (!currentUser) { openAuthModal(); return; }
+        if (currentUser.purchasedPlans?.includes(planName)) return showToast(`${planName} already purchased!`, "error");
+        if ((currentUser.balance || 0) < amount) return showToast(`Insufficient balance! Need $${amount}`, "error");
+        
+        currentUser.balance -= amount;
+        if (!currentUser.purchasedPlans) currentUser.purchasedPlans = [];
+        currentUser.purchasedPlans.push(planName);
+        
+        let newInvest = { id: Date.now(), userId: currentUser.id, plan: planName, amount: amount, startDate: new Date(), status: 'active', profitEarned: 0, lastProfitDate: null };
+        investments.push(newInvest);
+        
+        // Update user in users array
+        let userIndex = users.findIndex(u => u.id === currentUser.id);
+        if (userIndex !== -1) users[userIndex] = currentUser;
+        
+        saveData();
+        loadDashboard();
+        renderPlans();
+        showToast(`🎉 Invested $${amount} in ${planName}!`);
+    }
+
+    // ============ DEPOSIT (Goes to Agent for Verification) ============
+    function selectMethod(name, address, qrUrl) {
+        selectedMethod = { name, address, qr: qrUrl };
+        document.getElementById('qrDisplay').style.display = 'block';
+        document.getElementById('qrImage').src = qrUrl;
+        document.getElementById('walletAddressDisplay').innerHTML = `<strong>Send to:</strong><br>${address}`;
+        document.querySelectorAll('.method-chip').forEach(el => el.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    function submitDeposit() {
+        if (!currentUser) return;
+        if (!selectedMethod.address) return showToast("Select a payment method", "error");
+        let userWallet = document.getElementById('userWallet').value;
+        if (!userWallet) return showToast("Enter your wallet address", "error");
+        let amount = parseFloat(document.getElementById('depositAmount').value) || 100;
+        if (amount < 50) return showToast("Minimum deposit is $50", "error");
+        
+        let newDep = { 
+            id: Date.now(), 
+            userId: currentUser.id, 
+            userEmail: currentUser.email,
+            userName: currentUser.fullname,
+            method: selectedMethod.name, 
+            userWallet: userWallet, 
+            txnHash: document.getElementById('txnHash').value, 
+            amount: amount, 
+            status: 'pending',
+            createdAt: new Date().toLocaleString()
+        };
+        deposits.push(newDep);
+        saveData();
+        showToast("Deposit request submitted! Waiting for Agent verification.");
+        
+        closeModal('depositModal');
+        document.getElementById('userWallet').value = '';
+        document.getElementById('txnHash').value = '';
+        
+        // Notify if agent is logged in (real-time)
+        if (users.find(u => u.role === 'agent')) {
+            showToast("📢 Agent notified! Verification pending.");
+        }
+    }
+
+    // ============ WITHDRAWAL (Goes to Agent for Verification) ============
+    function submitWithdraw() {
+        if (!currentUser) return;
+        let method = document.getElementById('withdrawMethod').value;
+        let address = document.getElementById('withdrawAddress').value;
+        let amount = parseFloat(document.getElementById('withdrawAmount').value);
+        if (!address || amount < 20) return showToast("Min withdrawal $20", "error");
+        if ((currentUser.balance || 0) < amount) return showToast("Insufficient balance", "error");
+        
+        let newWd = { 
+            id: Date.now(), 
+            userId: currentUser.id,
+            userEmail: currentUser.email,
+            userName: currentUser.fullname,
+            method: method, 
+            address: address, 
+            amount: amount, 
+            status: 'pending',
+            createdAt: new Date().toLocaleString()
+        };
+        withdrawals.push(newWd);
+        saveData();
+        showToast("Withdrawal request submitted! Waiting for Agent verification.");
+        
+        closeModal('withdrawModal');
+        document.getElementById('withdrawAddress').value = '';
+        document.getElementById('withdrawAmount').value = '';
+    }
+
+    // ============ AGENT PANEL (Verification System) ============
+    function showAgentPanel() {
+        if (!currentUser || currentUser.role !== 'agent') return;
+        document.getElementById('dashboardSection').style.display = 'none';
+        document.getElementById('investSection').style.display = 'none';
+        document.getElementById('referralSection').style.display = 'none';
+        document.getElementById('agentSection').style.display = 'block';
+        loadAgentPanelData();
+    }
+
+    function loadAgentPanelData() {
+        // Pending Deposits
+        let pendingDeps = deposits.filter(d => d.status === 'pending');
+        document.getElementById('agentPendingDeposits').innerHTML = pendingDeps.length ? 
+            `<table class="admin-table">
+                <tr><th>User</th><th>Method</th><th>Amount</th><th>Wallet</th><th>Time</th><th>Action</th></tr>
+                ${pendingDeps.map(d => `
+                    <tr>
+                        <td>${d.userName || d.userEmail || 'Unknown'}</td>
+                        <td>${d.method}</td>
+                        <td>$${d.amount}</td>
+                        <td><small>${d.userWallet?.substring(0, 15)}...</small></td>
+                        <td><small>${d.createdAt || 'Now'}</small></td>
+                        <td>
+                            <button class="action-btn approve-btn" onclick="approveDeposit(${d.id})">✅ Approve</button>
+                            <button class="action-btn reject-btn" onclick="rejectDeposit(${d.id})">❌ Reject</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </table>` : '<p style="padding:20px; text-align:center;">✅ No pending deposits</p>';
+        
+        // Pending Withdrawals
+        let pendingWds = withdrawals.filter(w => w.status === 'pending');
+        document.getElementById('agentPendingWithdrawals').innerHTML = pendingWds.length ?
+            `<table class="admin-table">
+                <tr><th>User</th><th>Method</th><th>Amount</th><th>Address</th><th>Time</th><th>Action</th></tr>
+                ${pendingWds.map(w => `
+                    <tr>
+                        <td>${w.userName || w.userEmail || 'Unknown'}</td>
+                        <td>${w.method}</td>
+                        <td>$${w.amount}</td>
+                        <td><small>${w.address?.substring(0, 15)}...</small></td>
+                        <td><small>${w.createdAt || 'Now'}</small></td>
+                        <td>
+                            <button class="action-btn approve-btn" onclick="approveWithdrawal(${w.id})">✅ Approve</button>
+                            <button class="action-btn reject-btn" onclick="rejectWithdrawal(${w.id})">❌ Reject</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </table>` : '<p style="padding:20px; text-align:center;">✅ No pending withdrawals</p>';
+        
+        // Recent Activity
+        let recentApproved = [...deposits.filter(d => d.status === 'approved'), ...withdrawals.filter(w => w.status === 'approved')]
+            .sort((a, b) => b.id - a.id).slice(0, 5);
+        document.getElementById('agentRecentActivity').innerHTML = recentApproved.length ?
+            recentApproved.map(r => `<div class="glass-card" style="padding:10px; margin:8px 0;">✓ ${r.userName || r.userEmail} - ${r.amount ? `$${r.amount}` : ''} ${r.method || r.address ? 'Withdrawal' : 'Deposit'} approved</div>`).join('') :
+            '<p>No recent activity</p>';
+    }
+
+    // Agent Approve/Reject Functions
+    function approveDeposit(id) {
+        let dep = deposits.find(d => d.id === id);
+        if (dep && dep.status === 'pending') {
+            dep.status = 'approved';
+            let user = users.find(u => u.id === dep.userId);
+            if (user) {
+                user.balance = (user.balance || 0) + dep.amount;
+                // Update currentUser if it's the same user
+                if (currentUser && currentUser.id === user.id) currentUser.balance = user.balance;
+                showToast(`✅ Deposit $${dep.amount} approved for ${user.email}`);
+            }
+            saveData();
+            loadAgentPanelData();
+            updateAgentBadge();
+            
+            // Real-time notification simulation
+            showToast(`📢 Deposit request approved! Funds added.`);
+        }
+    }
+
+    function rejectDeposit(id) {
+        let dep = deposits.find(d => d.id === id);
+        if (dep) { 
+            dep.status = 'rejected'; 
+            saveData(); 
+            loadAgentPanelData();
+            updateAgentBadge();
+            showToast(`❌ Deposit rejected`, "error");
+        }
+    }
+
+    function approveWithdrawal(id) {
+        let wd = withdrawals.find(w => w.id === id);
+        if (wd && wd.status === 'pending') {
+            wd.status = 'approved';
+            let user = users.find(u => u.id === wd.userId);
+            if (user) {
+                user.balance = (user.balance || 0) - wd.amount;
+                if (currentUser && currentUser.id === user.id) currentUser.balance = user.balance;
+                showToast(`✅ Withdrawal $${wd.amount} approved for ${user.email}`);
+            }
+            saveData();
+            loadAgentPanelData();
+            updateAgentBadge();
+        }
+    }
+
+    function rejectWithdrawal(id) {
+        let wd = withdrawals.find(w => w.id === id);
+        if (wd) { 
+            wd.status = 'rejected'; 
+            saveData(); 
+            loadAgentPanelData();
+            updateAgentBadge();
+            showToast(`❌ Withdrawal rejected`, "error");
+        }
+    }
+
+    // ============ REFERRAL ============
+    function loadReferralData() {
+        if (!currentUser) return;
+        let refLink = `https://nexora.com/ref/${currentUser.refCode}`;
+        document.getElementById('refLinkInput').value = refLink;
+        let referredUsers = users.filter(u => u.referredBy === currentUser.id);
+        let totalEarn = referrals.filter(r => r.userId === currentUser.id).reduce((s, r) => s + r.amount, 0);
+        document.getElementById('refCount').innerText = referredUsers.length;
+        document.getElementById('refEarnings').innerText = `$${totalEarn.toFixed(2)}`;
+    }
+
+    function copyRefLink() {
+        let inp = document.getElementById('refLinkInput');
+        inp.select();
+        document.execCommand('copy');
+        showToast("Referral link copied!");
+    }
+
+    // ============ DAILY PROFIT ============
+    function checkDailyProfit() {
+        if (!currentUser || currentUser.role !== 'user') return;
+        let today = new Date().toDateString();
+        if (profitLog[currentUser.id] === today) return;
+        profitLog[currentUser.id] = today;
+        
+        let userInvests = investments.filter(i => i.userId === currentUser.id && i.status === 'active');
+        let totalProfit = 0;
+        userInvests.forEach(inv => {
+            let randomPercent = (Math.random() * (11 - 5) + 5).toFixed(2);
+            let profit = inv.amount * (randomPercent / 100);
+            inv.profitEarned = (inv.profitEarned || 0) + profit;
+            currentUser.balance = (currentUser.balance || 0) + profit;
+            totalProfit += profit;
+        });
+        if (totalProfit > 0) {
+            let userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) users[userIndex] = currentUser;
+            saveData();
+            loadDashboard();
+            showToast(`✨ Daily profit credited: +$${totalProfit.toFixed(2)}`);
+        }
+    }
+
+    // ============ LEGAL ============
+    function showLegalModal(type) {
+        let content = '';
+        if (type === 'terms') content = 'Terms & Conditions: By using Nexora Capital, you agree to our terms. Investing involves risk. You must be 18+.';
+        else if (type === 'privacy') content = 'Privacy Policy: Your data is encrypted and secure. We do not share personal information.';
+        else content = 'Risk Disclosure: Cryptocurrency investments are highly volatile. You may lose your entire capital. Only invest what you can afford to lose.';
+        alert(content);
+    }
+
+    // ============ NAVIGATION ============
+    function showDashboard() { 
+        if (currentUser?.role === 'user') {
+            document.getElementById('dashboardSection').style.display = 'block'; 
+            document.getElementById('investSection').style.display = 'none'; 
+            document.getElementById('referralSection').style.display = 'none'; 
+            document.getElementById('agentSection').style.display = 'none';
+            loadDashboard(); 
+        } else if (currentUser?.role === 'agent') {
+            showAgentPanel();
+        }
+    }
+    function showInvestments() { 
+        if (currentUser?.role === 'user') {
+            document.getElementById('investSection').style.display = 'block'; 
+            document.getElementById('dashboardSection').style.display = 'none'; 
+            document.getElementById('referralSection').style.display = 'none'; 
+            document.getElementById('agentSection').style.display = 'none';
+            renderPlans(); 
+        }
+    }
+    function showReferrals() { 
+        if (currentUser?.role === 'user') {
+            document.getElementById('referralSection').style.display = 'block'; 
+            document.getElementById('dashboardSection').style.display = 'none'; 
+            document.getElementById('investSection').style.display = 'none'; 
+            document.getElementById('agentSection').style.display = 'none';
+            loadReferralData(); 
+        }
+    }
+    function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
+    function openDepositModal() { if (!currentUser) openAuthModal(); else document.getElementById('depositModal').style.display = 'flex'; }
+    function openWithdrawModal() { if (!currentUser) openAuthModal(); else document.getElementById('withdrawModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // Banner Slider
+    let slides = document.querySelectorAll('.banner-slide');
+    let slideIndex = 0;
+    setInterval(() => {
+        slides[slideIndex].classList.remove('active');
+        slideIndex = (slideIndex + 1) % slides.length;
+        slides[slideIndex].classList.add('active');
+    }, 4000);
+
+    document.getElementById('heroBtn').onclick = () => { if (currentUser) showInvestments(); else openAuthModal(); };
+    setInterval(() => { if (currentUser && currentUser.role === 'user') checkDailyProfit(); }, 60000);
+    
+    updateUI();
+</script>
 </body>
 </html>
