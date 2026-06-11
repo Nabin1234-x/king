@@ -11,7 +11,7 @@
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: #0A0E1A; color: #FFFFFF; overflow-x: hidden; padding-bottom: 70px; -webkit-text-size-adjust: 100%; touch-action: pan-x pan-y; }
+        body { font-family: 'Inter', sans-serif; background: #0A0E1A; color: #FFFFFF; overflow-x: hidden; padding-bottom: 70px; -webkit-text-size-adjust: 100%; }
         
         .glass-card { background: rgba(18, 25, 45, 0.75); backdrop-filter: blur(12px); border-radius: 28px; border: 1px solid rgba(245, 176, 65, 0.25); transition: all 0.3s; }
         .glass-card:hover { border-color: rgba(245, 176, 65, 0.6); transform: translateY(-3px); }
@@ -75,7 +75,6 @@
         .history-item { padding: 12px; border-bottom: 1px solid #2A3148; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .badge-success { background: #10B981; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
         .badge-pending { background: #F59E0B; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
-        .badge-rejected { background: #EF4444; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
         
         .banner-slide { height: 160px; border-radius: 24px; background-size: cover; background-position: center; transition: background-image 0.8s; }
         
@@ -116,12 +115,16 @@
         .balance-item { flex: 1; min-width: 100px; text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 20px; }
         .balance-label { font-size: 12px; opacity: 0.7; }
         .balance-value { font-size: 18px; font-weight: 700; color: #F5B041; }
+        
+        .forgot-card { background: linear-gradient(135deg, #1A2340, #0F1428); padding: 20px; border-radius: 24px; text-align: center; margin-bottom: 15px; }
+        .verify-success-icon { font-size: 60px; color: #10B981; margin-bottom: 15px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
 <div class="security-badge" id="securityBadge">
-    <i class="fas fa-shield-alt"></i> Cloud Sync
+    <i class="fas fa-shield-alt"></i> Secure Platform
 </div>
 
 <!-- LOGIN OVERLAY -->
@@ -129,14 +132,14 @@
     <div class="login-box">
         <div class="login-logo">
             <h1><span class="gold-text">NEXORA</span> CAPITAL</h1>
-            <p>Multi-Device Cloud Platform</p>
+            <p>Premium Investment Platform</p>
         </div>
         
         <div id="loginForm">
             <input type="email" id="loginEmail" class="login-input" placeholder="📧 Email Address">
             <input type="password" id="loginPassword" class="login-input" placeholder="🔒 Password">
             <button class="btn-primary" id="loginBtn" onclick="handleLogin()">Login</button>
-            <div class="auth-switch"><a onclick="showRegister()">📝 Create New Account</a></div>
+            <div class="auth-switch"><a onclick="showRegister()">📝 Create New Account</a> | <a onclick="showForgotPassword()">🔑 Forgot Password?</a></div>
         </div>
         
         <div id="registerForm" style="display:none;">
@@ -147,6 +150,30 @@
             <input type="text" id="regRefCode" class="login-input" placeholder="🎁 Referral Code">
             <button class="btn-primary" onclick="handleRegister()">Register</button>
             <div class="auth-switch"><a onclick="showLogin()">← Back to Login</a></div>
+        </div>
+        
+        <div id="forgotPasswordForm" style="display:none;">
+            <div class="forgot-card">
+                <i class="fas fa-key" style="font-size: 50px; color: #F5B041; margin-bottom: 15px;"></i>
+                <h3>Reset Password</h3>
+                <p style="font-size: 13px; margin: 10px 0;">Enter your email to receive password reset link</p>
+                <input type="email" id="resetEmail" class="login-input" placeholder="📧 Your Email Address">
+                <button class="btn-primary" onclick="sendPasswordReset()">Send Reset Link</button>
+                <div class="auth-switch"><a onclick="showLogin()">← Back to Login</a></div>
+            </div>
+        </div>
+        
+        <div id="verifyForm" style="display:none;">
+            <div style="text-align:center; padding: 20px;">
+                <div class="verify-success-icon"><i class="fas fa-envelope-open-text"></i></div>
+                <h3>Verify Your Email</h3>
+                <p>Verification link sent to <strong style="color:#F5B041;" id="verifyEmailSpan"></strong></p>
+                <p style="font-size: 12px;">📧 Please check your Gmail inbox and click the verification link.</p>
+                <p style="font-size: 11px; color: #F59E0B;">⚠️ Check Spam folder if not found</p>
+                <button class="btn-primary" style="margin-top: 20px;" onclick="checkEmailVerified()">✓ I have verified my email</button>
+                <button class="btn-outline" style="margin-top: 10px; width: 100%;" onclick="resendVerificationEmail()">⟳ Resend</button>
+                <div class="auth-switch"><a onclick="showLogin()">← Back</a></div>
+            </div>
         </div>
     </div>
 </div>
@@ -170,14 +197,8 @@
             <div><i class="fas fa-wallet"></i> Electronic Wallet (USDT)</div>
             <div class="wallet-amount" id="userBalance">$0.00</div>
             <div class="balance-row">
-                <div class="balance-item">
-                    <div class="balance-label">Today's Profit</div>
-                    <div class="balance-value" id="todayProfit">$0.00</div>
-                </div>
-                <div class="balance-item">
-                    <div class="balance-label">Est. Daily</div>
-                    <div class="balance-value" id="dailyEstimate">$0.00</div>
-                </div>
+                <div class="balance-item"><div class="balance-label">Today's Profit</div><div class="balance-value" id="todayProfit">$0.00</div></div>
+                <div class="balance-item"><div class="balance-label">Est. Daily</div><div class="balance-value" id="dailyEstimate">$0.00</div></div>
             </div>
             <div style="display: flex; gap: 15px; margin-top: 15px;">
                 <button class="btn-gold" style="flex:1;" onclick="openDepositModal()"><i class="fas fa-plus-circle"></i> Deposit</button>
@@ -226,7 +247,6 @@
         <div class="glass-card" style="padding: 16px; margin: 16px;"><button class="btn-outline" style="width:100%; padding: 14px; color: #EF4444;" onclick="logout()">Logout</button></div>
     </div>
 
-    <!-- CHAT PAGE -->
     <div id="chatPage" class="page">
         <h2 class="gold-text" style="padding: 0 16px;"><i class="fas fa-headset"></i> Support Chat</h2>
         <div class="glass-card" style="padding: 16px; margin: 0 16px;">
@@ -240,29 +260,18 @@
         </div>
     </div>
 
-    <!-- AGENT PANEL -->
     <div id="agentPanel" class="page">
         <h2 class="gold-text" style="padding: 0 16px;">Agent Verification Panel</h2>
+        <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;"><h3>📥 Pending Deposits</h3><div id="pendingDepositsList">Loading...</div></div>
+        <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;"><h3>📤 Pending Withdrawals</h3><div id="pendingWithdrawalsList">Loading...</div></div>
         <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;">
-            <h3>📥 Pending Deposits</h3>
-            <div id="pendingDepositsList">Loading...</div>
-        </div>
-        <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;">
-            <h3>📤 Pending Withdrawals</h3>
-            <div id="pendingWithdrawalsList">Loading...</div>
-        </div>
-        <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;">
-            <h3><i class="fas fa-comments"></i> Support Messages <span id="agentChatBadge" class="nav-badge" style="display: none; position: relative; top: 0; right: 0; margin-left: 10px;">0</span></h3>
-            <div id="agentMessagesList" style="max-height: 300px; overflow-y: auto;">
-                <p>No messages yet</p>
-            </div>
+            <h3><i class="fas fa-comments"></i> Support Messages <span id="agentChatBadge" class="nav-badge" style="display: none; margin-left: 10px;">0</span></h3>
+            <div id="agentMessagesList" style="max-height: 300px; overflow-y: auto;"><p>No messages yet</p></div>
         </div>
         <div style="padding: 0 16px;"><button class="btn-outline" style="width:100%; padding: 14px; color: #EF4444;" onclick="logout()">Logout</button></div>
     </div>
 
-    <div class="support-icon" id="supportIcon" onclick="openChatPage()">
-        <i class="fas fa-headset" style="font-size: 24px; color: #0A0E1A;"></i>
-    </div>
+    <div class="support-icon" id="supportIcon" onclick="openChatPage()"><i class="fas fa-headset" style="font-size: 24px; color: #0A0E1A;"></i></div>
 
     <div class="bottom-nav">
         <div class="nav-item active" onclick="changePage('userDashboard', this)"><i class="fas fa-home"></i><span>Home</span></div>
@@ -301,7 +310,7 @@
     <select id="withdrawMethod"><option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option></select>
     <input type="text" id="withdrawAddress" placeholder="Withdrawal Address">
     <input type="number" id="withdrawAmount" placeholder="Amount (USD)">
-    <div class="file-upload" onclick="document.getElementById('withdrawQrFile').click()">📸 Upload Wallet QR Code (Optional)</div>
+    <div class="file-upload" onclick="document.getElementById('withdrawQrFile').click()">📸 Upload Wallet QR Code</div>
     <input type="file" id="withdrawQrFile" accept="image/*" style="display:none;" onchange="previewWithdrawQr(this)">
     <div id="withdrawQrPreview" style="display:none;"></div>
     <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitWithdraw()">Request Withdrawal</button>
@@ -311,7 +320,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
     const firebaseConfig = {
@@ -328,15 +337,8 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     
-    let currentUser = null;
-    let currentUserData = null;
-    let selectedMethod = null;
-    let selectedScreenshot = null;
-    let selectedWithdrawQr = null;
-    let chatUnsubscribe = null;
-    let profitCheckInterval = null;
+    let currentUser = null, currentUserData = null, selectedMethod = null, selectedScreenshot = null, selectedWithdrawQr = null, chatUnsubscribe = null, profitCheckInterval = null, pendingUserCred = null;
     
-    // Create Agent
     async function createAgent() {
         try {
             const cred = await createUserWithEmailAndPassword(auth, "agent@nexora.com", "Agent@123");
@@ -344,8 +346,7 @@
                 fullname: "Support Agent", email: "agent@nexora.com", balance: 0, refCode: "AGENT001", role: "agent",
                 purchasedPlans: [], totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0, createdAt: serverTimestamp()
             });
-            console.log("Agent created");
-        } catch(e) { console.log("Agent exists"); }
+        } catch(e) {}
     }
     createAgent();
     
@@ -393,10 +394,20 @@
     window.showLogin = function() {
         document.getElementById("loginForm").style.display = "block";
         document.getElementById("registerForm").style.display = "none";
+        document.getElementById("forgotPasswordForm").style.display = "none";
+        document.getElementById("verifyForm").style.display = "none";
     };
     window.showRegister = function() {
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("registerForm").style.display = "block";
+        document.getElementById("forgotPasswordForm").style.display = "none";
+        document.getElementById("verifyForm").style.display = "none";
+    };
+    window.showForgotPassword = function() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("forgotPasswordForm").style.display = "block";
+        document.getElementById("verifyForm").style.display = "none";
     };
     
     window.handleLogin = async () => {
@@ -407,10 +418,19 @@
         btn.innerHTML = '<span class="loader"></span> Logging...';
         btn.disabled = true;
         try {
-            await signInWithEmailAndPassword(auth, email, pwd);
+            const result = await signInWithEmailAndPassword(auth, email, pwd);
+            if (!result.user.emailVerified && email !== "agent@nexora.com") {
+                showToast("Please verify your email first. Check Gmail inbox.", "error");
+                btn.innerHTML = 'Login';
+                btn.disabled = false;
+                return;
+            }
             showToast("✅ Login successful!");
         } catch(error) {
-            showToast(error.message, "error");
+            let msg = error.message;
+            if (msg.includes("user-not-found")) msg = "No account found";
+            if (msg.includes("wrong-password")) msg = "Incorrect password";
+            showToast(msg, "error");
             btn.innerHTML = 'Login';
             btn.disabled = false;
         }
@@ -422,63 +442,76 @@
         const pwd = document.getElementById("regPassword").value;
         const confirm = document.getElementById("regConfirm").value;
         const refCode = document.getElementById("regRefCode").value.trim();
-        
         if (!name || !email || !pwd || !confirm) { showToast("All fields required", "error"); return; }
         if (pwd !== confirm) { showToast("Passwords don't match", "error"); return; }
         if (pwd.length < 6) { showToast("Password min 6 characters", "error"); return; }
-        
         const btn = event.target;
         btn.innerHTML = '<span class="loader"></span> Creating...';
         btn.disabled = true;
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, pwd);
             await updateProfile(cred.user, { displayName: name });
-            
-            let referredBy = null;
-            if (refCode) {
-                const q = query(collection(db, "users"), where("refCode", "==", refCode));
-                const snap = await getDocs(q);
-                if (!snap.empty) referredBy = snap.docs[0].id;
-            }
-            await setDoc(doc(db, "users", cred.user.uid), {
-                fullname: name, email: email, balance: 0,
-                refCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
-                referredBy: referredBy, role: "user", purchasedPlans: [],
-                totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0, createdAt: serverTimestamp()
-            });
-            showToast("Registration successful! Please login.");
+            await sendEmailVerification(cred.user);
+            pendingUserCred = { cred, name, refCode };
+            document.getElementById("verifyEmailSpan").innerText = email;
             showLogin();
+            document.getElementById("verifyForm").style.display = "block";
+            document.getElementById("loginForm").style.display = "none";
+            showToast(`Verification email sent to ${email}. Check Gmail.`);
         } catch(e) { showToast(e.message, "error"); }
         btn.innerHTML = "Register";
         btn.disabled = false;
     };
     
-    window.logout = async () => { 
-        if (chatUnsubscribe) chatUnsubscribe();
-        if (profitCheckInterval) clearInterval(profitCheckInterval);
-        await signOut(auth);
-        showToast("Logged out successfully.");
+    window.sendPasswordReset = async () => {
+        const email = document.getElementById("resetEmail").value.trim();
+        if (!email) { showToast("Enter email address", "error"); return; }
+        try {
+            await sendPasswordResetEmail(auth, email);
+            showToast(`Password reset link sent to ${email}. Check Gmail.`);
+            showLogin();
+        } catch(e) { showToast(e.message, "error"); }
     };
     
-    window.openChatPage = function() {
-        changePage('chatPage', null);
-        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        loadChatMessages();
+    window.checkEmailVerified = async () => {
+        if (!pendingUserCred) return showToast("No pending registration", "error");
+        await pendingUserCred.cred.user.reload();
+        if (pendingUserCred.cred.user.emailVerified) {
+            let referredBy = null;
+            if (pendingUserCred.refCode) {
+                const q = query(collection(db, "users"), where("refCode", "==", pendingUserCred.refCode));
+                const snap = await getDocs(q);
+                if (!snap.empty) referredBy = snap.docs[0].id;
+            }
+            await setDoc(doc(db, "users", pendingUserCred.cred.user.uid), {
+                fullname: pendingUserCred.name, email: pendingUserCred.cred.user.email, balance: 0,
+                refCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
+                referredBy: referredBy, role: "user", purchasedPlans: [],
+                totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0, createdAt: serverTimestamp()
+            });
+            showToast("Email verified! Please login.");
+            showLogin();
+            pendingUserCred = null;
+        } else {
+            showToast("Email not verified yet. Check Gmail inbox.", "error");
+        }
     };
+    
+    window.resendVerificationEmail = async () => {
+        if (pendingUserCred) { await sendEmailVerification(pendingUserCred.cred.user); showToast("Verification email resent."); }
+    };
+    
+    window.logout = async () => { if (chatUnsubscribe) chatUnsubscribe(); if (profitCheckInterval) clearInterval(profitCheckInterval); await signOut(auth); showToast("Logged out."); };
+    
+    window.openChatPage = function() { changePage('chatPage', null); document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active')); loadChatMessages(); };
     
     window.sendMessage = async () => {
         if (!currentUserData) return;
         const msg = document.getElementById("chatInput").value.trim();
         if (!msg) return showToast("Please enter a message", "error");
-        
         await addDoc(collection(db, "supportMessages"), {
-            userId: currentUserData.uid,
-            userName: currentUserData.fullname,
-            userEmail: currentUserData.email,
-            message: msg,
-            role: currentUserData.role,
-            isRead: false,
-            createdAt: serverTimestamp()
+            userId: currentUserData.uid, userName: currentUserData.fullname, userEmail: currentUserData.email,
+            message: msg, role: currentUserData.role, isRead: false, createdAt: serverTimestamp()
         });
         document.getElementById("chatInput").value = "";
         showToast("Message sent to Agent!");
@@ -490,17 +523,14 @@
         const q = query(collection(db, "supportMessages"), orderBy("createdAt", "asc"));
         const snap = await getDocs(q);
         const container = document.getElementById("chatMessages");
-        if (snap.empty) {
-            container.innerHTML = '<p style="text-align: center; color: #aaa;">No messages yet. Send a message to support!</p>';
-            return;
-        }
+        if (snap.empty) { container.innerHTML = '<p style="text-align: center; color: #aaa;">No messages yet.</p>'; return; }
         let html = "";
         snap.docs.forEach(doc => {
             const data = doc.data();
             const isUser = data.userId === currentUserData.uid;
             html += `<div class="message-item ${isUser ? 'message-user' : 'message-agent'}" style="align-self: ${isUser ? 'flex-start' : 'flex-end'};">
                         <strong>${isUser ? 'You' : 'Agent'}:</strong><br>${data.message}
-                        <div style="font-size: 10px; opacity: 0.7; margin-top: 5px;">${data.createdAt?.toDate?.().toLocaleTimeString() || 'Just now'}</div>
+                        <div style="font-size: 10px; opacity: 0.7;">${data.createdAt?.toDate?.().toLocaleTimeString() || 'Now'}</div>
                      </div>`;
         });
         container.innerHTML = html;
@@ -513,51 +543,37 @@
         const snap = await getDocs(q);
         const unreadCount = snap.docs.filter(d => !d.data().isRead && d.data().role !== "agent").length;
         const badge = document.getElementById("agentChatBadge");
-        if (unreadCount > 0) {
-            badge.style.display = "inline-block";
-            badge.innerText = unreadCount;
-        } else {
-            badge.style.display = "none";
-        }
-        
+        if (unreadCount > 0) { badge.style.display = "inline-block"; badge.innerText = unreadCount; }
+        else { badge.style.display = "none"; }
         let html = "";
         for (const docMsg of snap.docs) {
             const data = docMsg.data();
             if (data.role === "agent") continue;
             html += `<div class="glass-card" style="padding: 12px; margin: 10px 0;">
-                        <strong>${data.userName} (${data.userEmail})</strong><br>
-                        <p>${data.message}</p>
+                        <strong>${data.userName}</strong><br><small>${data.userEmail}</small><br>
+                        <p style="margin-top: 5px;">${data.message}</p>
                         <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <button class="approve-btn" onclick="replyToUser('${docMsg.id}', '${data.userId}')">Reply</button>
                             <button class="view-btn" onclick="markAsRead('${docMsg.id}')">Mark Read</button>
                         </div>
-                        <div style="font-size: 10px; opacity: 0.7; margin-top: 5px;">${data.createdAt?.toDate?.().toLocaleString() || 'Just now'}</div>
                      </div>`;
         }
-        document.getElementById("agentMessagesList").innerHTML = html || "<p>No messages from users</p>";
+        document.getElementById("agentMessagesList").innerHTML = html || "<p>No messages</p>";
     }
     
     window.replyToUser = async (msgId, userId) => {
-        const reply = prompt("Type your reply to user:");
+        const reply = prompt("Type your reply:");
         if (!reply) return;
         await addDoc(collection(db, "supportMessages"), {
-            userId: userId,
-            userName: "Agent",
-            userEmail: "agent@nexora.com",
-            message: reply,
-            role: "agent",
-            isRead: true,
-            createdAt: serverTimestamp()
+            userId: userId, userName: "Agent", userEmail: "agent@nexora.com",
+            message: reply, role: "agent", isRead: true, createdAt: serverTimestamp()
         });
         await updateDoc(doc(db, "supportMessages", msgId), { isRead: true });
-        showToast("Reply sent to user!");
+        showToast("Reply sent!");
         loadAgentMessages();
     };
     
-    window.markAsRead = async (msgId) => {
-        await updateDoc(doc(db, "supportMessages", msgId), { isRead: true });
-        loadAgentMessages();
-    };
+    window.markAsRead = async (msgId) => { await updateDoc(doc(db, "supportMessages", msgId), { isRead: true }); loadAgentMessages(); };
     
     window.changePage = function(pageId, element) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -575,8 +591,7 @@
         const purchased = currentUserData?.purchasedPlans || [];
         document.getElementById("vipList").innerHTML = vipPlans.map(p => `
             <div class="vip-card"><div class="vip-price">$${p.price}</div>
-            <div>Daily: $${p.dailyReturn} USDT</div><div>${p.days} Days</div>
-            <div>Total: $${p.totalReturn} USDT</div>
+            <div>Daily: $${p.dailyReturn} USDT</div><div>${p.days} Days</div><div>Total: $${p.totalReturn} USDT</div>
             ${!purchased.includes(p.level) ? `<button class="btn-gold" style="width:100%; margin-top:12px;" onclick="buyPlan(${p.price}, '${p.level}')">Unlock</button>` : '<button class="btn-outline" disabled>Purchased</button>'}
             </div>`).join("");
     }
@@ -606,16 +621,11 @@
         if (!wallet) return showToast("Enter wallet address", "error");
         const amount = parseFloat(document.getElementById("depositAmount").value);
         if (amount < 50) return showToast("Minimum $50", "error");
-        
         let screenshot = "";
         if (selectedScreenshot) {
             const reader = new FileReader();
-            screenshot = await new Promise((resolve) => {
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(selectedScreenshot);
-            });
+            screenshot = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(selectedScreenshot); });
         }
-        
         await addDoc(collection(db, "deposits"), {
             userId: currentUserData.uid, userName: currentUserData.fullname, userEmail: currentUserData.email,
             method: selectedMethod.method, userWallet: wallet, txnHash: document.getElementById("depositTxn").value,
@@ -638,16 +648,11 @@
         if (!address) return showToast("Enter address", "error");
         if (amount < 20) return showToast("Minimum $20", "error");
         if ((currentUserData.balance || 0) < amount) return showToast("Insufficient balance", "error");
-        
         let qrCode = "";
         if (selectedWithdrawQr) {
             const reader = new FileReader();
-            qrCode = await new Promise((resolve) => {
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(selectedWithdrawQr);
-            });
+            qrCode = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(selectedWithdrawQr); });
         }
-        
         await addDoc(collection(db, "withdrawals"), {
             userId: currentUserData.uid, userName: currentUserData.fullname, userEmail: currentUserData.email,
             method: document.getElementById("withdrawMethod").value, address, amount, qrCode, status: "pending", createdAt: serverTimestamp()
@@ -660,19 +665,8 @@
         selectedWithdrawQr = null;
     };
     
-    window.viewScreenshot = (screenshot) => {
-        if (screenshot) {
-            const win = window.open();
-            win.document.write(`<img src="${screenshot}" style="max-width:100%;">`);
-        }
-    };
-    
-    window.viewWithdrawQr = (qrCode) => {
-        if (qrCode) {
-            const win = window.open();
-            win.document.write(`<img src="${qrCode}" style="max-width:100%;">`);
-        }
-    };
+    window.viewScreenshot = (screenshot) => { if (screenshot) { const win = window.open(); win.document.write(`<img src="${screenshot}" style="max-width:100%;">`); } };
+    window.viewWithdrawQr = (qrCode) => { if (qrCode) { const win = window.open(); win.document.write(`<img src="${qrCode}" style="max-width:100%;">`); } };
     
     window.approveDeposit = async (id, userId, amount, userEmail) => {
         await updateDoc(doc(db, "deposits", id), { status: "approved" });
@@ -680,71 +674,38 @@
         showToast(`✅ Deposit $${amount} approved for ${userEmail}!`);
         loadAgentPanel();
     };
-    
-    window.rejectDeposit = async (id, userEmail) => {
-        await updateDoc(doc(db, "deposits", id), { status: "rejected" });
-        showToast(`❌ Deposit rejected for ${userEmail}`, "error");
-        loadAgentPanel();
-    };
-    
+    window.rejectDeposit = async (id, userEmail) => { await updateDoc(doc(db, "deposits", id), { status: "rejected" }); showToast(`❌ Deposit rejected`, "error"); loadAgentPanel(); };
     window.approveWithdrawal = async (id, userId, amount, userEmail) => {
         await updateDoc(doc(db, "withdrawals", id), { status: "approved" });
         await updateDoc(doc(db, "users", userId), { balance: increment(-amount), totalWithdrawals: increment(amount) });
         showToast(`✅ Withdrawal $${amount} approved for ${userEmail}!`);
         loadAgentPanel();
     };
+    window.rejectWithdrawal = async (id, userEmail) => { await updateDoc(doc(db, "withdrawals", id), { status: "rejected" }); showToast(`❌ Withdrawal rejected`, "error"); loadAgentPanel(); };
     
-    window.rejectWithdrawal = async (id, userEmail) => {
-        await updateDoc(doc(db, "withdrawals", id), { status: "rejected" });
-        showToast(`❌ Withdrawal rejected for ${userEmail}`, "error");
-        loadAgentPanel();
-    };
-    
-    // DAILY PROFIT - ONCE PER DAY (Cloud Storage)
     async function checkDailyProfit() {
         if (!currentUserData || currentUserData.role !== "user") return;
-        
         const today = new Date().toDateString();
         const profitRef = doc(db, "userDailyProfit", currentUserData.uid);
         const profitSnap = await getDoc(profitRef);
-        
-        // Check if already credited today
         if (profitSnap.exists() && profitSnap.data().lastProfitDate === today) {
-            // Update today's profit display from cloud
             document.getElementById("todayProfit").innerHTML = `$${(profitSnap.data().todayProfit || 0).toFixed(2)}`;
             return;
         }
-        
         const investments = await getDocs(query(collection(db, "investments"), where("userId", "==", currentUserData.uid), where("status", "==", "active")));
         if (investments.empty) return;
-        
-        let totalProfit = 0;
-        let dailyBonusAmount = 0;
-        
+        let totalProfit = 0, dailyBonusAmount = 0;
         for (const docSnap of investments.docs) {
             const inv = docSnap.data();
             const percent = (Math.random() * 6 + 5).toFixed(2);
             const profit = inv.amount * (percent / 100);
-            totalProfit += profit;
-            dailyBonusAmount += profit;
+            totalProfit += profit; dailyBonusAmount += profit;
             await updateDoc(doc(db, "investments", docSnap.id), { profitEarned: increment(profit) });
         }
-        
         if (totalProfit > 0) {
-            await updateDoc(doc(db, "users", currentUserData.uid), { 
-                balance: increment(totalProfit), 
-                totalIncome: increment(totalProfit) 
-            });
-            
-            // Store in Cloud
-            await setDoc(profitRef, {
-                userId: currentUserData.uid,
-                lastProfitDate: today,
-                todayProfit: dailyBonusAmount,
-                updatedAt: serverTimestamp()
-            });
-            
-            showToast(`✨ Daily profit credited: +$${totalProfit.toFixed(2)}`);
+            await updateDoc(doc(db, "users", currentUserData.uid), { balance: increment(totalProfit), totalIncome: increment(totalProfit) });
+            await setDoc(profitRef, { userId: currentUserData.uid, lastProfitDate: today, todayProfit: dailyBonusAmount, updatedAt: serverTimestamp() });
+            showToast(`✨ Daily profit: +$${totalProfit.toFixed(2)}`);
             loadUserDashboard();
         }
     }
@@ -756,20 +717,12 @@
         document.getElementById("totalCommission").innerHTML = `$${(currentUserData.totalCommission || 0).toFixed(2)}`;
         document.getElementById("totalDeposits").innerHTML = `$${(currentUserData.totalDeposits || 0).toFixed(2)}`;
         document.getElementById("totalWithdrawals").innerHTML = `$${(currentUserData.totalWithdrawals || 0).toFixed(2)}`;
-        
-        // Get today's profit from cloud
         const profitRef = doc(db, "userDailyProfit", currentUserData.uid);
         const profitSnap = await getDoc(profitRef);
-        if (profitSnap.exists()) {
-            document.getElementById("todayProfit").innerHTML = `$${(profitSnap.data().todayProfit || 0).toFixed(2)}`;
-        } else {
-            document.getElementById("todayProfit").innerHTML = `$0.00`;
-        }
-        
+        if (profitSnap.exists()) { document.getElementById("todayProfit").innerHTML = `$${(profitSnap.data().todayProfit || 0).toFixed(2)}`; }
         const investments = await getDocs(query(collection(db, "investments"), where("userId", "==", currentUserData.uid), where("status", "==", "active")));
         const dailyEst = investments.docs.reduce((sum, inv) => sum + (inv.data().amount * 0.007), 0);
         document.getElementById("dailyEstimate").innerHTML = `$${dailyEst.toFixed(2)}`;
-        
         const vipPreview = investments.docs.slice(0,2).map(d => `<div class="glass-card" style="padding:10px; margin:5px 0;">⭐ ${d.data().plan} - $${d.data().amount}</div>`).join("");
         document.getElementById("vipPreview").innerHTML = vipPreview || "<p>No active VIP</p>";
     }
@@ -781,17 +734,14 @@
         document.getElementById("userEmailDisplay").innerHTML = currentUserData.email;
         document.getElementById("userRefCode").innerHTML = currentUserData.refCode;
         document.getElementById("memberSince").innerHTML = currentUserData.createdAt?.toDate?.().toLocaleDateString() || "Today";
-        
         const investments = await getDocs(query(collection(db, "investments"), where("userId", "==", currentUserData.uid)));
         let totalInv = 0, totalProf = 0;
         investments.docs.forEach(d => { totalInv += d.data().amount; totalProf += d.data().profitEarned || 0; });
         document.getElementById("totalInvested").innerHTML = totalInv;
         document.getElementById("totalProfit").innerHTML = totalProf.toFixed(2);
-        
         let invHtml = "";
         investments.docs.forEach(d => { invHtml += `<div class="history-item">💰 ${d.data().plan} - $${d.data().amount} - <span class="badge-success">Active</span></div>`; });
         document.getElementById("investHistory").innerHTML = invHtml || "<div>No investments</div>";
-        
         const deposits = await getDocs(query(collection(db, "deposits"), where("userId", "==", currentUserData.uid)));
         const withdrawals = await getDocs(query(collection(db, "withdrawals"), where("userId", "==", currentUserData.uid)));
         let transHtml = "";
@@ -804,55 +754,31 @@
         if (!currentUserData || currentUserData.role !== "agent") return;
         try {
             const deps = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending")));
-            if (deps.empty) {
-                document.getElementById("pendingDepositsList").innerHTML = "<p>✅ No pending deposits</p>";
-            } else {
+            if (deps.empty) { document.getElementById("pendingDepositsList").innerHTML = "<p>✅ No pending deposits</p>"; }
+            else {
                 let html = `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>SS</th><th>Action</th></tr>`;
                 deps.docs.forEach(d => {
                     const data = d.data();
                     const hasSS = data.screenshot && data.screenshot.length > 100;
-                    html += `<tr>
-                        <td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td>
-                        <td>$${data.amount}</td>
-                        <td>${data.method}</td>
-                        <td>${hasSS ? `<button class="view-btn" onclick="viewScreenshot('${data.screenshot}')">View</button>` : 'No'}</td>
-                        <td>
-                            <button class="approve-btn" onclick="approveDeposit('${d.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button>
-                            <button class="reject-btn" onclick="rejectDeposit('${d.id}', '${data.userEmail}')">Reject</button>
-                        </td>
-                    </tr>`;
+                    html += `<tr><td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td><td>$${data.amount}</td><td>${data.method}</td><td>${hasSS ? `<button class="view-btn" onclick="viewScreenshot('${data.screenshot}')">View</button>` : 'No'}</td><td><button class="approve-btn" onclick="approveDeposit('${d.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button><button class="reject-btn" onclick="rejectDeposit('${d.id}', '${data.userEmail}')">Reject</button></td></tr>`;
                 });
                 html += `</table>`;
                 document.getElementById("pendingDepositsList").innerHTML = html;
             }
-            
             const wds = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending")));
-            if (wds.empty) {
-                document.getElementById("pendingWithdrawalsList").innerHTML = "<p>✅ No pending withdrawals</p>";
-            } else {
+            if (wds.empty) { document.getElementById("pendingWithdrawalsList").innerHTML = "<p>✅ No pending withdrawals</p>"; }
+            else {
                 let html = `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>QR</th><th>Action</th></tr>`;
                 wds.docs.forEach(w => {
                     const data = w.data();
                     const hasQR = data.qrCode && data.qrCode.length > 100;
-                    html += `<tr>
-                        <td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td>
-                        <td>$${data.amount}</td>
-                        <td>${data.method}</td>
-                        <td>${hasQR ? `<button class="view-btn" onclick="viewWithdrawQr('${data.qrCode}')">View QR</button>` : 'No QR'}</td>
-                        <td>
-                            <button class="approve-btn" onclick="approveWithdrawal('${w.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button>
-                            <button class="reject-btn" onclick="rejectWithdrawal('${w.id}', '${data.userEmail}')">Reject</button>
-                        </td>
-                    </tr>`;
+                    html += `<tr><td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td><td>$${data.amount}</td><td>${data.method}</td><td>${hasQR ? `<button class="view-btn" onclick="viewWithdrawQr('${data.qrCode}')">View QR</button>` : 'No QR'}</td><td><button class="approve-btn" onclick="approveWithdrawal('${w.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button><button class="reject-btn" onclick="rejectWithdrawal('${w.id}', '${data.userEmail}')">Reject</button></td></tr>`;
                 });
                 html += `</table>`;
                 document.getElementById("pendingWithdrawalsList").innerHTML = html;
             }
-            
             await loadAgentMessages();
-        } catch(error) {
-            document.getElementById("pendingDepositsList").innerHTML = `<p style="color:#EF4444;">Error: ${error.message}</p>`;
-        }
+        } catch(error) { document.getElementById("pendingDepositsList").innerHTML = `<p style="color:#EF4444;">Error: ${error.message}</p>`; }
     }
     
     async function loadReferralStats() {
@@ -872,13 +798,10 @@
     
     const bannerImages = ["https://i.postimg.cc/J79RmYCT/company-countr.png", "https://i.postimg.cc/NjbhypZc/advatiesment-photo-company.png", "https://i.postimg.cc/bJtFRTVt/advaitiesment-photo.png"];
     let bannerIdx = 0;
-    setInterval(() => {
-        const banner = document.getElementById("bannerSlide");
-        if (banner) { bannerIdx = (bannerIdx + 1) % 3; banner.style.backgroundImage = `url('${bannerImages[bannerIdx]}')`; }
-    }, 4000);
+    setInterval(() => { const banner = document.getElementById("bannerSlide"); if (banner) { bannerIdx = (bannerIdx + 1) % 3; banner.style.backgroundImage = `url('${bannerImages[bannerIdx]}')`; } }, 4000);
     
     onAuthStateChanged(auth, async (user) => {
-        if (user) {
+        if (user && (user.emailVerified || user.email === "agent@nexora.com")) {
             const snap = await getDoc(doc(db, "users", user.uid));
             if (snap.exists()) {
                 currentUser = user;
@@ -887,7 +810,6 @@
                 document.getElementById("mainApp").style.display = "block";
                 document.getElementById("avatarIcon").innerHTML = '<i class="fas fa-user-check" style="color:#0A0E1A;"></i>';
                 document.getElementById("roleBadge").innerHTML = currentUserData.role === "agent" ? "🤵 Agent" : "👤 User";
-                
                 const agentNavBtn = document.getElementById("agentNavBtn");
                 const supportIcon = document.getElementById("supportIcon");
                 if (currentUserData.role === "agent") {
@@ -904,27 +826,13 @@
                     changePage('userDashboard', document.querySelectorAll('.nav-item')[0]);
                     loadUserDashboard();
                     loadMePage();
-                    
-                    // Check daily profit (Cloud based)
                     setTimeout(() => checkDailyProfit(), 2000);
                     if (profitCheckInterval) clearInterval(profitCheckInterval);
                     profitCheckInterval = setInterval(() => checkDailyProfit(), 3600000);
-                    
-                    // Real-time listeners for cloud data sync across devices
-                    onSnapshot(doc(db, "users", user.uid), () => {
-                        getDoc(doc(db, "users", user.uid)).then(s => {
-                            if (s.exists()) { currentUserData = { uid: user.uid, ...s.data() }; loadUserDashboard(); loadMePage(); }
-                        });
-                    });
-                    
-                    onSnapshot(doc(db, "userDailyProfit", user.uid), () => {
-                        loadUserDashboard();
-                    });
-                    
+                    onSnapshot(doc(db, "users", user.uid), () => { getDoc(doc(db, "users", user.uid)).then(s => { if (s.exists()) { currentUserData = { uid: user.uid, ...s.data() }; loadUserDashboard(); loadMePage(); } }); });
+                    onSnapshot(doc(db, "userDailyProfit", user.uid), () => { loadUserDashboard(); });
                     if (chatUnsubscribe) chatUnsubscribe();
-                    chatUnsubscribe = onSnapshot(query(collection(db, "supportMessages"), orderBy("createdAt", "asc")), () => {
-                        if (document.getElementById("chatPage").classList.contains("active")) loadChatMessages();
-                    });
+                    chatUnsubscribe = onSnapshot(query(collection(db, "supportMessages"), orderBy("createdAt", "asc")), () => { if (document.getElementById("chatPage").classList.contains("active")) loadChatMessages(); });
                 }
             }
         } else {
