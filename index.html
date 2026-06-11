@@ -3,122 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#F5B041">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NEXORA CAPITAL">
+    <link rel="manifest" href="data:application/manifest+json,{
+      %22name%22: %22NEXORA CAPITAL%22,
+      %22short_name%22: %22Nexora%22,
+      %22description%22: %22Premium Investment Platform%22,
+      %22start_url%22: %22/%22,
+      %22display%22: %22standalone%22,
+      %22background_color%22: %220A0E1A%22,
+      %22theme_color%22: %22F5B041%22,
+      %22icons%22: [
+        {%22src%22: %22https://i.postimg.cc/J79RmYCT/company-countr.png%22, %22sizes%22: %22192x192%22, %22type%22: %22image/png%22},
+        {%22src%22: %22https://i.postimg.cc/J79RmYCT/company-countr.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}
+      ]
+    }">
     <title>NEXORA CAPITAL | Premium Investment Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: #0A0E1A; color: #FFFFFF; overflow-x: hidden; padding-bottom: 70px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
         
-        .glass-card { background: rgba(18, 25, 45, 0.75); backdrop-filter: blur(12px); border-radius: 28px; border: 1px solid rgba(245, 176, 65, 0.25); transition: all 0.2s; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0A0E1A;
+            color: #FFFFFF;
+            overflow-x: hidden;
+            padding-bottom: 70px;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Smooth Transitions */
+        .glass-card {
+            background: rgba(18, 25, 45, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            border: 1px solid rgba(245, 176, 65, 0.25);
+            transition: transform 0.15s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            will-change: transform;
+        }
         .glass-card:active { transform: scale(0.98); }
         
-        .gold-text { background: linear-gradient(135deg, #F5B041, #D4AF37); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .gold-text {
+            background: linear-gradient(135deg, #F5B041, #D4AF37);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
         
-        .btn-gold { background: linear-gradient(95deg, #F5B041, #E6A800); border: none; color: #0A0E1A; font-weight: 700; padding: 12px 24px; border-radius: 40px; cursor: pointer; transition: all 0.2s; }
-        .btn-gold:active { transform: scale(0.96); }
-        .btn-outline { background: transparent; border: 1px solid rgba(245, 176, 65, 0.5); color: #F5B041; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
+        .btn-gold, .btn-primary, .btn-outline, .approve-btn, .reject-btn {
+            transition: transform 0.12s ease;
+            cursor: pointer;
+            will-change: transform;
+        }
+        .btn-gold:active, .btn-primary:active, .approve-btn:active, .reject-btn:active {
+            transform: scale(0.96);
+        }
         
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10, 14, 26, 0.98); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 10px 20px 22px; border-top: 1px solid rgba(245, 176, 65, 0.2); z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #6B7280; cursor: pointer; font-size: 11px; position: relative; transition: all 0.15s; }
+        .btn-gold {
+            background: linear-gradient(95deg, #F5B041, #E6A800);
+            border: none;
+            color: #0A0E1A;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 40px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(245, 176, 65, 0.5);
+            color: #F5B041;
+            padding: 10px 20px;
+            border-radius: 40px;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 26, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 20px 22px;
+            border-top: 1px solid rgba(245, 176, 65, 0.2);
+            z-index: 1000;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #6B7280;
+            cursor: pointer;
+            font-size: 11px;
+            transition: color 0.15s, transform 0.12s;
+        }
+        .nav-item:active { transform: translateY(-2px); }
         .nav-item i { font-size: 22px; }
-        .nav-item.active, .nav-item:hover { color: #F5B041; transform: translateY(-2px); }
+        .nav-item.active, .nav-item:hover { color: #F5B041; }
         
-        .top-header { background: rgba(10, 14, 26, 0.95); backdrop-filter: blur(10px); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(245, 176, 65, 0.2); position: sticky; top: 0; z-index: 100; }
-        .avatar { width: 42px; height: 42px; background: linear-gradient(135deg, #F5B041, #D4AF37); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .top-header {
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(245, 176, 65, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #F5B041, #D4AF37);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.12s;
+        }
+        .avatar:active { transform: scale(0.95); }
         
-        .wallet-card { background: linear-gradient(135deg, #1A2340, #0F1428); border-radius: 28px; padding: 22px; margin: 12px 0; border: 1px solid rgba(245, 176, 65, 0.3); }
+        .wallet-card {
+            background: linear-gradient(135deg, #1A2340, #0F1428);
+            border-radius: 28px;
+            padding: 22px;
+            margin: 12px 0;
+            border: 1px solid rgba(245, 176, 65, 0.3);
+        }
         .wallet-amount { font-size: 34px; font-weight: 800; color: #F5B041; }
         
-        .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 15px 0; }
-        .stat-item { background: rgba(18, 25, 45, 0.6); border-radius: 20px; padding: 15px; text-align: center; }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .stat-item {
+            background: rgba(18, 25, 45, 0.6);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.12s;
+        }
+        .stat-item:active { transform: scale(0.98); }
         .stat-value { font-size: 20px; font-weight: 700; color: #F5B041; }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(14px); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: #0F1422; width: 90%; max-width: 480px; border-radius: 32px; padding: 28px; border: 1px solid #F5B041; max-height: 80vh; overflow-y: auto; animation: modalFade 0.2s; }
-        @keyframes modalFade { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.96);
+            backdrop-filter: blur(14px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #0F1422;
+            width: 90%;
+            max-width: 480px;
+            border-radius: 32px;
+            padding: 28px;
+            border: 1px solid #F5B041;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalFade 0.2s ease;
+        }
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
         
-        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; background: #1A1F30; border: 1px solid #2A3148; border-radius: 30px; color: white; font-size: 16px; }
-        input:focus { border-color: #F5B041; outline: none; }
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            background: #1A1F30;
+            border: 1px solid #2A3148;
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.12s;
+        }
+        input:focus {
+            border-color: #F5B041;
+            outline: none;
+            transform: scale(1.01);
+        }
         
-        .method-chip { display: inline-block; background: #1A1F30; padding: 8px 16px; margin: 5px; border-radius: 30px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+        .method-chip {
+            display: inline-block;
+            background: #1A1F30;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.12s;
+        }
         .method-chip:active { transform: scale(0.95); }
         .method-chip.active { background: #F5B041; color: #0A0E1A; }
         
-        .qr-preview { text-align: center; margin: 15px 0; padding: 15px; background: #1A1F30; border-radius: 20px; }
+        .qr-preview {
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #1A1F30;
+            border-radius: 20px;
+        }
         .qr-preview img { width: 170px; border-radius: 16px; background: white; padding: 8px; }
         
-        .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #1E243C; border-left: 4px solid #F5B041; padding: 12px 24px; border-radius: 30px; z-index: 3000; animation: toastFade 0.2s; z-index: 9999; white-space: nowrap; }
-        @keyframes toastFade { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1E243C;
+            border-left: 4px solid #F5B041;
+            padding: 12px 24px;
+            border-radius: 30px;
+            z-index: 9999;
+            animation: toastFade 0.2s ease;
+            white-space: nowrap;
+        }
+        @keyframes toastFade {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
         
-        .page { display: none; padding: 16px; padding-bottom: 80px; animation: pageFade 0.2s; }
-        @keyframes pageFade { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+        .page {
+            display: none;
+            padding: 16px;
+            padding-bottom: 80px;
+            animation: pageFade 0.2s ease;
+        }
+        @keyframes pageFade {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
         .page.active { display: block; }
         
         .admin-table { width: 100%; font-size: 12px; border-collapse: collapse; }
         .admin-table th, .admin-table td { padding: 10px 6px; text-align: left; border-bottom: 1px solid #2A3148; }
         .admin-table th { background: rgba(245,176,65,0.15); color: #F5B041; }
-        .approve-btn { background: #10B981; color: white; border: none; padding: 5px 12px; border-radius: 25px; cursor: pointer; margin: 2px; font-size: 11px; }
-        .reject-btn { background: #EF4444; color: white; border: none; padding: 5px 12px; border-radius: 25px; cursor: pointer; margin: 2px; font-size: 11px; }
-        .view-btn { background: #3B82F6; color: white; border: none; padding: 5px 10px; border-radius: 25px; cursor: pointer; font-size: 10px; }
+        .approve-btn { background: #10B981; color: white; border: none; padding: 5px 12px; border-radius: 25px; margin: 2px; font-size: 11px; }
+        .reject-btn { background: #EF4444; color: white; border: none; padding: 5px 12px; border-radius: 25px; margin: 2px; font-size: 11px; }
+        .view-btn { background: #3B82F6; color: white; border: none; padding: 5px 10px; border-radius: 25px; font-size: 10px; }
         
-        .support-icon { position: fixed; bottom: 80px; right: 16px; background: #F5B041; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 99; box-shadow: 0 4px 15px rgba(245,176,65,0.4); transition: all 0.2s; }
+        .telegram-btn {
+            background: linear-gradient(135deg, #0088cc, #00aaff);
+            color: white;
+            padding: 12px;
+            border-radius: 30px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: transform 0.12s;
+        }
+        .telegram-btn:active { transform: scale(0.98); }
+        
+        .support-icon {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            background: #F5B041;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 99;
+            box-shadow: 0 4px 15px rgba(245,176,65,0.4);
+            transition: transform 0.12s;
+        }
         .support-icon:active { transform: scale(0.9); }
         
-        .message-item { padding: 12px; margin: 8px 0; border-radius: 20px; max-width: 85%; }
+        .message-item {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 20px;
+            max-width: 85%;
+            animation: msgFade 0.15s ease;
+        }
+        @keyframes msgFade {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
         .message-user { background: #1A2340; align-self: flex-start; }
         .message-agent { background: #F5B041; color: #0A0E1A; align-self: flex-end; margin-left: auto; }
-        .chat-container { display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; padding: 10px; }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
         
         .balance-row { display: flex; justify-content: space-between; gap: 15px; margin-top: 15px; }
         .balance-item { flex: 1; text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 20px; }
         .balance-label { font-size: 12px; opacity: 0.7; }
         .balance-value { font-size: 18px; font-weight: 700; color: #F5B041; }
         
-        .banner-slide { height: 160px; border-radius: 24px; background-size: cover; background-position: center; transition: background-image 0.5s; }
+        .banner-slide {
+            height: 160px;
+            border-radius: 24px;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.5s ease;
+        }
         
-        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at top, #0F1428, #050814); display: flex; justify-content: center; align-items: center; z-index: 10000; transition: all 0.3s; }
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at top, #0F1428, #050814);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.3s ease;
+        }
         .login-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        .login-box { background: rgba(18, 25, 45, 0.95); backdrop-filter: blur(20px); border-radius: 48px; padding: 40px 30px; width: 90%; max-width: 440px; border: 1px solid rgba(245, 176, 65, 0.4); animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .login-box {
+            background: rgba(18, 25, 45, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 48px;
+            padding: 40px 30px;
+            width: 90%;
+            max-width: 440px;
+            border: 1px solid rgba(245, 176, 65, 0.4);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
         
-        .login-logo { text-align: center; margin-bottom: 30px; }
-        .login-logo h1 { font-size: 2rem; font-weight: 800; }
-        .login-input { width: 100%; padding: 14px 18px; margin: 10px 0; background: #1A1F30; border: 1.5px solid rgba(245, 176, 65, 0.3); border-radius: 50px; color: white; font-size: 16px; }
-        .login-input:focus { border-color: #F5B041; outline: none; }
+        .login-input {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 10px 0;
+            background: #1A1F30;
+            border: 1.5px solid rgba(245, 176, 65, 0.3);
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.12s;
+        }
+        .login-input:focus {
+            border-color: #F5B041;
+            outline: none;
+            transform: scale(1.01);
+        }
         
-        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #F5B041, #D4AF37); border: none; border-radius: 50px; color: #0A0E1A; font-weight: 800; font-size: 16px; cursor: pointer; margin-top: 15px; transition: all 0.2s; }
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #F5B041, #D4AF37);
+            border: none;
+            border-radius: 50px;
+            color: #0A0E1A;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.12s;
+        }
         .btn-primary:active { transform: scale(0.98); }
         
         .auth-switch { text-align: center; margin-top: 15px; color: #8A8F9E; font-size: 13px; }
         .auth-switch a { color: #F5B041; cursor: pointer; text-decoration: none; }
         
-        .security-badge { position: fixed; top: 10px; right: 10px; background: rgba(16, 185, 129, 0.2); padding: 4px 12px; border-radius: 20px; font-size: 10px; color: #10B981; z-index: 1000; }
+        .security-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(16, 185, 129, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: #10B981;
+            z-index: 1000;
+        }
         .role-badge { background: rgba(245,176,65,0.2); padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-left: 10px; }
         .user-details { margin-top: 15px; padding: 12px; background: rgba(245,176,65,0.1); border-radius: 20px; text-align: left; }
         .history-item { padding: 12px; border-bottom: 1px solid #2A3148; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .badge-success { background: #10B981; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
         .badge-pending { background: #F59E0B; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
-        
-        .telegram-btn { background: linear-gradient(135deg, #0088cc, #00aaff); color: white; padding: 12px; border-radius: 30px; text-align: center; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
-        .welcome-message { font-size: 18px; font-weight: 600; color: #F5B041; margin-bottom: 10px; }
-        .loader { display: inline-block; width: 18px; height: 18px; border: 2px solid #0A0E1A; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 8px; }
+        .vip-card {
+            background: linear-gradient(145deg, #1A2340, #11172A);
+            border-radius: 24px;
+            padding: 18px;
+            margin: 10px 0;
+            border: 1px solid rgba(245, 176, 65, 0.2);
+            transition: transform 0.12s;
+        }
+        .vip-card:active { transform: scale(0.98); }
+        .vip-price { font-size: 28px; font-weight: 800; color: #F5B041; }
+        .loader {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #0A0E1A;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .file-upload { border: 2px dashed #F5B041; border-radius: 20px; padding: 15px; text-align: center; margin: 10px 0; cursor: pointer; transition: all 0.2s; }
+        .file-upload {
+            border: 2px dashed #F5B041;
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: background 0.12s;
+        }
         .file-upload:active { background: rgba(245,176,65,0.1); }
         
-        @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr 1fr; } .wallet-amount { font-size: 26px; } .toast { white-space: normal; text-align: center; width: 90%; } .banner-slide { height: 140px; } .balance-row { flex-direction: column; } }
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .wallet-amount { font-size: 26px; }
+            .toast { white-space: normal; text-align: center; width: 90%; }
+            .banner-slide { height: 140px; }
+            .balance-row { flex-direction: column; }
+        }
         
         .forgot-card { background: linear-gradient(135deg, #1A2340, #0F1428); padding: 20px; border-radius: 24px; text-align: center; margin-bottom: 15px; }
         .verify-success-icon { font-size: 60px; color: #10B981; margin-bottom: 15px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
-        /* Hide elements for agent */
-        .agent-hide { display: none !important; }
+        .welcome-message { font-size: 18px; font-weight: 600; color: #F5B041; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -164,18 +508,20 @@
     <div class="top-header">
         <div class="logo-small"><h2><span class="gold-text">NEXORA</span> CAPITAL</h2></div>
         <div class="user-info"><a href="https://t.me/NexoraCapitalSupport" target="_blank" style="color:#F5B041; font-size:20px;"><i class="fab fa-telegram"></i></a>
-        <div class="avatar" id="avatarIcon"><i class="fas fa-user" style="color:#0A0E1A;"></i></div><span id="roleBadge" class="role-badge"></span></div>
+        <div class="avatar" id="avatarIcon" onclick="openMe()"><i class="fas fa-user" style="color:#0A0E1A;"></i></div><span id="roleBadge" class="role-badge"></span></div>
     </div>
     <div style="margin:10px 16px;"><div id="bannerSlide" class="banner-slide" style="background-image:url('https://i.postimg.cc/J79RmYCT/company-countr.png');"></div></div>
 
-    <!-- USER DASHBOARD -->
-    <div id="userDashboard" class="page">
-        <div class="wallet-card" style="margin:0 16px;"><div><i class="fas fa-wallet"></i> Electronic Wallet (USDT)</div>
-        <div class="wallet-amount" id="userBalance">$0.00</div>
-        <div class="balance-row"><div class="balance-item"><div class="balance-label">Today's Profit</div><div class="balance-value" id="todayProfit">$0.00</div></div>
-        <div class="balance-item"><div class="balance-label">Est. Daily</div><div class="balance-value" id="dailyEstimate">$0.00</div></div></div>
-        <div style="display:flex; gap:15px; margin-top:15px;"><button class="btn-gold" style="flex:1;" onclick="openDeposit()"><i class="fas fa-plus-circle"></i> Deposit</button>
-        <button class="btn-outline" style="flex:1;" onclick="openWithdraw()"><i class="fas fa-hand-holding-usd"></i> Withdraw</button></div></div>
+    <!-- User Dashboard -->
+    <div id="userDashboard" class="page active">
+        <div class="wallet-card" style="margin:0 16px;">
+            <div><i class="fas fa-wallet"></i> Electronic Wallet (USDT)</div>
+            <div class="wallet-amount" id="userBalance">$0.00</div>
+            <div class="balance-row"><div class="balance-item"><div class="balance-label">Today's Profit</div><div class="balance-value" id="todayProfit">$0.00</div></div>
+            <div class="balance-item"><div class="balance-label">Est. Daily</div><div class="balance-value" id="dailyEstimate">$0.00</div></div></div>
+            <div style="display:flex; gap:15px; margin-top:15px;"><button class="btn-gold" style="flex:1;" onclick="openDeposit()"><i class="fas fa-plus-circle"></i> Deposit</button>
+            <button class="btn-outline" style="flex:1;" onclick="openWithdraw()"><i class="fas fa-hand-holding-usd"></i> Withdraw</button></div>
+        </div>
         <div class="stats-row" style="padding:0 16px;"><div class="stat-item"><i class="fas fa-chart-line"></i><div>Total Income</div><div class="stat-value" id="totalIncome">$0</div></div>
         <div class="stat-item"><i class="fas fa-users"></i><div>Commission</div><div class="stat-value" id="totalCommission">$0</div></div>
         <div class="stat-item"><i class="fas fa-download"></i><div>Recharge</div><div class="stat-value" id="totalDeposits">$0</div></div>
@@ -205,18 +551,17 @@
         <div style="display:flex; gap:10px; margin-top:15px;"><textarea id="chatInput" placeholder="Type message..." rows="2" style="flex:1;"></textarea><button class="btn-gold" onclick="sendMsg()" style="padding:10px 20px;">Send</button></div></div>
     </div>
 
-    <!-- AGENT PANEL (Only Deposit, Withdraw, Chat) -->
+    <!-- Agent Panel -->
     <div id="agentPanel" class="page">
         <h2 class="gold-text" style="padding:0 16px;">🤵 Agent Verification Panel</h2>
         <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3>📥 Pending Deposits</h3><div id="pendingDeposits">Loading...</div></div>
         <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3>📤 Pending Withdrawals</h3><div id="pendingWithdrawals">Loading...</div></div>
-        <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3><i class="fas fa-comments"></i> Customer Support</h3><div id="agentMessages" style="max-height:300px; overflow-y:auto;"><p>No messages</p></div></div>
+        <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3><i class="fas fa-comments"></i> Support</h3><div id="agentMessages" style="max-height:300px; overflow-y:auto;"><p>No messages</p></div></div>
         <div style="padding:0 16px 20px;"><button class="btn-outline" style="width:100%; padding:14px; color:#EF4444;" onclick="logout()">Logout</button></div>
     </div>
 
-    <div class="support-icon" id="supportIcon" onclick="openChat()"><i class="fas fa-headset" style="font-size:24px; color:#0A0E1A;"></i></div>
+    <div class="support-icon" onclick="openChat()"><i class="fas fa-headset" style="font-size:24px; color:#0A0E1A;"></i></div>
 
-    <!-- Bottom Navigation - Agent will have limited items -->
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-item" id="navHome" onclick="changePage('userDashboard', this)"><i class="fas fa-home"></i><span>Home</span></div>
         <div class="nav-item" id="navVip" onclick="changePage('vipPage', this)"><i class="fas fa-crown"></i><span>VIP</span></div>
@@ -244,7 +589,7 @@
     <select id="withdrawMethod"><option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option></select>
     <input type="text" id="withdrawAddr" placeholder="Withdrawal Address">
     <input type="number" id="withdrawAmt" placeholder="Amount (USD)">
-    <div class="file-upload" onclick="document.getElementById('wdQrFile').click()">📸 Upload Wallet QR</div>
+    <div class="file-upload" onclick="document.getElementById('wdQrFile').click()">📸 Upload QR</div>
     <input type="file" id="wdQrFile" accept="image/*" style="display:none;" onchange="previewWDQr(this)">
     <div id="wdQrPreview" style="display:none;"></div>
     <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitWithdraw()">Request</button>
@@ -440,6 +785,8 @@
     };
     
     window.openChat = function() { changePage('chatPage', null); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); loadChat(); };
+    window.openMe = function() { changePage('mePage', document.getElementById('navMe')); };
+    
     window.sendMsg = async () => {
         if (!currentData) return;
         const msg = document.getElementById("chatInput").value.trim();
@@ -700,7 +1047,7 @@
             const wd = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending")));
             if (wd.empty) { document.getElementById("pendingWithdrawals").innerHTML = "<p>✅ No pending withdrawals</p>"; }
             else {
-                let h = `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>QR</th><th>Action</th></tr>`;
+                let h = `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>QR</th><th>Action</th><table>`;
                 wd.docs.forEach(w => {
                     const data = w.data();
                     const has = data.qrCode && data.qrCode.length > 100;
@@ -711,7 +1058,7 @@
                         <td>${has ? `<button class="view-btn" onclick="viewQR('${data.qrCode}')">View QR</button>` : 'No'}</td>
                         <td><button class="approve-btn" onclick="approveWithdraw('${w.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button>
                         <button class="reject-btn" onclick="rejectWithdraw('${w.id}', '${data.userEmail}')">Reject</button>NonNull
-                    <tr>`;
+                    </tr>`;
                 });
                 h += `</table>`;
                 document.getElementById("pendingWithdrawals").innerHTML = h;
@@ -739,6 +1086,11 @@
     let bidx = 0;
     setInterval(() => { const b = document.getElementById("bannerSlide"); if (b) { bidx = (bidx + 1) % 3; b.style.backgroundImage = `url('${banners[bidx]}')`; } }, 4000);
     
+    // Service Worker for PWA
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+    
     onAuthStateChanged(auth, async (user) => {
         if (user && (user.emailVerified || user.email === "agent@nexora.com")) {
             const snap = await getDoc(doc(db, "users", user.uid));
@@ -751,14 +1103,13 @@
                 document.getElementById("roleBadge").innerHTML = currentData.role === "agent" ? "🤵 Agent" : "👤 User";
                 
                 const agentNav = document.getElementById("navAgent");
-                const supportIcon = document.getElementById("supportIcon");
                 const navHome = document.getElementById("navHome");
                 const navVip = document.getElementById("navVip");
                 const navInvite = document.getElementById("navInvite");
                 const navMe = document.getElementById("navMe");
+                const supportIcon = document.getElementById("supportIcon");
                 
                 if (currentData.role === "agent") {
-                    // Agent - only show Agent nav and hide other nav items
                     agentNav.style.display = "flex";
                     supportIcon.style.display = "none";
                     navHome.style.display = "none";
@@ -771,7 +1122,6 @@
                     onSnapshot(collection(db, "withdrawals"), () => loadAgent());
                     onSnapshot(collection(db, "supportMessages"), () => loadAgentMsgs());
                 } else {
-                    // User - show all nav items except Agent
                     agentNav.style.display = "none";
                     supportIcon.style.display = "flex";
                     navHome.style.display = "flex";
