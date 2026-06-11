@@ -13,7 +13,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #0A0E1A; color: #FFFFFF; overflow-x: hidden; }
         
-        /* Login Overlay */
         .login-overlay {
             position: fixed;
             top: 0;
@@ -37,14 +36,13 @@
             width: 90%;
             max-width: 460px;
             border: 1px solid rgba(245, 176, 65, 0.4);
-            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8);
             animation: fadeIn 0.5s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
         .login-logo { text-align: center; margin-bottom: 35px; }
         .login-logo h1 { font-size: 2.3rem; font-weight: 800; }
-        .login-logo p { font-size: 0.8rem; opacity: 0.7; margin-top: 5px; }
+        .login-logo p { font-size: 0.8rem; opacity: 0.7; }
         
         .login-input {
             width: 100%;
@@ -55,9 +53,8 @@
             border-radius: 50px;
             color: white;
             font-size: 15px;
-            transition: all 0.3s;
         }
-        .login-input:focus { border-color: #F5B041; outline: none; box-shadow: 0 0 10px rgba(245,176,65,0.3); }
+        .login-input:focus { border-color: #F5B041; outline: none; }
         
         .btn-primary {
             width: 100%;
@@ -71,32 +68,12 @@
             cursor: pointer;
             margin-top: 20px;
             transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(245,176,65,0.3);
         }
         .btn-primary:hover { transform: scale(1.02); opacity: 0.95; }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        
-        .btn-outline-light {
-            background: transparent;
-            border: 1.5px solid #F5B041;
-            color: #F5B041;
-            padding: 14px;
-            border-radius: 50px;
-            width: 100%;
-            margin-top: 12px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        .btn-outline-light:hover { background: rgba(245,176,65,0.1); }
         
         .auth-switch { text-align: center; margin-top: 20px; color: #8A8F9E; font-size: 14px; }
         .auth-switch a { color: #F5B041; cursor: pointer; text-decoration: none; font-weight: 600; }
         
-        .verify-card { text-align: center; padding: 20px; }
-        .verify-card i { font-size: 60px; color: #10B981; margin-bottom: 15px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
-        /* Main App */
         .main-app { display: none; }
         .main-app.show { display: block; }
         
@@ -105,7 +82,7 @@
         
         .gold-text { background: linear-gradient(135deg, #F5B041, #D4AF37); -webkit-background-clip: text; background-clip: text; color: transparent; }
         
-        .btn-gold { background: linear-gradient(95deg, #F5B041, #E6A800); border: none; color: #0A0E1A; font-weight: 700; padding: 12px 24px; border-radius: 40px; cursor: pointer; transition: all 0.3s; }
+        .btn-gold { background: linear-gradient(95deg, #F5B041, #E6A800); border: none; color: #0A0E1A; font-weight: 700; padding: 12px 24px; border-radius: 40px; cursor: pointer; }
         .btn-gold:hover { transform: scale(1.02); }
         .btn-outline { background: transparent; border: 1px solid rgba(245, 176, 65, 0.5); color: #F5B041; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
         
@@ -178,7 +155,6 @@
         
         .welcome-message { font-size: 18px; font-weight: 600; color: #F5B041; margin-bottom: 10px; }
         .user-details { margin-top: 15px; padding: 12px; background: rgba(245,176,65,0.1); border-radius: 20px; text-align: left; }
-        .user-details p { margin: 8px 0; font-size: 14px; }
         
         .history-item { padding: 12px; border-bottom: 1px solid #2A3148; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .badge-success { background: #10B981; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
@@ -193,11 +169,16 @@
         
         .file-upload { border: 2px dashed #F5B041; border-radius: 20px; padding: 15px; text-align: center; margin: 10px 0; cursor: pointer; }
         .file-upload:hover { background: rgba(245,176,65,0.1); }
+        
+        .role-badge { background: rgba(245,176,65,0.2); padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-left: 10px; }
+        
+        .screenshot-modal { max-width: 90%; max-height: 90%; }
+        .screenshot-modal img { max-width: 100%; max-height: 80vh; border-radius: 16px; }
     </style>
 </head>
 <body>
 
-<!-- LOGIN OVERLAY - FULL SCREEN -->
+<!-- LOGIN OVERLAY -->
 <div id="loginOverlay" class="login-overlay">
     <div class="login-box">
         <div class="login-logo">
@@ -205,15 +186,13 @@
             <p>Premium Investment Platform | Secure & Trusted</p>
         </div>
         
-        <!-- Login Form -->
         <div id="loginForm">
             <input type="email" id="loginEmail" class="login-input" placeholder="📧 Email Address">
             <input type="password" id="loginPassword" class="login-input" placeholder="🔒 Password">
             <button class="btn-primary" id="loginBtn" onclick="handleLogin()">Login to Dashboard</button>
-            <div class="auth-switch"><a onclick="showRegister()">📝 Create New Account</a> | <a onclick="showForgot()">🔑 Forgot Password?</a></div>
+            <div class="auth-switch"><a onclick="showRegister()">📝 Create New Account</a></div>
         </div>
         
-        <!-- Register Form -->
         <div id="registerForm" style="display:none;">
             <input type="text" id="regName" class="login-input" placeholder="👤 Full Name">
             <input type="email" id="regEmail" class="login-input" placeholder="📧 Email Address">
@@ -224,29 +203,14 @@
             <div class="auth-switch"><a onclick="showLogin()">← Back to Login</a></div>
         </div>
         
-        <!-- Forgot Password Form -->
-        <div id="forgotForm" style="display:none;">
-            <div style="background: linear-gradient(135deg, #1A2340, #0F1428); padding: 20px; border-radius: 24px; text-align: center;">
-                <i class="fas fa-key" style="font-size: 50px; color: #F5B041; margin-bottom: 15px;"></i>
-                <h3>Reset Password</h3>
-                <p style="font-size: 13px; margin: 10px 0;">Enter your email to receive reset link</p>
-                <input type="email" id="resetEmail" class="login-input" placeholder="📧 Your Email Address">
-                <button class="btn-primary" onclick="handleResetPassword()">Send Reset Link</button>
-                <div class="auth-switch"><a onclick="showLogin()">← Back to Login</a></div>
-            </div>
-        </div>
-        
-        <!-- Email Verification Form -->
         <div id="verifyForm" style="display:none;">
-            <div class="verify-card">
-                <i class="fas fa-envelope-open-text"></i>
+            <div style="text-align:center; padding:20px;">
+                <i class="fas fa-envelope-open-text" style="font-size:60px; color:#10B981;"></i>
                 <h3>Verify Your Email</h3>
                 <p>Verification link sent to <strong style="color:#F5B041;" id="verifyEmailSpan"></strong></p>
-                <p style="font-size: 12px; margin-top: 10px;">📧 Please check your Gmail inbox and click the verification link.</p>
-                <p style="font-size: 11px; color: #F59E0B;">⚠️ Check Spam folder if not found</p>
                 <button class="btn-primary" style="margin-top: 20px;" onclick="checkVerification()">✓ I have verified my email</button>
-                <button class="btn-outline-light" onclick="resendVerification()">⟳ Resend verification email</button>
-                <div class="auth-switch"><a onclick="showLogin()">← Back to Login</a></div>
+                <button class="btn-outline-light" onclick="resendVerification()">⟳ Resend</button>
+                <div class="auth-switch"><a onclick="showLogin()">← Back</a></div>
             </div>
         </div>
     </div>
@@ -259,14 +223,14 @@
         <div class="user-info">
             <a href="https://t.me/NexoraCapitalSupport" target="_blank" style="color: #F5B041; font-size: 20px;"><i class="fab fa-telegram"></i></a>
             <div class="avatar" id="avatarIcon"><i class="fas fa-user" style="color: #0A0E1A;"></i></div>
+            <span id="roleBadge" class="role-badge"></span>
         </div>
     </div>
 
-    <!-- Banner Slider -->
     <div style="margin: 10px 16px;"><div id="bannerSlide" class="banner-slide" style="background-image: url('https://i.postimg.cc/J79RmYCT/company-countr.png');"></div></div>
 
-    <!-- Home Page -->
-    <div id="homePage" class="page active">
+    <!-- User Dashboard -->
+    <div id="userDashboard" class="page active">
         <div class="wallet-card" style="margin: 0 16px;">
             <div><i class="fas fa-wallet"></i> Electronic Wallet (USDT)</div>
             <div class="wallet-amount" id="userBalance">$0.00</div>
@@ -285,23 +249,20 @@
             <div style="display: flex; justify-content: space-between;"><h3><i class="fas fa-crown gold-text"></i> VIP Plans</h3><a onclick="showVipPage()" style="color: #F5B041; cursor: pointer;">View All →</a></div>
             <div id="vipPreview"></div>
         </div>
-        <div class="telegram-btn" style="margin: 16px;" onclick="window.open('https://t.me/NexoraCapitalSupport', '_blank')"><i class="fab fa-telegram"></i> 24/7 Customer Support</div>
+        <div class="telegram-btn" style="margin: 16px;" onclick="window.open('https://t.me/NexoraCapitalSupport', '_blank')"><i class="fab fa-telegram"></i> 24/7 Support</div>
     </div>
 
-    <!-- VIP Page -->
-    <div id="vipPage" class="page"><h2 class="gold-text" style="padding: 0 16px;"><i class="fas fa-crown"></i> VIP Investment Plans</h2><div id="vipList" style="padding: 0 16px;"></div></div>
+    <div id="vipPage" class="page"><h2 class="gold-text" style="padding: 0 16px;"><i class="fas fa-crown"></i> VIP Plans</h2><div id="vipList" style="padding: 0 16px;"></div></div>
     
-    <!-- Invite Page -->
     <div id="invitePage" class="page">
         <div class="glass-card" style="padding: 20px; margin: 0 16px; text-align: center;">
             <i class="fas fa-gift" style="font-size: 50px; color: #F5B041;"></i>
-            <h3>Invite Friends & Earn 8%</h3>
+            <h3>Invite & Earn 8%</h3>
             <div style="display: flex; gap: 10px; margin: 20px 0;"><input type="text" id="refLinkInput" readonly style="flex:1;"><button class="btn-gold" onclick="copyRefLink()">Copy</button></div>
-            <div class="stats-row"><div class="stat-item"><div>Total Referrals</div><div class="stat-value" id="refCount">0</div></div><div class="stat-item"><div>Referral Earnings</div><div class="stat-value" id="refEarnings">$0</div></div></div>
+            <div class="stats-row"><div class="stat-item"><div>Referrals</div><div class="stat-value" id="refCount">0</div></div><div class="stat-item"><div>Earnings</div><div class="stat-value" id="refEarnings">$0</div></div></div>
         </div>
     </div>
 
-    <!-- Me Page -->
     <div id="mePage" class="page">
         <div class="glass-card" style="padding: 20px; margin: 0 16px; text-align: center;">
             <div class="avatar" style="width: 80px; height: 80px; margin: 0 auto;"><i class="fas fa-user" style="font-size: 35px; color:#0A0E1A;"></i></div>
@@ -309,7 +270,7 @@
             <h3 id="userFullname">User Name</h3>
             <p id="userEmailDisplay">user@example.com</p>
             <div class="user-details">
-                <p><i class="fas fa-wallet gold-text"></i> <strong>Wallet Address:</strong> <span id="userWalletAddr">Not set</span></p>
+                <p><i class="fas fa-wallet gold-text"></i> <strong>Wallet:</strong> <span id="userWalletAddr">Not set</span></p>
                 <p><i class="fas fa-code gold-text"></i> <strong>Referral Code:</strong> <span id="userRefCode">---</span> <i class="fas fa-copy" onclick="copyUserRefCode()" style="cursor: pointer;"></i></p>
                 <p><i class="fas fa-calendar gold-text"></i> <strong>Member Since:</strong> <span id="memberSince">---</span></p>
                 <p><i class="fas fa-coins gold-text"></i> <strong>Total Invested:</strong> $<span id="totalInvested">0</span></p>
@@ -321,18 +282,33 @@
         <div class="glass-card" style="padding: 16px; margin: 16px;"><button class="btn-outline" style="width:100%; padding: 14px; color: #EF4444; border-color: #EF4444;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
     </div>
 
-    <!-- Agent Page -->
-    <div id="agentPage" class="page">
-        <h2 class="gold-text" style="padding: 0 16px;">Agent Verification Panel</h2>
-        <div class="glass-card" style="padding: 16px; margin: 0 16px;"><h3>Pending Deposits</h3><div id="pendingDepositsList"></div></div>
-        <div class="glass-card" style="padding: 16px; margin: 16px;"><h3>Pending Withdrawals</h3><div id="pendingWithdrawalsList"></div></div>
+    <!-- Agent Panel -->
+    <div id="agentPanel" class="page">
+        <h2 class="gold-text" style="padding: 0 16px;"><i class="fas fa-user-tie"></i> Agent Verification Panel</h2>
+        <p style="padding: 0 16px; margin-bottom: 10px; color: #F5B041;">Verify deposit and withdrawal requests from users</p>
+        
+        <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;">
+            <h3><i class="fas fa-download gold-text"></i> Pending Deposit Requests</h3>
+            <div id="pendingDepositsList">Loading...</div>
+        </div>
+        
+        <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;">
+            <h3><i class="fas fa-upload gold-text"></i> Pending Withdrawal Requests</h3>
+            <div id="pendingWithdrawalsList">Loading...</div>
+        </div>
+        
+        <div class="glass-card" style="padding: 16px; margin: 0 16px;">
+            <h3><i class="fas fa-check-circle gold-text"></i> Recently Verified</h3>
+            <div id="recentActivity">No recent activity</div>
+        </div>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="changePage('homePage', this)"><i class="fas fa-home"></i><span>Home</span></div>
+        <div class="nav-item active" onclick="changePage('userDashboard', this)"><i class="fas fa-home"></i><span>Home</span></div>
         <div class="nav-item" onclick="changePage('vipPage', this)"><i class="fas fa-crown"></i><span>VIP</span></div>
         <div class="nav-item" onclick="changePage('invitePage', this)"><i class="fas fa-user-friends"></i><span>Invite</span></div>
         <div class="nav-item" onclick="changePage('mePage', this)"><i class="fas fa-user"></i><span>Me</span></div>
+        <div class="nav-item" id="agentNavBtn" onclick="changePage('agentPanel', this)" style="display:none;"><i class="fas fa-user-tie"></i><span>Agent</span></div>
     </div>
 </div>
 
@@ -351,10 +327,11 @@
     <input type="text" id="depositWallet" placeholder="Your Wallet Address">
     <input type="text" id="depositTxn" placeholder="Transaction Hash">
     <input type="number" id="depositAmount" placeholder="Amount (USD)" value="100">
-    <div class="file-upload" onclick="document.getElementById('screenshotFile').click()"><i class="fas fa-camera"></i> Click to upload payment screenshot</div>
+    <div class="file-upload" onclick="document.getElementById('screenshotFile').click()"><i class="fas fa-camera"></i> 📸 Click to upload payment screenshot</div>
     <input type="file" id="screenshotFile" accept="image/*" style="display:none;" onchange="previewScreenshot(this)">
     <div id="screenshotPreview" style="display:none; margin:10px 0; text-align:center;"></div>
     <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitDeposit()">Submit Deposit Request</button>
+    <p style="font-size:12px; margin-top:10px; text-align:center;">⏳ Agent will verify your request</p>
 </div></div>
 
 <!-- Withdraw Modal -->
@@ -365,6 +342,14 @@
     <input type="text" id="withdrawAddress" placeholder="Withdrawal Address">
     <input type="number" id="withdrawAmount" placeholder="Amount (USD)">
     <button class="btn-gold" style="width:100%;" onclick="submitWithdraw()">Request Withdrawal</button>
+    <p style="font-size:12px; margin-top:10px; text-align:center;">⏳ Agent will verify your request</p>
+</div></div>
+
+<!-- Screenshot Preview Modal for Agent -->
+<div id="screenshotModal" class="modal"><div class="modal-content screenshot-modal" style="max-width: 600px; text-align: center;">
+    <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('screenshotModal')">&times;</span>
+    <h3 class="gold-text">Payment Screenshot</h3>
+    <img id="fullScreenshotImg" src="" style="max-width: 100%; border-radius: 16px; margin-top: 15px;">
 </div></div>
 
 <div id="toastContainer"></div>
@@ -372,7 +357,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
     const firebaseConfig = {
         apiKey: "AIzaSyAxSWI_Uh_hYJvSBMhKLw-bvcoqwzvdhN4",
@@ -394,18 +379,20 @@
     let pendingUser = null;
     let selectedScreenshot = null;
     
-    // Create Agent Account
-    async function createAgent() {
+    // Fixed Agent Account
+    const AGENT_EMAIL = "agent@nexora.com";
+    const AGENT_PASSWORD = "Agent@123";
+    
+    async function createFixedAgentAccount() {
         try {
-            const cred = await createUserWithEmailAndPassword(auth, "agent@nexora.com", "Agent@123");
-            await setDoc(doc(db, "users", cred.user.uid), {
-                fullname: "Verification Agent", email: "agent@nexora.com", balance: 0, refCode: "AGENT001", role: "agent",
+            const agentCred = await createUserWithEmailAndPassword(auth, AGENT_EMAIL, AGENT_PASSWORD);
+            await setDoc(doc(db, "users", agentCred.user.uid), {
+                fullname: "Verification Agent", email: AGENT_EMAIL, balance: 0, refCode: "AGENT001", role: "agent",
                 purchasedPlans: [], totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0, createdAt: serverTimestamp()
             });
-            console.log("Agent account ready");
         } catch(e) { console.log("Agent exists"); }
     }
-    createAgent();
+    createFixedAgentAccount();
     
     const vipPlans = [
         { level: "VIP 1", price: 20, dailyReturn: 2.00, days: 45, totalReturn: 90 },
@@ -439,46 +426,34 @@
     window.showLogin = function() {
         document.getElementById("loginForm").style.display = "block";
         document.getElementById("registerForm").style.display = "none";
-        document.getElementById("forgotForm").style.display = "none";
         document.getElementById("verifyForm").style.display = "none";
     };
     window.showRegister = function() {
         document.getElementById("loginForm").style.display = "none";
         document.getElementById("registerForm").style.display = "block";
-        document.getElementById("forgotForm").style.display = "none";
-        document.getElementById("verifyForm").style.display = "none";
-    };
-    window.showForgot = function() {
-        document.getElementById("loginForm").style.display = "none";
-        document.getElementById("registerForm").style.display = "none";
-        document.getElementById("forgotForm").style.display = "block";
         document.getElementById("verifyForm").style.display = "none";
     };
     
     window.handleLogin = async () => {
         const email = document.getElementById("loginEmail").value.trim();
         const pwd = document.getElementById("loginPassword").value;
-        if (!email || !pwd) {
-            showToast("Please enter email and password", "error");
-            return;
-        }
+        if (!email || !pwd) { showToast("Enter email and password", "error"); return; }
         const btn = document.getElementById("loginBtn");
         btn.innerHTML = '<span class="loader"></span> Logging in...';
         btn.disabled = true;
         try {
             const result = await signInWithEmailAndPassword(auth, email, pwd);
-            if (!result.user.emailVerified) {
-                showToast("Please verify your email first. Check your Gmail inbox.", "error");
+            if (!result.user.emailVerified && !email.includes("agent")) {
+                showToast("Please verify your email first.", "error");
                 btn.innerHTML = 'Login to Dashboard';
                 btn.disabled = false;
                 return;
             }
-            // Login successful - auth state will trigger UI change
-            showToast("✅ Login successful! Redirecting to dashboard...");
+            showToast("✅ Login successful!");
         } catch(error) {
             let msg = error.message;
-            if (msg.includes("user-not-found")) msg = "No account found with this email";
-            if (msg.includes("wrong-password")) msg = "Incorrect password. Please try again.";
+            if (msg.includes("user-not-found")) msg = "No account found";
+            if (msg.includes("wrong-password")) msg = "Incorrect password";
             showToast(msg, "error");
             btn.innerHTML = 'Login to Dashboard';
             btn.disabled = false;
@@ -492,18 +467,10 @@
         const confirm = document.getElementById("regConfirm").value;
         const refCode = document.getElementById("regRefCode").value.trim();
         
-        if (!name || !email || !pwd || !confirm) {
-            showToast("All fields required", "error");
-            return;
-        }
-        if (pwd !== confirm) {
-            showToast("Passwords don't match", "error");
-            return;
-        }
-        if (pwd.length < 6) {
-            showToast("Password must be at least 6 characters", "error");
-            return;
-        }
+        if (!name || !email || !pwd || !confirm) { showToast("All fields required", "error"); return; }
+        if (pwd !== confirm) { showToast("Passwords don't match", "error"); return; }
+        if (pwd.length < 6) { showToast("Password min 6 characters", "error"); return; }
+        
         const btn = event.target;
         btn.innerHTML = '<span class="loader"></span> Creating...';
         btn.disabled = true;
@@ -516,23 +483,10 @@
             showLogin();
             document.getElementById("verifyForm").style.display = "block";
             document.getElementById("loginForm").style.display = "none";
-            showToast(`Verification email sent to ${email}. Check your Gmail inbox.`);
+            showToast(`Verification email sent to ${email}`);
         } catch(e) { showToast(e.message, "error"); }
         btn.innerHTML = "Register & Verify Email";
         btn.disabled = false;
-    };
-    
-    window.handleResetPassword = async () => {
-        const email = document.getElementById("resetEmail").value.trim();
-        if (!email) {
-            showToast("Enter email address", "error");
-            return;
-        }
-        try {
-            await sendPasswordResetEmail(auth, email);
-            showToast(`Password reset link sent to ${email}. Check Gmail.`);
-            showLogin();
-        } catch(e) { showToast(e.message, "error"); }
     };
     
     window.checkVerification = async () => {
@@ -555,15 +509,12 @@
             showLogin();
             pendingUser = null;
         } else {
-            showToast("Email not verified yet. Check your Gmail inbox (Spam folder too).", "error");
+            showToast("Email not verified yet. Check Gmail inbox.", "error");
         }
     };
     
     window.resendVerification = async () => {
-        if (pendingUser) {
-            await sendEmailVerification(pendingUser.cred.user);
-            showToast("Verification email resent. Check Gmail.");
-        }
+        if (pendingUser) { await sendEmailVerification(pendingUser.cred.user); showToast("Email resent"); }
     };
     
     window.logout = async () => { await signOut(auth); };
@@ -575,7 +526,7 @@
         if (element) element.classList.add('active');
         if (pageId === 'vipPage') renderVipPlans();
         if (pageId === 'invitePage' && currentUserData) loadReferralStats();
-        if (pageId === 'agentPage' && currentUserData?.role === 'agent') loadAgentPanel();
+        if (pageId === 'agentPanel' && currentUserData?.role === 'agent') loadAgentPanel();
         if (pageId === 'mePage' && currentUserData) loadMePage();
     };
     window.showVipPage = () => changePage('vipPage', document.querySelectorAll('.nav-item')[1]);
@@ -587,18 +538,18 @@
             <div><i class="fas fa-chart-line"></i> Daily: $${p.dailyReturn} USDT</div>
             <div><i class="fas fa-calendar"></i> ${p.days} Days</div>
             <div><i class="fas fa-coins"></i> Total: $${p.totalReturn} USDT</div>
-            ${!purchased.includes(p.level) ? `<button class="btn-gold" style="width:100%; margin-top:12px;" onclick="buyPlan(${p.price}, '${p.level}')">Unlock Now</button>` : '<button class="btn-outline" disabled style="width:100%;">✅ Already Purchased</button>'}
+            ${!purchased.includes(p.level) ? `<button class="btn-gold" style="width:100%; margin-top:12px;" onclick="buyPlan(${p.price}, '${p.level}')">Unlock Now</button>` : '<button class="btn-outline" disabled>✅ Purchased</button>'}
             </div>`).join("");
     }
     
     window.buyPlan = async (amount, level) => {
-        if (!currentUserData) return;
+        if (!currentUserData || currentUserData.role !== "user") return;
         if (currentUserData.purchasedPlans?.includes(level)) return showToast(`${level} already purchased!`, "error");
-        if ((currentUserData.balance || 0) < amount) return showToast(`Need $${amount} in balance`, "error");
+        if ((currentUserData.balance || 0) < amount) return showToast(`Need $${amount}`, "error");
         await updateDoc(doc(db, "users", currentUserData.uid), { balance: increment(-amount), purchasedPlans: arrayUnion(level) });
         await addDoc(collection(db, "investments"), { userId: currentUserData.uid, plan: level, amount, status: "active", profitEarned: 0, startDate: serverTimestamp() });
-        showToast(`✅ Successfully unlocked ${level}!`);
-        loadDashboard(); renderVipPlans(); loadMePage();
+        showToast(`✅ Unlocked ${level}!`);
+        loadUserDashboard(); renderVipPlans(); loadMePage();
     };
     
     window.selectMethod = (method, qr) => {
@@ -610,12 +561,12 @@
     };
     
     window.submitDeposit = async () => {
-        if (!currentUserData) return;
+        if (!currentUserData || currentUserData.role !== "user") return;
         if (!selectedMethod) return showToast("Select payment method", "error");
         const wallet = document.getElementById("depositWallet").value.trim();
         if (!wallet) return showToast("Enter wallet address", "error");
         const amount = parseFloat(document.getElementById("depositAmount").value);
-        if (amount < 50) return showToast("Minimum deposit $50", "error");
+        if (amount < 50) return showToast("Minimum $50", "error");
         
         let screenshot = "";
         if (selectedScreenshot) {
@@ -636,17 +587,16 @@
         document.getElementById("depositTxn").value = "";
         document.getElementById("qrContainer").style.display = "none";
         document.getElementById("screenshotPreview").style.display = "none";
-        document.getElementById("screenshotPreview").innerHTML = "";
         selectedScreenshot = null;
         selectedMethod = null;
     };
     
     window.submitWithdraw = async () => {
-        if (!currentUserData) return;
+        if (!currentUserData || currentUserData.role !== "user") return;
         const address = document.getElementById("withdrawAddress").value.trim();
         const amount = parseFloat(document.getElementById("withdrawAmount").value);
-        if (!address) return showToast("Enter withdrawal address", "error");
-        if (amount < 20) return showToast("Minimum withdrawal $20", "error");
+        if (!address) return showToast("Enter address", "error");
+        if (amount < 20) return showToast("Minimum $20", "error");
         if ((currentUserData.balance || 0) < amount) return showToast("Insufficient balance", "error");
         await addDoc(collection(db, "withdrawals"), {
             userId: currentUserData.uid, userName: currentUserData.fullname, userEmail: currentUserData.email,
@@ -658,24 +608,53 @@
         document.getElementById("withdrawAmount").value = "";
     };
     
-    window.approveDeposit = async (id, userId, amount) => {
-        await updateDoc(doc(db, "deposits", id), { status: "approved" });
-        await updateDoc(doc(db, "users", userId), { balance: increment(amount), totalDeposits: increment(amount), totalIncome: increment(amount) });
-        showToast(`✅ Deposit $${amount} approved!`);
-        if (currentUserData?.role === "agent") loadAgentPanel();
-    };
-    window.rejectDeposit = async (id) => { await updateDoc(doc(db, "deposits", id), { status: "rejected" }); showToast("❌ Deposit rejected", "error"); };
-    window.approveWithdrawal = async (id, userId, amount) => { await updateDoc(doc(db, "withdrawals", id), { status: "approved" }); await updateDoc(doc(db, "users", userId), { balance: increment(-amount), totalWithdrawals: increment(amount) }); showToast(`✅ Withdrawal $${amount} approved!`); };
-    window.rejectWithdrawal = async (id) => { await updateDoc(doc(db, "withdrawals", id), { status: "rejected" }); showToast("❌ Withdrawal rejected", "error"); };
-    
-    window.viewScreenshot = (screenshot) => {
-        if (screenshot) {
-            const win = window.open();
-            win.document.write(`<img src="${screenshot}" style="max-width:100%; background:#000;">`);
+    // Agent Functions with Screenshot View
+    window.viewFullScreenshot = (screenshotData) => {
+        if (screenshotData) {
+            document.getElementById("fullScreenshotImg").src = screenshotData;
+            document.getElementById("screenshotModal").style.display = "flex";
+        } else {
+            showToast("No screenshot available", "error");
         }
     };
     
-    async function loadDashboard() {
+    window.approveDeposit = async (id, userId, amount, userEmail) => {
+        await updateDoc(doc(db, "deposits", id), { status: "approved" });
+        await updateDoc(doc(db, "users", userId), { balance: increment(amount), totalDeposits: increment(amount), totalIncome: increment(amount) });
+        showToast(`✅ Deposit $${amount} approved for ${userEmail}!`);
+        if (currentUserData?.role === "agent") { loadAgentPanel(); loadRecentActivity(); }
+    };
+    
+    window.rejectDeposit = async (id, userEmail) => {
+        await updateDoc(doc(db, "deposits", id), { status: "rejected" });
+        showToast(`❌ Deposit rejected for ${userEmail}`, "error");
+        if (currentUserData?.role === "agent") loadAgentPanel();
+    };
+    
+    window.approveWithdrawal = async (id, userId, amount, userEmail) => {
+        await updateDoc(doc(db, "withdrawals", id), { status: "approved" });
+        await updateDoc(doc(db, "users", userId), { balance: increment(-amount), totalWithdrawals: increment(amount) });
+        showToast(`✅ Withdrawal $${amount} approved for ${userEmail}!`);
+        if (currentUserData?.role === "agent") { loadAgentPanel(); loadRecentActivity(); }
+    };
+    
+    window.rejectWithdrawal = async (id, userEmail) => {
+        await updateDoc(doc(db, "withdrawals", id), { status: "rejected" });
+        showToast(`❌ Withdrawal rejected for ${userEmail}`, "error");
+        if (currentUserData?.role === "agent") loadAgentPanel();
+    };
+    
+    async function loadRecentActivity() {
+        if (!currentUserData || currentUserData.role !== "agent") return;
+        const recentDeposits = await getDocs(query(collection(db, "deposits"), where("status", "in", ["approved", "rejected"]), orderBy("createdAt", "desc"), limit(5)));
+        const recentWithdrawals = await getDocs(query(collection(db, "withdrawals"), where("status", "in", ["approved", "rejected"]), orderBy("createdAt", "desc"), limit(5)));
+        let html = "";
+        recentDeposits.docs.forEach(d => { html += `<div class="history-item">💰 Deposit $${d.data().amount} - ${d.data().status === 'approved' ? '✅ Approved' : '❌ Rejected'} for ${d.data().userName}</div>`; });
+        recentWithdrawals.docs.forEach(w => { html += `<div class="history-item">💸 Withdrawal $${w.data().amount} - ${w.data().status === 'approved' ? '✅ Approved' : '❌ Rejected'} for ${w.data().userName}</div>`; });
+        document.getElementById("recentActivity").innerHTML = html || "No recent activity";
+    }
+    
+    async function loadUserDashboard() {
         if (!currentUserData || currentUserData.role !== "user") return;
         document.getElementById("userBalance").innerHTML = `$${(currentUserData.balance || 0).toFixed(2)}`;
         document.getElementById("totalIncome").innerHTML = `$${(currentUserData.totalIncome || 0).toFixed(2)}`;
@@ -702,56 +681,62 @@
         
         let invHtml = "";
         investments.docs.forEach(d => { invHtml += `<div class="history-item">💰 ${d.data().plan} - $${d.data().amount} - <span class="badge-success">${d.data().status}</span></div>`; });
-        document.getElementById("investHistory").innerHTML = invHtml || "<div class='history-item'>No investments yet</div>";
+        document.getElementById("investHistory").innerHTML = invHtml || "<div>No investments</div>";
         
         const deposits = await getDocs(query(collection(db, "deposits"), where("userId", "==", currentUserData.uid)));
         const withdrawals = await getDocs(query(collection(db, "withdrawals"), where("userId", "==", currentUserData.uid)));
         let transHtml = "";
-        deposits.docs.forEach(d => transHtml += `<div class="history-item"><span><i class="fas fa-download" style="color:#10B981;"></i> Deposit</span><span>+$${d.data().amount}</span><span class="badge-${d.data().status === 'approved' ? 'success' : 'pending'}">${d.data().status}</span></div>`);
-        withdrawals.docs.forEach(w => transHtml += `<div class="history-item"><span><i class="fas fa-upload" style="color:#EF4444;"></i> Withdrawal</span><span>-$${w.data().amount}</span><span class="badge-${w.data().status === 'approved' ? 'success' : 'pending'}">${w.data().status}</span></div>`);
-        document.getElementById("transactionHistory").innerHTML = transHtml || "<div class='history-item'>No transactions</div>";
+        deposits.docs.forEach(d => transHtml += `<div class="history-item"><span><i class="fas fa-download"></i> Deposit</span><span>+$${d.data().amount}</span><span class="badge-${d.data().status === 'approved' ? 'success' : 'pending'}">${d.data().status}</span></div>`);
+        withdrawals.docs.forEach(w => transHtml += `<div class="history-item"><span><i class="fas fa-upload"></i> Withdrawal</span><span>-$${w.data().amount}</span><span class="badge-${w.data().status === 'approved' ? 'success' : 'pending'}">${w.data().status}</span></div>`);
+        document.getElementById("transactionHistory").innerHTML = transHtml || "<div>No transactions</div>";
     }
     
     async function loadAgentPanel() {
         if (!currentUserData || currentUserData.role !== "agent") return;
-        const deps = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending")));
-        const wds = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending")));
-        document.getElementById("pendingDepositsList").innerHTML = deps.empty ? "<p>No pending deposits</p>" :
-            `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>Screenshot</th><th>Action</th></tr>
-            ${deps.docs.map(d => `<tr>
-                <td>${d.data().userName}</td><td style="color:#F5B041;">$${d.data().amount}</td>
-                <td>${d.data().method}</td>
-                <td>${d.data().screenshot ? `<button class="view-btn" onclick="viewScreenshot('${d.data().screenshot}')">View</button>` : 'No file'}</td>
-                <td><button class="approve-btn" onclick="approveDeposit('${d.id}', '${d.data().userId}', ${d.data().amount})">Approve</button>
-                <button class="reject-btn" onclick="rejectDeposit('${d.id}')">Reject</button></td>
-            </tr>`).join("")}</tr>`;
-        document.getElementById("pendingWithdrawalsList").innerHTML = wds.empty ? "<p>No pending withdrawals</p>" :
-            `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>Action</th></tr>
-            ${wds.docs.map(w => `<tr>
-                <td>${w.data().userName}</td><td style="color:#F5B041;">$${w.data().amount}</td>
-                <td>${w.data().method}</td>
-                <td><button class="approve-btn" onclick="approveWithdrawal('${w.id}', '${w.data().userId}', ${w.data().amount})">Approve</button>
-                <button class="reject-btn" onclick="rejectWithdrawal('${w.id}')">Reject</button></td>
-            </tr>`).join("")}</table>`;
+        const deps = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending"), orderBy("createdAt", "desc")));
+        const wds = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending"), orderBy("createdAt", "desc")));
+        
+        document.getElementById("pendingDepositsList").innerHTML = deps.empty ? "<p>✅ No pending deposits</p>" :
+            `<table class="admin-table">:
+                <tr style="background:#1A1F30;"><th>User</th><th>Amount</th><th>Method</th><th>Screenshot</th><th>Action</th></tr>
+                ${deps.docs.map(d => {
+                    const hasSS = d.data().screenshot && d.data().screenshot.length > 100;
+                    return `<tr>
+                        <td><strong>${d.data().userName}</strong><br><small>${d.data().userEmail}</small></td>
+                        <td style="color:#F5B041;">$${d.data().amount}</td>
+                        <td>${d.data().method}</td>
+                        <td>${hasSS ? `<button class="view-btn" onclick="viewFullScreenshot('${d.data().screenshot}')"><i class="fas fa-image"></i> View Screenshot</button>` : '📷 No screenshot'}</td>
+                        <td><button class="approve-btn" onclick="approveDeposit('${d.id}', '${d.data().userId}', ${d.data().amount}, '${d.data().userEmail}')">Approve</button>
+                        <button class="reject-btn" onclick="rejectDeposit('${d.id}', '${d.data().userEmail}')">Reject</button></td>
+                    </tr>`;
+                }).join("")}
+            </table>`;
+        
+        document.getElementById("pendingWithdrawalsList").innerHTML = wds.empty ? "<p>✅ No pending withdrawals</p>" :
+            `<table class="admin-table">
+                <tr style="background:#1A1F30;"><th>User</th><th>Amount</th><th>Method</th><th>Action</th></tr>
+                ${wds.docs.map(w => `<tr>
+                    <td><strong>${w.data().userName}</strong><br><small>${w.data().userEmail}</small></td>
+                    <td style="color:#F5B041;">$${w.data().amount}</td>
+                    <td>${w.data().method}</td>
+                    <td><button class="approve-btn" onclick="approveWithdrawal('${w.id}', '${w.data().userId}', ${w.data().amount}, '${w.data().userEmail}')">Approve</button>
+                    <button class="reject-btn" onclick="rejectWithdrawal('${w.id}', '${w.data().userEmail}')">Reject</button></td>
+                </tr>`).join("")}
+            </table>`;
+        
+        await loadRecentActivity();
     }
     
     async function loadReferralStats() {
-        if (!currentUserData) return;
+        if (!currentUserData || currentUserData.role !== "user") return;
         const refs = await getDocs(query(collection(db, "users"), where("referredBy", "==", currentUserData.uid)));
         document.getElementById("refCount").innerHTML = refs.size;
         document.getElementById("refEarnings").innerHTML = `$${(currentUserData.totalCommission || 0).toFixed(2)}`;
         document.getElementById("refLinkInput").value = `https://nexora.com/ref/${currentUserData.refCode}`;
     }
     
-    window.copyRefLink = () => {
-        const inp = document.getElementById("refLinkInput");
-        inp.select(); document.execCommand("copy");
-        showToast("Referral link copied!");
-    };
-    window.copyUserRefCode = () => {
-        navigator.clipboard.writeText(document.getElementById("userRefCode").innerText);
-        showToast("Referral code copied!");
-    };
+    window.copyRefLink = () => { const inp = document.getElementById("refLinkInput"); inp.select(); document.execCommand("copy"); showToast("Link copied!"); };
+    window.copyUserRefCode = () => { navigator.clipboard.writeText(document.getElementById("userRefCode").innerText); showToast("Code copied!"); };
     
     async function dailyProfit() {
         if (!currentUserData || currentUserData.role !== "user") return;
@@ -769,8 +754,8 @@
         }
         if (total > 0) {
             await updateDoc(doc(db, "users", currentUserData.uid), { balance: increment(total), totalIncome: increment(total) });
-            showToast(`✨ Daily profit credited: +$${total.toFixed(2)}`);
-            loadDashboard(); loadMePage();
+            showToast(`✨ Daily profit: +$${total.toFixed(2)}`);
+            loadUserDashboard(); loadMePage();
         }
     }
     
@@ -785,73 +770,49 @@
         if (banner) { bannerIdx = (bannerIdx + 1) % 3; banner.style.backgroundImage = `url('${bannerImages[bannerIdx]}')`; }
     }, 4000);
     
-    // FIXED: Authentication state listener - correctly shows dashboard after login
     onAuthStateChanged(auth, async (user) => {
-        console.log("Auth state changed:", user?.email, "Verified:", user?.emailVerified);
-        if (user && user.emailVerified) {
+        if (user) {
             const snap = await getDoc(doc(db, "users", user.uid));
             if (snap.exists()) {
                 currentUser = user;
                 currentUserData = { uid: user.uid, ...snap.data() };
-                console.log("User data loaded:", currentUserData.fullname);
-                
-                // Hide login overlay, show main app
                 document.getElementById("loginOverlay").classList.add("hide");
                 document.getElementById("mainApp").classList.add("show");
                 document.getElementById("avatarIcon").innerHTML = '<i class="fas fa-user-check" style="color:#0A0E1A;"></i>';
+                document.getElementById("roleBadge").innerHTML = currentUserData.role === "agent" ? "🤵 Agent" : "👤 User";
                 
-                // Load all data
-                await loadDashboard();
-                await loadMePage();
-                dailyProfit();
-                setInterval(() => dailyProfit(), 60000);
-                
-                // Handle role-based navigation
-                const agentNav = document.querySelectorAll('.nav-item')[4];
+                const agentNavBtn = document.getElementById("agentNavBtn");
                 if (currentUserData.role === "agent") {
-                    if (agentNav) agentNav.style.display = "flex";
-                    changePage('agentPage', agentNav);
+                    agentNavBtn.style.display = "flex";
+                    changePage('agentPanel', agentNavBtn);
                     loadAgentPanel();
                     onSnapshot(collection(db, "deposits"), () => loadAgentPanel());
                     onSnapshot(collection(db, "withdrawals"), () => loadAgentPanel());
                 } else {
-                    if (agentNav) agentNav.style.display = "none";
-                    changePage('homePage', document.querySelectorAll('.nav-item')[0]);
-                    // Real-time user data updates
+                    agentNavBtn.style.display = "none";
+                    changePage('userDashboard', document.querySelectorAll('.nav-item')[0]);
+                    loadUserDashboard();
+                    loadMePage();
+                    dailyProfit();
+                    setInterval(() => dailyProfit(), 60000);
                     onSnapshot(doc(db, "users", user.uid), () => {
                         getDoc(doc(db, "users", user.uid)).then(s => {
-                            if (s.exists()) {
-                                currentUserData = { uid: user.uid, ...s.data() };
-                                loadDashboard();
-                                loadMePage();
-                            }
+                            if (s.exists()) { currentUserData = { uid: user.uid, ...s.data() }; loadUserDashboard(); loadMePage(); }
                         });
                     });
                 }
-            } else {
-                console.log("User document not found in Firestore");
             }
-        } else if (user && !user.emailVerified) {
-            console.log("User exists but email not verified");
-            showToast("Please verify your email before logging in. Check your Gmail inbox.", "error");
-            // Stay on login screen
-            document.getElementById("loginOverlay").classList.remove("hide");
-            document.getElementById("mainApp").classList.remove("show");
         } else {
-            console.log("No user logged in");
             currentUser = null;
             currentUserData = null;
             document.getElementById("loginOverlay").classList.remove("hide");
             document.getElementById("mainApp").classList.remove("show");
             showLogin();
-            // Clear login form
             document.getElementById("loginEmail").value = "";
             document.getElementById("loginPassword").value = "";
             const loginBtn = document.getElementById("loginBtn");
-            if (loginBtn) {
-                loginBtn.innerHTML = 'Login to Dashboard';
-                loginBtn.disabled = false;
-            }
+            if (loginBtn) loginBtn.innerHTML = 'Login to Dashboard';
+            loginBtn.disabled = false;
         }
     });
 </script>
