@@ -145,7 +145,7 @@
         .page { display: none; padding: 16px; padding-bottom: 80px; }
         .page.active { display: block; }
         
-        .admin-table { width: 100%; font-size: 12px; }
+        .admin-table { width: 100%; font-size: 12px; border-collapse: collapse; }
         .admin-table th, .admin-table td { padding: 10px; text-align: left; border-bottom: 1px solid #2A3148; }
         .approve-btn { background: #10B981; color: white; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; margin: 2px; }
         .reject-btn { background: #EF4444; color: white; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; margin: 2px; }
@@ -171,9 +171,6 @@
         .file-upload:hover { background: rgba(245,176,65,0.1); }
         
         .role-badge { background: rgba(245,176,65,0.2); padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-left: 10px; }
-        
-        .screenshot-modal { max-width: 90%; max-height: 90%; }
-        .screenshot-modal img { max-width: 100%; max-height: 80vh; border-radius: 16px; }
     </style>
 </head>
 <body>
@@ -285,7 +282,7 @@
     <!-- Agent Panel -->
     <div id="agentPanel" class="page">
         <h2 class="gold-text" style="padding: 0 16px;"><i class="fas fa-user-tie"></i> Agent Verification Panel</h2>
-        <p style="padding: 0 16px; margin-bottom: 10px; color: #F5B041;">Verify deposit and withdrawal requests from users</p>
+        <p style="padding: 0 16px; margin-bottom: 10px; color: #F5B041;">📋 Verify deposit and withdrawal requests from users</p>
         
         <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;">
             <h3><i class="fas fa-download gold-text"></i> Pending Deposit Requests</h3>
@@ -345,13 +342,6 @@
     <p style="font-size:12px; margin-top:10px; text-align:center;">⏳ Agent will verify your request</p>
 </div></div>
 
-<!-- Screenshot Preview Modal for Agent -->
-<div id="screenshotModal" class="modal"><div class="modal-content screenshot-modal" style="max-width: 600px; text-align: center;">
-    <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('screenshotModal')">&times;</span>
-    <h3 class="gold-text">Payment Screenshot</h3>
-    <img id="fullScreenshotImg" src="" style="max-width: 100%; border-radius: 16px; margin-top: 15px;">
-</div></div>
-
 <div id="toastContainer"></div>
 
 <script type="module">
@@ -390,7 +380,8 @@
                 fullname: "Verification Agent", email: AGENT_EMAIL, balance: 0, refCode: "AGENT001", role: "agent",
                 purchasedPlans: [], totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0, createdAt: serverTimestamp()
             });
-        } catch(e) { console.log("Agent exists"); }
+            console.log("✅ Agent account created");
+        } catch(e) { console.log("Agent already exists"); }
     }
     createFixedAgentAccount();
     
@@ -416,7 +407,7 @@
             selectedScreenshot = input.files[0];
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById("screenshotPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px; border:1px solid #F5B041;">`;
+                document.getElementById("screenshotPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px;">`;
                 document.getElementById("screenshotPreview").style.display = "block";
             };
             reader.readAsDataURL(input.files[0]);
@@ -535,9 +526,8 @@
         const purchased = currentUserData?.purchasedPlans || [];
         document.getElementById("vipList").innerHTML = vipPlans.map(p => `
             <div class="vip-card"><div class="vip-price">$${p.price}</div>
-            <div><i class="fas fa-chart-line"></i> Daily: $${p.dailyReturn} USDT</div>
-            <div><i class="fas fa-calendar"></i> ${p.days} Days</div>
-            <div><i class="fas fa-coins"></i> Total: $${p.totalReturn} USDT</div>
+            <div>Daily: $${p.dailyReturn} USDT</div><div>${p.days} Days</div>
+            <div>Total: $${p.totalReturn} USDT</div>
             ${!purchased.includes(p.level) ? `<button class="btn-gold" style="width:100%; margin-top:12px;" onclick="buyPlan(${p.price}, '${p.level}')">Unlock Now</button>` : '<button class="btn-outline" disabled>✅ Purchased</button>'}
             </div>`).join("");
     }
@@ -576,17 +566,26 @@
                 reader.readAsDataURL(selectedScreenshot);
             });
         }
+        
         await addDoc(collection(db, "deposits"), {
-            userId: currentUserData.uid, userName: currentUserData.fullname, userEmail: currentUserData.email,
-            method: selectedMethod.method, userWallet: wallet, txnHash: document.getElementById("depositTxn").value,
-            amount, screenshot, status: "pending", createdAt: serverTimestamp()
+            userId: currentUserData.uid, 
+            userName: currentUserData.fullname, 
+            userEmail: currentUserData.email,
+            method: selectedMethod.method, 
+            userWallet: wallet, 
+            txnHash: document.getElementById("depositTxn").value,
+            amount: amount, 
+            screenshot: screenshot, 
+            status: "pending", 
+            createdAt: serverTimestamp()
         });
-        showToast("✅ Deposit request sent to Agent!");
+        showToast("✅ Deposit request sent to Agent for verification!");
         closeModal("depositModal");
         document.getElementById("depositWallet").value = "";
         document.getElementById("depositTxn").value = "";
         document.getElementById("qrContainer").style.display = "none";
         document.getElementById("screenshotPreview").style.display = "none";
+        document.getElementById("screenshotPreview").innerHTML = "";
         selectedScreenshot = null;
         selectedMethod = null;
     };
@@ -608,11 +607,11 @@
         document.getElementById("withdrawAmount").value = "";
     };
     
-    // Agent Functions with Screenshot View
-    window.viewFullScreenshot = (screenshotData) => {
-        if (screenshotData) {
-            document.getElementById("fullScreenshotImg").src = screenshotData;
-            document.getElementById("screenshotModal").style.display = "flex";
+    // Agent Functions
+    window.viewScreenshot = (screenshot) => {
+        if (screenshot) {
+            const win = window.open();
+            win.document.write(`<img src="${screenshot}" style="max-width:100%; background:#000; max-height:90vh;">`);
         } else {
             showToast("No screenshot available", "error");
         }
@@ -686,39 +685,41 @@
         const deposits = await getDocs(query(collection(db, "deposits"), where("userId", "==", currentUserData.uid)));
         const withdrawals = await getDocs(query(collection(db, "withdrawals"), where("userId", "==", currentUserData.uid)));
         let transHtml = "";
-        deposits.docs.forEach(d => transHtml += `<div class="history-item"><span><i class="fas fa-download"></i> Deposit</span><span>+$${d.data().amount}</span><span class="badge-${d.data().status === 'approved' ? 'success' : 'pending'}">${d.data().status}</span></div>`);
-        withdrawals.docs.forEach(w => transHtml += `<div class="history-item"><span><i class="fas fa-upload"></i> Withdrawal</span><span>-$${w.data().amount}</span><span class="badge-${w.data().status === 'approved' ? 'success' : 'pending'}">${w.data().status}</span></div>`);
+        deposits.docs.forEach(d => transHtml += `<div class="history-item"><span>Deposit</span><span>+$${d.data().amount}</span><span class="badge-${d.data().status === 'approved' ? 'success' : 'pending'}">${d.data().status}</span></div>`);
+        withdrawals.docs.forEach(w => transHtml += `<div class="history-item"><span>Withdrawal</span><span>-$${w.data().amount}</span><span class="badge-${w.data().status === 'approved' ? 'success' : 'pending'}">${w.data().status}</span></div>`);
         document.getElementById("transactionHistory").innerHTML = transHtml || "<div>No transactions</div>";
     }
     
     async function loadAgentPanel() {
         if (!currentUserData || currentUserData.role !== "agent") return;
+        console.log("Loading agent panel...");
         const deps = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending"), orderBy("createdAt", "desc")));
-        const wds = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending"), orderBy("createdAt", "desc")));
+        console.log("Pending deposits count:", deps.size);
         
         document.getElementById("pendingDepositsList").innerHTML = deps.empty ? "<p>✅ No pending deposits</p>" :
-            `<table class="admin-table">:
+            `<table class="admin-table">
                 <tr style="background:#1A1F30;"><th>User</th><th>Amount</th><th>Method</th><th>Screenshot</th><th>Action</th></tr>
                 ${deps.docs.map(d => {
                     const hasSS = d.data().screenshot && d.data().screenshot.length > 100;
                     return `<tr>
-                        <td><strong>${d.data().userName}</strong><br><small>${d.data().userEmail}</small></td>
+                        <td><strong>${d.data().userName || d.data().userEmail}</strong><br><small>${d.data().userEmail}</small></td>
                         <td style="color:#F5B041;">$${d.data().amount}</td>
-                        <td>${d.data().method}</td>
-                        <td>${hasSS ? `<button class="view-btn" onclick="viewFullScreenshot('${d.data().screenshot}')"><i class="fas fa-image"></i> View Screenshot</button>` : '📷 No screenshot'}</td>
+                        <td>${d.data().method || 'N/A'}</td>
+                        <td>${hasSS ? `<button class="view-btn" onclick="viewScreenshot('${d.data().screenshot}')"><i class="fas fa-image"></i> View SS</button>` : '📷 No screenshot'}</td>
                         <td><button class="approve-btn" onclick="approveDeposit('${d.id}', '${d.data().userId}', ${d.data().amount}, '${d.data().userEmail}')">Approve</button>
                         <button class="reject-btn" onclick="rejectDeposit('${d.id}', '${d.data().userEmail}')">Reject</button></td>
                     </tr>`;
                 }).join("")}
             </table>`;
         
+        const wds = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending"), orderBy("createdAt", "desc")));
         document.getElementById("pendingWithdrawalsList").innerHTML = wds.empty ? "<p>✅ No pending withdrawals</p>" :
             `<table class="admin-table">
                 <tr style="background:#1A1F30;"><th>User</th><th>Amount</th><th>Method</th><th>Action</th></tr>
                 ${wds.docs.map(w => `<tr>
-                    <td><strong>${w.data().userName}</strong><br><small>${w.data().userEmail}</small></td>
+                    <td><strong>${w.data().userName || w.data().userEmail}</strong><br><small>${w.data().userEmail}</small></td>
                     <td style="color:#F5B041;">$${w.data().amount}</td>
-                    <td>${w.data().method}</td>
+                    <td>${w.data().method || 'N/A'}</td>
                     <td><button class="approve-btn" onclick="approveWithdrawal('${w.id}', '${w.data().userId}', ${w.data().amount}, '${w.data().userEmail}')">Approve</button>
                     <button class="reject-btn" onclick="rejectWithdrawal('${w.id}', '${w.data().userEmail}')">Reject</button></td>
                 </tr>`).join("")}
@@ -786,6 +787,7 @@
                     agentNavBtn.style.display = "flex";
                     changePage('agentPanel', agentNavBtn);
                     loadAgentPanel();
+                    // Real-time listeners
                     onSnapshot(collection(db, "deposits"), () => loadAgentPanel());
                     onSnapshot(collection(db, "withdrawals"), () => loadAgentPanel());
                 } else {
