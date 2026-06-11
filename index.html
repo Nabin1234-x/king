@@ -64,7 +64,7 @@
         .qr-big img { width: 180px; border-radius: 20px; background: white; padding: 10px; }
         .wallet-address { background: #0B0E18; padding: 12px; border-radius: 20px; text-align: center; font-family: monospace; word-break: break-all; margin: 10px 0; }
 
-        .toast { position: fixed; bottom: 30px; right: 30px; background: #1E243C; border-left: 5px solid #F5B041; padding: 14px 24px; border-radius: 16px; z-index: 3000; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease; }
+        .toast { position: fixed; bottom: 30px; right: 30px; background: #1E243C; border-left: 5px solid #F5B041; padding: 14px 24px; border-radius: 16px; z-index: 3000; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         @keyframes slideIn { from { opacity: 0; transform: translateX(80px); } to { opacity: 1; transform: translateX(0); } }
 
         .admin-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
@@ -73,6 +73,12 @@
         .action-btn { padding: 5px 12px; margin: 0 3px; border-radius: 20px; cursor: pointer; border: none; }
         .approve-btn { background: #10B981; color: white; }
         .reject-btn { background: #EF4444; color: white; }
+        .pending-badge { background: #F59E0B; color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+        .success-badge { background: #10B981; color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+        .rejected-badge { background: #EF4444; color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px; }
+
+        .history-card { background: rgba(18, 25, 45, 0.5); border-radius: 20px; padding: 15px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .notification-badge { background: #EF4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; margin-left: 5px; }
 
         footer { background: #070A12; padding: 40px 5% 25px; margin-top: 60px; border-top: 1px solid #F5B04120; }
         .footer-links { display: flex; justify-content: center; gap: 35px; flex-wrap: wrap; margin: 20px 0; }
@@ -86,7 +92,11 @@
             .stats-grid { grid-template-columns: 1fr; }
             .plans-grid { grid-template-columns: 1fr; }
             .nav-links { justify-content: center; }
+            .history-card { flex-direction: column; text-align: center; }
         }
+        
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #F5B041; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -94,13 +104,14 @@
 <div class="navbar">
     <div class="logo">
         <h2><span class="gold-text">NEXORA</span> CAPITAL</h2>
-        <p>Smart Investments. Stronger Futures.</p>
+        <p>Real-Time Multi-Device Platform</p>
     </div>
     <div class="nav-links" id="navLinks">
         <a onclick="showDashboard()" id="dashNav" style="display:none;"><i class="fas fa-chart-pie"></i> Dashboard</a>
         <a onclick="showInvestments()" id="investNav" style="display:none;"><i class="fas fa-crown"></i> VIP Plans</a>
         <a onclick="showReferrals()" id="refNav" style="display:none;"><i class="fas fa-link"></i> Referrals</a>
-        <a onclick="showAgentPanel()" id="agentNav" style="display:none;"><i class="fas fa-user-tie"></i> Agent Panel</a>
+        <a onclick="showHistory()" id="historyNav" style="display:none;"><i class="fas fa-clock"></i> History</a>
+        <a onclick="showAgentPanel()" id="agentNav" style="display:none;"><i class="fas fa-user-tie"></i> Agent Panel <span id="pendingBadge" class="notification-badge" style="display:none;">0</span></a>
         <a id="authBtn" onclick="openAuthModal()"><i class="fas fa-user-circle"></i> Login</a>
     </div>
 </div>
@@ -117,12 +128,13 @@
     <div class="banner-overlay"></div>
     <div class="banner-text">
         <h2 class="gold-text">Invest Smart. Grow Securely.</h2>
-        <p>Nexora Capital – Real-Time Multi-Device Platform</p>
-        <button class="btn-gold" id="heroBtn" style="padding: 8px 20px; margin-top: 6px;">Start Investing →</button>
+        <p>Real-Time Deposit & Withdrawal System</p>
+        <button class="btn-gold" id="heroBtn" style="padding: 8px 20px;">Start Investing →</button>
     </div>
 </div>
 
 <div class="app-main" id="appMain">
+    <!-- User Dashboard -->
     <div id="dashboardSection">
         <h2><i class="fas fa-tachometer-alt gold-text"></i> Dashboard</h2>
         <div class="stats-grid">
@@ -131,26 +143,28 @@
             <div class="stat-card glass-card"><i class="fas fa-sun"></i><h3>Daily Profit Est.</h3><h2 id="dailyEstimate">$0.00</h2></div>
         </div>
         <div class="glass-card" style="padding: 25px; margin-bottom: 30px;">
-            <h3><i class="fas fa-chart-line gold-text"></i> Profit Projection</h3>
+            <h3><i class="fas fa-chart-line gold-text"></i> Profit Projection (7 Days)</h3>
             <canvas id="profitChart" height="150"></canvas>
         </div>
         <div class="glass-card" style="padding: 28px;">
-            <h3><i class="fas fa-history"></i> My Investments</h3>
+            <h3><i class="fas fa-chart-simple"></i> Active Investments</h3>
             <div id="investHistoryList">No active investments yet.</div>
             <div style="display: flex; gap: 15px; margin-top: 28px; flex-wrap: wrap;">
-                <button class="btn-gold" onclick="openDepositModal()"><i class="fas fa-plus-circle"></i> Deposit</button>
+                <button class="btn-gold" onclick="openDepositModal()"><i class="fas fa-plus-circle"></i> Deposit Funds</button>
                 <button class="btn-outline-gold" onclick="openWithdrawModal()"><i class="fas fa-hand-holding-usd"></i> Withdraw</button>
                 <button class="btn-outline-gold" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </div>
     </div>
 
+    <!-- VIP Plans -->
     <div id="investSection" style="display: none;">
         <h2><i class="fas fa-gem gold-text"></i> VIP Investment Plans</h2>
         <p style="margin-bottom: 20px;">Each plan can be purchased only once • 45 days • Daily 5-11% ROI</p>
         <div class="plans-grid" id="plansGrid"></div>
     </div>
 
+    <!-- Referrals -->
     <div id="referralSection" style="display: none;">
         <div class="glass-card" style="padding: 35px;">
             <h3><i class="fas fa-link gold-text"></i> Referral Program</h3>
@@ -161,26 +175,47 @@
             </div>
             <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
                 <div class="glass-card" style="padding: 20px;"><h4>Total Referrals</h4><h2 id="refCount">0</h2></div>
-                <div class="glass-card" style="padding: 20px;"><h4>Earnings</h4><h2 id="refEarnings">$0.00</h2></div>
+                <div class="glass-card" style="padding: 20px;"><h4>Referral Earnings</h4><h2 id="refEarnings">$0.00</h2></div>
             </div>
         </div>
     </div>
 
+    <!-- Transaction History -->
+    <div id="historySection" style="display: none;">
+        <h2><i class="fas fa-clock gold-text"></i> Transaction History</h2>
+        <div class="glass-card" style="padding: 28px;">
+            <h3><i class="fas fa-download"></i> Deposit History</h3>
+            <div id="depositHistoryList">No deposits yet.</div>
+        </div>
+        <div class="glass-card" style="padding: 28px; margin-top: 20px;">
+            <h3><i class="fas fa-upload"></i> Withdrawal History</h3>
+            <div id="withdrawalHistoryList">No withdrawals yet.</div>
+        </div>
+    </div>
+
+    <!-- Agent Panel -->
     <div id="agentSection" style="display: none;">
         <h2><i class="fas fa-user-tie gold-text"></i> Agent Verification Panel</h2>
-        <p style="margin-bottom: 20px;">Real-time deposit & withdrawal verification</p>
+        <p style="margin-bottom: 20px;">Real-time deposit & withdrawal verification <span id="agentPendingCount" class="pending-badge" style="margin-left: 10px;">0 Pending</span></p>
+        
         <div class="glass-card" style="padding: 25px; margin: 20px 0;">
-            <h3><i class="fas fa-download gold-text"></i> Pending Deposits</h3>
+            <h3><i class="fas fa-download gold-text"></i> Pending Deposit Requests</h3>
             <div id="agentPendingDeposits">Loading...</div>
         </div>
+        
         <div class="glass-card" style="padding: 25px; margin: 20px 0;">
-            <h3><i class="fas fa-upload gold-text"></i> Pending Withdrawals</h3>
+            <h3><i class="fas fa-upload gold-text"></i> Pending Withdrawal Requests</h3>
             <div id="agentPendingWithdrawals">Loading...</div>
+        </div>
+        
+        <div class="glass-card" style="padding: 25px;">
+            <h3><i class="fas fa-check-circle gold-text"></i> Recently Verified</h3>
+            <div id="recentActivity">No recent activity</div>
         </div>
     </div>
 </div>
 
-<!-- Modals -->
+<!-- Deposit Modal -->
 <div id="depositModal" class="modal">
     <div class="modal-content">
         <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('depositModal')">&times;</span>
@@ -196,29 +231,35 @@
             <img id="qrImage" src="">
             <div class="wallet-address" id="walletAddressDisplay"></div>
         </div>
-        <input type="text" id="userWallet" placeholder="Your Wallet Address">
+        <input type="text" id="userWallet" placeholder="Your Wallet Address *" required>
         <input type="text" id="txnHash" placeholder="Transaction Hash">
-        <input type="number" id="depositAmount" placeholder="Amount (USD)" value="100">
-        <button class="btn-gold" style="width:100%;" onclick="submitDepositRequest()">Submit Deposit</button>
-        <p class="risk-warning">Agent will verify your request in real-time</p>
+        <input type="number" id="depositAmount" placeholder="Amount (USD) - Min $50" value="100">
+        <button class="btn-gold" style="width:100%;" onclick="submitDeposit()" id="submitDepositBtn">Submit Deposit Request</button>
+        <p class="risk-warning" style="margin-top: 12px;">✓ Request will be verified by Agent in real-time</p>
+        <p class="risk-warning">✓ Funds added to balance after approval</p>
     </div>
 </div>
 
+<!-- Withdraw Modal -->
 <div id="withdrawModal" class="modal">
     <div class="modal-content">
         <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('withdrawModal')">&times;</span>
         <h3 class="gold-text"><i class="fas fa-hand-holding-usd"></i> Withdraw Funds</h3>
-        <select id="withdrawMethod"><option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option></select>
-        <input type="text" id="withdrawAddress" placeholder="Withdrawal Address">
+        <select id="withdrawMethod">
+            <option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option>
+        </select>
+        <input type="text" id="withdrawAddress" placeholder="Withdrawal Address *" required>
         <input type="number" id="withdrawAmount" placeholder="Amount (USD) - Min $20">
-        <button class="btn-gold" style="width:100%;" onclick="submitWithdrawRequest()">Request Withdrawal</button>
+        <button class="btn-gold" style="width:100%;" onclick="submitWithdraw()">Request Withdrawal</button>
+        <p class="risk-warning">✓ Request will be verified by Agent</p>
     </div>
 </div>
 
+<!-- Auth Modal -->
 <div id="authModal" class="modal">
     <div class="modal-content">
         <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('authModal')">&times;</span>
-        <h3 class="gold-text" id="authTitle">Login to Nexora</h3>
+        <h3 class="gold-text" id="authTitle">Welcome to Nexora Capital</h3>
         <div id="loginForm">
             <input type="email" id="loginEmail" placeholder="Email Address">
             <input type="password" id="loginPassword" placeholder="Password">
@@ -235,8 +276,8 @@
             <a href="#" onclick="toggleAuthMode()" id="toggleAuthLink">Don't have an account? Register</a>
         </p>
         <p style="text-align:center; margin-top:10px;">
-            <a href="#" onclick="sendPasswordReset()">Forgot Password?</a> | 
-            <a href="#" onclick="signInWithGoogle()">Sign in with Google</a>
+            <a href="#" onclick="forgotPassword()">Forgot Password?</a> | 
+            <a href="#" onclick="googleLogin()">Sign in with Google</a>
         </p>
     </div>
 </div>
@@ -257,7 +298,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
     const firebaseConfig = {
         apiKey: "AIzaSyAxSWI_Uh_hYJvSBMhKLw-bvcoqwzvdhN4",
@@ -275,40 +316,15 @@
     const googleProvider = new GoogleAuthProvider();
     
     let currentUserData = null;
-    let unsubscribeAgentDeposits = null;
-    let unsubscribeAgentWithdrawals = null;
+    let unsubscribeList = [];
     
-    // Predefined accounts
     const AGENT_EMAIL = "agent@nexora.com";
-    const AGENT_PASS = "Agent@123";
     const ADMIN_EMAIL = "admin@nexora.com";
-    const ADMIN_PASS = "Admin@123";
     
+    // Create predefined accounts
     async function createPredefinedUsers() {
-        try {
-            const agentCred = await createUserWithEmailAndPassword(auth, AGENT_EMAIL, AGENT_PASS);
-            await setDoc(doc(db, "users", agentCred.user.uid), {
-                fullname: "Verification Agent",
-                email: AGENT_EMAIL,
-                balance: 0,
-                refCode: "AGENT001",
-                role: "agent",
-                purchasedPlans: [],
-                createdAt: serverTimestamp()
-            });
-        } catch(e) {}
-        try {
-            const adminCred = await createUserWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASS);
-            await setDoc(doc(db, "users", adminCred.user.uid), {
-                fullname: "System Admin",
-                email: ADMIN_EMAIL,
-                balance: 0,
-                refCode: "ADMIN001",
-                role: "admin",
-                purchasedPlans: [],
-                createdAt: serverTimestamp()
-            });
-        } catch(e) {}
+        try { await createUserWithEmailAndPassword(auth, AGENT_EMAIL, "Agent@123"); } catch(e) {}
+        try { await createUserWithEmailAndPassword(auth, ADMIN_EMAIL, "Admin@123"); } catch(e) {}
     }
     createPredefinedUsers();
     
@@ -317,10 +333,51 @@
         toast.className = "toast";
         toast.innerHTML = `<i class="fas ${type === "success" ? "fa-check-circle" : "fa-exclamation-triangle"}" style="color:#F5B041;"></i> ${msg}`;
         document.getElementById("toastContainer").appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        setTimeout(() => toast.remove(), 3500);
     }
     
-    window.signInWithGoogle = async () => {
+    async function updateUIBasedOnRole() {
+        const appMain = document.getElementById("appMain");
+        const authBtn = document.getElementById("authBtn");
+        const dashNav = document.getElementById("dashNav");
+        const investNav = document.getElementById("investNav");
+        const refNav = document.getElementById("refNav");
+        const historyNav = document.getElementById("historyNav");
+        const agentNav = document.getElementById("agentNav");
+        
+        if (currentUserData) {
+            appMain.style.display = "block";
+            authBtn.innerHTML = `<i class="fas fa-user-check"></i> ${currentUserData.fullname || currentUserData.email.split('@')[0]}`;
+            
+            if (currentUserData.role === "agent") {
+                dashNav.style.display = "none";
+                investNav.style.display = "none";
+                refNav.style.display = "none";
+                historyNav.style.display = "none";
+                agentNav.style.display = "flex";
+                showAgentPanel();
+            } else if (currentUserData.role === "admin") {
+                dashNav.style.display = "flex";
+                investNav.style.display = "flex";
+                refNav.style.display = "flex";
+                historyNav.style.display = "flex";
+                agentNav.style.display = "none";
+                showDashboard();
+            } else {
+                dashNav.style.display = "flex";
+                investNav.style.display = "flex";
+                refNav.style.display = "flex";
+                historyNav.style.display = "flex";
+                agentNav.style.display = "none";
+                showDashboard();
+            }
+        } else {
+            appMain.style.display = "none";
+            authBtn.innerHTML = '<i class="fas fa-user-circle"></i> Login';
+        }
+    }
+    
+    window.googleLogin = async () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
@@ -338,56 +395,19 @@
                 });
             }
             showToast("Google login successful!");
+            closeModal("authModal");
         } catch(e) { showToast(e.message, "error"); }
     };
     
-    window.sendPasswordReset = async () => {
-        const email = prompt("Enter your email:");
+    window.forgotPassword = async () => {
+        const email = prompt("Enter your email address:");
         if (email) {
             try {
                 await sendPasswordResetEmail(auth, email);
-                showToast("Reset email sent!");
+                showToast("Password reset email sent! Check your inbox.");
             } catch(e) { showToast(e.message, "error"); }
         }
     };
-    
-    async function updateUI() {
-        const appMain = document.getElementById("appMain");
-        const authBtn = document.getElementById("authBtn");
-        const dashNav = document.getElementById("dashNav");
-        const investNav = document.getElementById("investNav");
-        const refNav = document.getElementById("refNav");
-        const agentNav = document.getElementById("agentNav");
-        
-        if (currentUserData) {
-            appMain.style.display = "block";
-            authBtn.innerHTML = `<i class="fas fa-user-check"></i> ${currentUserData.fullname || currentUserData.email.split('@')[0]}`;
-            dashNav.style.display = "flex";
-            investNav.style.display = "flex";
-            refNav.style.display = "flex";
-            
-            if (currentUserData.role === "agent") {
-                agentNav.style.display = "flex";
-                dashNav.style.display = "none";
-                investNav.style.display = "none";
-                refNav.style.display = "none";
-                showAgentPanel();
-            } else if (currentUserData.role === "admin") {
-                agentNav.style.display = "none";
-                showDashboard();
-            } else {
-                agentNav.style.display = "none";
-                showDashboard();
-            }
-        } else {
-            appMain.style.display = "none";
-            authBtn.innerHTML = '<i class="fas fa-user-circle"></i> Login';
-            dashNav.style.display = "none";
-            investNav.style.display = "none";
-            refNav.style.display = "none";
-            agentNav.style.display = "none";
-        }
-    }
     
     window.login = async (email, password) => {
         try {
@@ -399,6 +419,7 @@
     
     window.register = async (name, email, password, confirm, refCode) => {
         if (password !== confirm) return showToast("Passwords don't match", "error");
+        if (password.length < 6) return showToast("Password must be at least 6 characters", "error");
         try {
             const result = await createUserWithEmailAndPassword(auth, email, password);
             let referredBy = null;
@@ -417,47 +438,68 @@
                 purchasedPlans: [],
                 createdAt: serverTimestamp()
             });
-            showToast("Registration successful!");
+            showToast("Registration successful! Welcome to Nexora!");
             closeModal("authModal");
         } catch(e) { showToast(e.message, "error"); }
     };
     
     window.logout = async () => {
         await signOut(auth);
-        showToast("Logged out");
+        showToast("Logged out successfully");
     };
     
-    window.submitDepositRequest = async () => {
-        if (!currentUserData || !selectedMethod.address) return showToast("Select payment method", "error");
+    let selectedMethod = { name: "", address: "", qr: "" };
+    window.selectMethod = (name, address, qr) => {
+        selectedMethod = { name, address, qr };
+        document.getElementById("qrDisplay").style.display = "block";
+        document.getElementById("qrImage").src = qr;
+        document.getElementById("walletAddressDisplay").innerHTML = `<strong>Send funds to:</strong><br>${address}`;
+        document.querySelectorAll(".method-chip").forEach(el => el.classList.remove("active"));
+        event.target.classList.add("active");
+    };
+    
+    window.submitDeposit = async () => {
+        if (!currentUserData) return;
+        if (!selectedMethod.address) return showToast("Please select a payment method", "error");
         const userWallet = document.getElementById("userWallet").value;
-        if (!userWallet) return showToast("Enter wallet address", "error");
-        const amount = parseFloat(document.getElementById("depositAmount").value) || 100;
-        if (amount < 50) return showToast("Minimum $50", "error");
+        if (!userWallet) return showToast("Please enter your wallet address", "error");
+        const amount = parseFloat(document.getElementById("depositAmount").value);
+        if (amount < 50) return showToast("Minimum deposit amount is $50", "error");
         
-        await addDoc(collection(db, "deposits"), {
-            userId: currentUserData.uid,
-            userEmail: currentUserData.email,
-            userName: currentUserData.fullname,
-            method: selectedMethod.name,
-            depositAddress: selectedMethod.address,
-            userWallet: userWallet,
-            txnHash: document.getElementById("txnHash").value,
-            amount: amount,
-            status: "pending",
-            createdAt: serverTimestamp()
-        });
-        showToast("Deposit request sent! Agent will verify.");
-        closeModal("depositModal");
-        document.getElementById("userWallet").value = "";
-        document.getElementById("txnHash").value = "";
+        const btn = document.getElementById("submitDepositBtn");
+        btn.innerHTML = '<span class="loading-spinner"></span> Submitting...';
+        btn.disabled = true;
+        
+        try {
+            await addDoc(collection(db, "deposits"), {
+                userId: currentUserData.uid,
+                userEmail: currentUserData.email,
+                userName: currentUserData.fullname,
+                method: selectedMethod.name,
+                depositAddress: selectedMethod.address,
+                userWallet: userWallet,
+                txnHash: document.getElementById("txnHash").value,
+                amount: amount,
+                status: "pending",
+                createdAt: serverTimestamp()
+            });
+            showToast("✅ Deposit request submitted! Agent will verify soon.");
+            closeModal("depositModal");
+            document.getElementById("userWallet").value = "";
+            document.getElementById("txnHash").value = "";
+        } catch(e) { showToast(e.message, "error"); }
+        
+        btn.innerHTML = "Submit Deposit Request";
+        btn.disabled = false;
     };
     
-    window.submitWithdrawRequest = async () => {
+    window.submitWithdraw = async () => {
         if (!currentUserData) return;
         const method = document.getElementById("withdrawMethod").value;
         const address = document.getElementById("withdrawAddress").value;
         const amount = parseFloat(document.getElementById("withdrawAmount").value);
-        if (!address || amount < 20) return showToast("Min $20", "error");
+        if (!address) return showToast("Enter withdrawal address", "error");
+        if (amount < 20) return showToast("Minimum withdrawal amount is $20", "error");
         if ((currentUserData.balance || 0) < amount) return showToast("Insufficient balance", "error");
         
         await addDoc(collection(db, "withdrawals"), {
@@ -470,37 +512,42 @@
             status: "pending",
             createdAt: serverTimestamp()
         });
-        showToast("Withdrawal request sent! Agent will verify.");
+        showToast("✅ Withdrawal request submitted! Agent will verify.");
         closeModal("withdrawModal");
+        document.getElementById("withdrawAddress").value = "";
+        document.getElementById("withdrawAmount").value = "";
     };
     
     window.approveDeposit = async (id, userId, amount) => {
         await updateDoc(doc(db, "deposits", id), { status: "approved" });
         await updateDoc(doc(db, "users", userId), { balance: increment(amount) });
-        showToast(`Deposit $${amount} approved!`);
+        showToast(`✅ Deposit $${amount} approved! Balance updated.`);
     };
     
     window.rejectDeposit = async (id) => {
         await updateDoc(doc(db, "deposits", id), { status: "rejected" });
-        showToast("Deposit rejected", "error");
+        showToast(`❌ Deposit rejected`, "error");
     };
     
     window.approveWithdrawal = async (id, userId, amount) => {
         await updateDoc(doc(db, "withdrawals", id), { status: "approved" });
         await updateDoc(doc(db, "users", userId), { balance: increment(-amount) });
-        showToast(`Withdrawal $${amount} approved!`);
+        showToast(`✅ Withdrawal $${amount} approved! Balance updated.`);
     };
     
     window.rejectWithdrawal = async (id) => {
         await updateDoc(doc(db, "withdrawals", id), { status: "rejected" });
-        showToast("Withdrawal rejected", "error");
+        showToast(`❌ Withdrawal rejected`, "error");
     };
     
     window.buyPlan = async (amount, planName) => {
         if (!currentUserData) return;
-        if (currentUserData.purchasedPlans?.includes(planName)) return showToast(`${planName} already purchased!`, "error");
-        if ((currentUserData.balance || 0) < amount) return showToast(`Need $${amount}`, "error");
-        
+        if (currentUserData.purchasedPlans?.includes(planName)) {
+            return showToast(`${planName} already purchased!`, "error");
+        }
+        if ((currentUserData.balance || 0) < amount) {
+            return showToast(`Insufficient balance! Need $${amount}`, "error");
+        }
         await updateDoc(doc(db, "users", currentUserData.uid), {
             balance: increment(-amount),
             purchasedPlans: arrayUnion(planName)
@@ -513,21 +560,24 @@
             profitEarned: 0,
             startDate: serverTimestamp()
         });
-        showToast(`Invested $${amount} in ${planName}!`);
+        showToast(`🎉 Successfully invested $${amount} in ${planName}!`);
+        if (currentUserData.role === "user") loadUserDashboard();
     };
     
+    // Load User Dashboard
     async function loadUserDashboard() {
         if (!currentUserData || currentUserData.role !== "user") return;
-        document.getElementById("totalBalance").innerText = `$${(currentUserData.balance || 0).toFixed(2)}`;
+        document.getElementById("totalBalance").innerHTML = `$${(currentUserData.balance || 0).toFixed(2)}`;
+        
         const q = query(collection(db, "investments"), where("userId", "==", currentUserData.uid), where("status", "==", "active"));
         const snap = await getDocs(q);
         const investmentsList = snap.docs.map(d => d.data());
         document.getElementById("activeCount").innerText = investmentsList.length;
         const dailyEst = investmentsList.reduce((s, i) => s + (i.amount * 0.007), 0);
-        document.getElementById("dailyEstimate").innerText = `$${dailyEst.toFixed(2)}`;
+        document.getElementById("dailyEstimate").innerHTML = `$${dailyEst.toFixed(2)}`;
         
-        let html = investmentsList.map(i => `<div class="glass-card" style="padding:12px; margin:8px 0;">💼 ${i.plan} - $${i.amount} | Daily ~$${(i.amount * 0.007).toFixed(2)}</div>`).join("");
-        document.getElementById("investHistoryList").innerHTML = html || "<p>No active investments.</p>";
+        let html = investmentsList.map(i => `<div class="glass-card" style="padding:12px; margin:8px 0;"><i class="fas fa-chart-line gold-text"></i> ${i.plan} - $${i.amount} | Daily ~$${(i.amount * 0.007).toFixed(2)}</div>`).join("");
+        document.getElementById("investHistoryList").innerHTML = html || "<p>No active investments. Start investing now!</p>";
         
         const ctx = document.getElementById("profitChart")?.getContext("2d");
         if (ctx) {
@@ -539,24 +589,86 @@
         }
     }
     
-    async function loadAgentPanel() {
-        if (!currentUserData || currentUserData.role !== "agent") return;
-        const depositsSnap = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending")));
-        const withdrawalsSnap = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending")));
+    // Load Transaction History
+    async function loadHistory() {
+        if (!currentUserData) return;
         
-        document.getElementById("agentPendingDeposits").innerHTML = depositsSnap.empty ? "<p>No pending deposits</p>" :
-            `<table class="admin-table"><tr><th>User</th><th>Method</th><th>Amount</th><th>Action</th></tr>
-            ${depositsSnap.docs.map(d => `<tr><td>${d.data().userName || d.data().userEmail}</td><td>${d.data().method}</td><td>$${d.data().amount}</td>
-            <td><button class="action-btn approve-btn" onclick="approveDeposit('${d.id}', '${d.data().userId}', ${d.data().amount})">Approve</button>
-            <button class="action-btn reject-btn" onclick="rejectDeposit('${d.id}')">Reject</button></td></tr>`).join("")}</table>`;
+        // Deposit History
+        const depQ = query(collection(db, "deposits"), where("userId", "==", currentUserData.uid), orderBy("createdAt", "desc"));
+        const depSnap = await getDocs(depQ);
+        document.getElementById("depositHistoryList").innerHTML = depSnap.empty ? "<p>No deposit history</p>" :
+            depSnap.docs.map(d => {
+                const data = d.data();
+                const statusBadge = data.status === "approved" ? '<span class="success-badge">✓ Approved</span>' : 
+                                   (data.status === "rejected" ? '<span class="rejected-badge">✗ Rejected</span>' : '<span class="pending-badge">⏳ Pending</span>');
+                return `<div class="history-card">
+                            <div><i class="fas fa-coins gold-text"></i> ${data.method}</div>
+                            <div>$${data.amount}</div>
+                            <div>${statusBadge}</div>
+                            <div><small>${data.createdAt?.toDate?.().toLocaleDateString() || "Just now"}</small></div>
+                        </div>`;
+            }).join("");
         
-        document.getElementById("agentPendingWithdrawals").innerHTML = withdrawalsSnap.empty ? "<p>No pending withdrawals</p>" :
-            `<table class="admin-table"><tr><th>User</th><th>Method</th><th>Amount</th><th>Action</th></tr>
-            ${withdrawalsSnap.docs.map(w => `<tr><td>${w.data().userName || w.data().userEmail}</td><td>${w.data().method}</td><td>$${w.data().amount}</td>
-            <td><button class="action-btn approve-btn" onclick="approveWithdrawal('${w.id}', '${w.data().userId}', ${w.data().amount})">Approve</button>
-            <button class="action-btn reject-btn" onclick="rejectWithdrawal('${w.id}')">Reject</button></td></tr>`).join("")}</table>`;
+        // Withdrawal History
+        const wdQ = query(collection(db, "withdrawals"), where("userId", "==", currentUserData.uid), orderBy("createdAt", "desc"));
+        const wdSnap = await getDocs(wdQ);
+        document.getElementById("withdrawalHistoryList").innerHTML = wdSnap.empty ? "<p>No withdrawal history</p>" :
+            wdSnap.docs.map(w => {
+                const data = w.data();
+                const statusBadge = data.status === "approved" ? '<span class="success-badge">✓ Approved</span>' : 
+                                   (data.status === "rejected" ? '<span class="rejected-badge">✗ Rejected</span>' : '<span class="pending-badge">⏳ Pending</span>');
+                return `<div class="history-card">
+                            <div><i class="fas fa-hand-holding-usd gold-text"></i> ${data.method}</div>
+                            <div>$${data.amount}</div>
+                            <div>${statusBadge}</div>
+                            <div><small>${data.createdAt?.toDate?.().toLocaleDateString() || "Just now"}</small></div>
+                        </div>`;
+            }).join("");
     }
     
+    // Load Agent Panel
+    async function loadAgentPanel() {
+        if (!currentUserData || currentUserData.role !== "agent") return;
+        
+        const depositsSnap = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending"), orderBy("createdAt", "desc")));
+        const withdrawalsSnap = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending"), orderBy("createdAt", "desc")));
+        
+        const pendingCount = depositsSnap.size + withdrawalsSnap.size;
+        document.getElementById("agentPendingCount").innerText = `${pendingCount} Pending`;
+        document.getElementById("pendingBadge").innerText = pendingCount;
+        document.getElementById("pendingBadge").style.display = pendingCount > 0 ? "inline-block" : "none";
+        
+        document.getElementById("agentPendingDeposits").innerHTML = depositsSnap.empty ? "<p>✅ No pending deposits</p>" :
+            `<table class="admin-table"><tr><th>User</th><th>Method</th><th>Amount</th><th>Wallet</th><th>Time</th><th>Action</th></tr>
+            ${depositsSnap.docs.map(d => `<tr>
+                <td><strong>${d.data().userName || d.data().userEmail}</strong></td>
+                <td>${d.data().method}</td>
+                <td style="color:#F5B041;">$${d.data().amount}</td>
+                <td><small>${d.data().userWallet?.substring(0, 12)}...</small></td>
+                <td><small>${d.data().createdAt?.toDate?.().toLocaleTimeString() || "Now"}</small></td>
+                <td><button class="action-btn approve-btn" onclick="approveDeposit('${d.id}', '${d.data().userId}', ${d.data().amount})">✓ Approve</button>
+                <button class="action-btn reject-btn" onclick="rejectDeposit('${d.id}')">✗ Reject</button></td>
+            </tr>`).join("")}</table>`;
+        
+        document.getElementById("agentPendingWithdrawals").innerHTML = withdrawalsSnap.empty ? "<p>✅ No pending withdrawals</p>" :
+            `<table class="admin-table"><tr><th>User</th><th>Method</th><th>Amount</th><th>Address</th><th>Time</th><th>Action</th></tr>
+            ${withdrawalsSnap.docs.map(w => `<tr>
+                <td><strong>${w.data().userName || w.data().userEmail}</strong></td>
+                <td>${w.data().method}</td>
+                <td style="color:#F5B041;">$${w.data().amount}</td>
+                <td><small>${w.data().address?.substring(0, 12)}...</small></td>
+                <td><small>${w.data().createdAt?.toDate?.().toLocaleTimeString() || "Now"}</small></td>
+                <td><button class="action-btn approve-btn" onclick="approveWithdrawal('${w.id}', '${w.data().userId}', ${w.data().amount})">✓ Approve</button>
+                <button class="action-btn reject-btn" onclick="rejectWithdrawal('${w.id}')">✗ Reject</button></td>
+            </tr>`).join("")}</table>`;
+        
+        // Recent activity
+        const recentApproved = await getDocs(query(collection(db, "deposits"), where("status", "==", "approved"), orderBy("createdAt", "desc"), limit(5)));
+        document.getElementById("recentActivity").innerHTML = recentApproved.empty ? "<p>No recent activity</p>" :
+            recentApproved.docs.map(d => `<div class="glass-card" style="padding:10px; margin:5px 0;">✓ ${d.data().userName} - $${d.data().amount} deposit approved</div>`).join("");
+    }
+    
+    // VIP Plans
     const plans = [
         { name: "VIP 1", amount: 20, duration: 45, roi: "5-11%" },
         { name: "VIP 2", amount: 82, duration: 45, roi: "5-11%" },
@@ -573,7 +685,7 @@
         document.getElementById("plansGrid").innerHTML = plans.map(p => {
             if (p.coming) return `<div class="plan-card"><span class="badge-coming">Coming Soon</span><h3>${p.name}</h3><div class="plan-price">$${p.amount}+</div><button class="btn-outline-gold" disabled>Coming Soon</button></div>`;
             const owned = purchased.includes(p.name);
-            return `<div class="plan-card">${owned ? '<span class="badge-owned">ACTIVE</span>' : ''}<h3>${p.name}</h3><div class="plan-price">$${p.amount}</div><p>⏱️ ${p.duration} days</p><p>📈 Daily ROI: ${p.roi}</p>${!owned ? `<button class="btn-gold" style="width:100%; margin-top:15px;" onclick="buyPlan(${p.amount}, '${p.name}')">Invest Now →</button>` : `<button class="btn-outline-gold" disabled>Already Purchased</button>`}</div>`;
+            return `<div class="plan-card">${owned ? '<span class="badge-owned">ACTIVE</span>' : ''}<h3>${p.name}</h3><div class="plan-price">$${p.amount}</div><p>⏱️ ${p.duration} days</p><p>📈 Daily ROI: ${p.roi}</p>${!owned ? `<button class="btn-gold" style="width:100%; margin-top:15px;" onclick="buyPlan(${p.amount}, '${p.name}')">Invest Now →</button>` : `<button class="btn-outline-gold" disabled style="width:100%;">Already Purchased</button>`}</div>`;
         }).join("");
     }
     
@@ -585,17 +697,20 @@
         document.getElementById("refCount").innerText = snap.size;
     }
     
+    // Navigation
     window.showDashboard = () => {
         document.getElementById("dashboardSection").style.display = "block";
         document.getElementById("investSection").style.display = "none";
         document.getElementById("referralSection").style.display = "none";
+        document.getElementById("historySection").style.display = "none";
         document.getElementById("agentSection").style.display = "none";
-        loadUserDashboard();
+        if (currentUserData?.role === "user") loadUserDashboard();
     };
     window.showInvestments = () => {
         document.getElementById("investSection").style.display = "block";
         document.getElementById("dashboardSection").style.display = "none";
         document.getElementById("referralSection").style.display = "none";
+        document.getElementById("historySection").style.display = "none";
         document.getElementById("agentSection").style.display = "none";
         renderPlans();
     };
@@ -603,14 +718,24 @@
         document.getElementById("referralSection").style.display = "block";
         document.getElementById("dashboardSection").style.display = "none";
         document.getElementById("investSection").style.display = "none";
+        document.getElementById("historySection").style.display = "none";
         document.getElementById("agentSection").style.display = "none";
         loadReferralData();
+    };
+    window.showHistory = () => {
+        document.getElementById("historySection").style.display = "block";
+        document.getElementById("dashboardSection").style.display = "none";
+        document.getElementById("investSection").style.display = "none";
+        document.getElementById("referralSection").style.display = "none";
+        document.getElementById("agentSection").style.display = "none";
+        loadHistory();
     };
     window.showAgentPanel = () => {
         document.getElementById("agentSection").style.display = "block";
         document.getElementById("dashboardSection").style.display = "none";
         document.getElementById("investSection").style.display = "none";
         document.getElementById("referralSection").style.display = "none";
+        document.getElementById("historySection").style.display = "none";
         loadAgentPanel();
     };
     
@@ -618,27 +743,22 @@
         const inp = document.getElementById("refLinkInput");
         inp.select();
         document.execCommand("copy");
-        showToast("Link copied!");
-    };
-    
-    let selectedMethod = { name: "", address: "", qr: "" };
-    window.selectMethod = (name, address, qr) => {
-        selectedMethod = { name, address, qr };
-        document.getElementById("qrDisplay").style.display = "block";
-        document.getElementById("qrImage").src = qr;
-        document.getElementById("walletAddressDisplay").innerHTML = `<strong>Send to:</strong><br>${address}`;
+        showToast("Referral link copied!");
     };
     
     window.openDepositModal = () => { if (currentUserData) document.getElementById("depositModal").style.display = "flex"; else openAuthModal(); };
     window.openWithdrawModal = () => { if (currentUserData) document.getElementById("withdrawModal").style.display = "flex"; else openAuthModal(); };
     window.openAuthModal = () => document.getElementById("authModal").style.display = "flex";
     window.closeModal = (id) => document.getElementById(id).style.display = "none";
-    window.showLegal = (type) => alert({ terms: "Terms & Conditions...", privacy: "Privacy Policy...", risk: "Risk Disclosure..." }[type]);
+    window.showLegal = (type) => {
+        const texts = { terms: "Terms & Conditions: By using Nexora Capital, you agree to our terms. Investing involves risk. You must be 18+.", privacy: "Privacy Policy: Your data is encrypted and secure. We do not share personal information.", risk: "Risk Disclosure: Cryptocurrency investments are volatile. You may lose your entire capital. Only invest what you can afford to lose." };
+        alert(texts[type]);
+    };
     
     let isLogin = true;
     window.toggleAuthMode = () => {
         isLogin = !isLogin;
-        document.getElementById("authTitle").innerText = isLogin ? "Login to Nexora" : "Create Account";
+        document.getElementById("authTitle").innerText = isLogin ? "Welcome Back" : "Create Account";
         document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
         document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
         document.getElementById("authActionBtn").innerText = isLogin ? "Login" : "Register";
@@ -654,6 +774,7 @@
         }
     };
     
+    // Banner Slider
     let slides = document.querySelectorAll(".banner-slide");
     let idx = 0;
     setInterval(() => {
@@ -664,28 +785,43 @@
     
     document.getElementById("heroBtn").onclick = () => { if (currentUserData) showInvestments(); else openAuthModal(); };
     
+    // Auth State Listener with Real-time Subscriptions
     onAuthStateChanged(auth, async (user) => {
+        unsubscribeList.forEach(unsub => unsub());
+        unsubscribeList = [];
+        
         if (user) {
             const userRef = doc(db, "users", user.uid);
             const snap = await getDoc(userRef);
             if (snap.exists()) {
                 currentUserData = { uid: user.uid, ...snap.data() };
-                updateUI();
+                await updateUIBasedOnRole();
+                
+                // Real-time user data listener
+                unsubscribeList.push(onSnapshot(userRef, (doc) => {
+                    if (doc.exists()) {
+                        currentUserData = { uid: user.uid, ...doc.data() };
+                        if (currentUserData.role === "user") loadUserDashboard();
+                        if (currentUserData.role === "agent") loadAgentPanel();
+                    }
+                }));
+                
                 if (currentUserData.role === "user") {
-                    const qDep = query(collection(db, "deposits"), where("userId", "==", user.uid));
-                    const qWd = query(collection(db, "withdrawals"), where("userId", "==", user.uid));
-                    onSnapshot(qDep, () => loadUserDashboard());
-                    onSnapshot(qWd, () => loadUserDashboard());
-                    onSnapshot(userRef, () => getDoc(userRef).then(s => { currentUserData = { uid: user.uid, ...s.data() }; loadUserDashboard(); }));
+                    unsubscribeList.push(onSnapshot(query(collection(db, "deposits"), where("userId", "==", user.uid)), () => loadUserDashboard()));
+                    unsubscribeList.push(onSnapshot(query(collection(db, "withdrawals"), where("userId", "==", user.uid)), () => loadUserDashboard()));
+                    unsubscribeList.push(onSnapshot(query(collection(db, "investments"), where("userId", "==", user.uid)), () => loadUserDashboard()));
+                    loadUserDashboard();
                 }
+                
                 if (currentUserData.role === "agent") {
-                    onSnapshot(collection(db, "deposits"), () => loadAgentPanel());
-                    onSnapshot(collection(db, "withdrawals"), () => loadAgentPanel());
+                    unsubscribeList.push(onSnapshot(collection(db, "deposits"), () => loadAgentPanel()));
+                    unsubscribeList.push(onSnapshot(collection(db, "withdrawals"), () => loadAgentPanel()));
+                    loadAgentPanel();
                 }
             }
         } else {
             currentUserData = null;
-            updateUI();
+            updateUIBasedOnRole();
         }
     });
 </script>
