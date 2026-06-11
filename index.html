@@ -35,9 +35,21 @@
             border-top: 1px solid rgba(245, 176, 65, 0.2);
             z-index: 1000;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #6B7280; cursor: pointer; font-size: 11px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #6B7280; cursor: pointer; font-size: 11px; position: relative; }
         .nav-item i { font-size: 22px; }
         .nav-item.active, .nav-item:hover { color: #F5B041; }
+        .nav-badge {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background: #EF4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
         
         .top-header {
             background: rgba(10, 14, 26, 0.95);
@@ -66,8 +78,9 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); backdrop-filter: blur(14px); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: #0F1422; width: 90%; max-width: 480px; border-radius: 32px; padding: 28px; border: 1px solid #F5B041; max-height: 80vh; overflow-y: auto; }
         
-        input, select { width: 100%; padding: 14px; margin: 10px 0; background: #1A1F30; border: 1px solid #2A3148; border-radius: 30px; color: white; font-size: 14px; }
-        input:focus { border-color: #F5B041; outline: none; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; background: #1A1F30; border: 1px solid #2A3148; border-radius: 30px; color: white; font-size: 14px; }
+        input:focus, textarea:focus { border-color: #F5B041; outline: none; }
+        textarea { border-radius: 20px; resize: none; }
         
         .method-chip { display: inline-block; background: #1A1F30; padding: 8px 16px; margin: 5px; border-radius: 30px; cursor: pointer; font-size: 13px; }
         .method-chip.active, .method-chip:hover { background: #F5B041; color: #0A0E1A; }
@@ -99,6 +112,31 @@
         .badge-rejected { background: #EF4444; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
         
         .banner-slide { height: 160px; border-radius: 24px; background-size: cover; background-position: center; transition: background-image 0.8s; }
+        
+        .message-item {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 20px;
+            max-width: 85%;
+        }
+        .message-user { background: #1A2340; align-self: flex-start; }
+        .message-agent { background: #F5B041; color: #0A0E1A; align-self: flex-end; margin-left: auto; }
+        .chat-container { display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; padding: 10px; }
+        .support-icon {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            background: #F5B041;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 99;
+            box-shadow: 0 4px 15px rgba(245,176,65,0.4);
+        }
         
         @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr 1fr; } .wallet-amount { font-size: 26px; } .toast { white-space: normal; text-align: center; width: 90%; } .admin-table { font-size: 10px; } }
         
@@ -183,7 +221,7 @@
 <body>
 
 <div class="security-badge" id="securityBadge">
-    <i class="fas fa-shield-alt"></i> Manual Login Required
+    <i class="fas fa-shield-alt"></i> Secure Manual Login
 </div>
 
 <!-- LOGIN OVERLAY -->
@@ -191,7 +229,7 @@
     <div class="login-box">
         <div class="login-logo">
             <h1><span class="gold-text">NEXORA</span> CAPITAL</h1>
-            <p>Secure Manual Login Required Every Time</p>
+            <p>Secure Investment Platform</p>
         </div>
         
         <div id="loginForm">
@@ -278,6 +316,20 @@
         <div class="glass-card" style="padding: 16px; margin: 16px;"><button class="btn-outline" style="width:100%; padding: 14px; color: #EF4444;" onclick="logout()">Logout</button></div>
     </div>
 
+    <!-- CHAT PAGE FOR USERS -->
+    <div id="chatPage" class="page">
+        <h2 class="gold-text" style="padding: 0 16px;"><i class="fas fa-headset"></i> Support Chat</h2>
+        <div class="glass-card" style="padding: 16px; margin: 0 16px;">
+            <div class="chat-container" id="chatMessages" style="height: 400px; overflow-y: auto; display: flex; flex-direction: column;">
+                <p style="text-align: center; color: #aaa;">Loading messages...</p>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <textarea id="chatInput" placeholder="Type your message here..." rows="2" style="flex: 1; margin: 0;"></textarea>
+                <button class="btn-gold" onclick="sendMessage()" style="padding: 10px 20px;">Send</button>
+            </div>
+        </div>
+    </div>
+
     <!-- AGENT PANEL -->
     <div id="agentPanel" class="page">
         <h2 class="gold-text" style="padding: 0 16px;">Agent Verification Panel</h2>
@@ -289,7 +341,18 @@
             <h3>📤 Pending Withdrawals</h3>
             <div id="pendingWithdrawalsList">Loading...</div>
         </div>
+        <div class="glass-card" style="padding: 16px; margin: 0 16px 16px;">
+            <h3><i class="fas fa-comments"></i> Support Messages <span id="agentChatBadge" class="nav-badge" style="display: none; position: relative; top: 0; right: 0; margin-left: 10px;">0</span></h3>
+            <div id="agentMessagesList" style="max-height: 300px; overflow-y: auto;">
+                <p>No messages yet</p>
+            </div>
+        </div>
         <div style="padding: 0 16px;"><button class="btn-outline" style="width:100%; padding: 14px; color: #EF4444;" onclick="logout()">Logout</button></div>
+    </div>
+
+    <!-- Support Chat Floating Icon (For Users) -->
+    <div class="support-icon" id="supportIcon" onclick="openChatPage()">
+        <i class="fas fa-headset" style="font-size: 24px; color: #0A0E1A;"></i>
     </div>
 
     <div class="bottom-nav">
@@ -316,20 +379,23 @@
     <input type="text" id="depositWallet" placeholder="Your Wallet Address">
     <input type="text" id="depositTxn" placeholder="Transaction Hash">
     <input type="number" id="depositAmount" placeholder="Amount (USD)" value="100">
-    <div class="file-upload" onclick="document.getElementById('screenshotFile').click()">📸 Upload Screenshot</div>
+    <div class="file-upload" onclick="document.getElementById('screenshotFile').click()">📸 Upload Payment Screenshot</div>
     <input type="file" id="screenshotFile" accept="image/*" style="display:none;" onchange="previewScreenshot(this)">
     <div id="screenshotPreview" style="display:none;"></div>
     <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitDeposit()">Submit</button>
 </div></div>
 
-<!-- Withdraw Modal -->
+<!-- Withdraw Modal with QR Upload -->
 <div id="withdrawModal" class="modal"><div class="modal-content">
     <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('withdrawModal')">&times;</span>
     <h3>Withdraw Funds</h3>
     <select id="withdrawMethod"><option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option></select>
     <input type="text" id="withdrawAddress" placeholder="Withdrawal Address">
     <input type="number" id="withdrawAmount" placeholder="Amount (USD)">
-    <button class="btn-gold" style="width:100%;" onclick="submitWithdraw()">Request</button>
+    <div class="file-upload" onclick="document.getElementById('withdrawQrFile').click()">📸 Upload Wallet QR Code (Optional)</div>
+    <input type="file" id="withdrawQrFile" accept="image/*" style="display:none;" onchange="previewWithdrawQr(this)">
+    <div id="withdrawQrPreview" style="display:none;"></div>
+    <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitWithdraw()">Request Withdrawal</button>
 </div></div>
 
 <div id="toastContainer"></div>
@@ -337,7 +403,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
     const firebaseConfig = {
         apiKey: "AIzaSyAxSWI_Uh_hYJvSBMhKLw-bvcoqwzvdhN4",
@@ -357,13 +423,15 @@
     let currentUserData = null;
     let selectedMethod = null;
     let selectedScreenshot = null;
+    let selectedWithdrawQr = null;
+    let chatUnsubscribe = null;
     
     // Create Agent
     async function createAgent() {
         try {
             const cred = await createUserWithEmailAndPassword(auth, "agent@nexora.com", "Agent@123");
             await setDoc(doc(db, "users", cred.user.uid), {
-                fullname: "Agent", email: "agent@nexora.com", balance: 0, refCode: "AGENT001", role: "agent",
+                fullname: "Support Agent", email: "agent@nexora.com", balance: 0, refCode: "AGENT001", role: "agent",
                 purchasedPlans: [], totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0, createdAt: serverTimestamp()
             });
             console.log("Agent created");
@@ -400,6 +468,18 @@
         }
     };
     
+    window.previewWithdrawQr = function(input) {
+        if (input.files && input.files[0]) {
+            selectedWithdrawQr = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById("withdrawQrPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px;">`;
+                document.getElementById("withdrawQrPreview").style.display = "block";
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+    
     window.showLogin = function() {
         document.getElementById("loginForm").style.display = "block";
         document.getElementById("registerForm").style.display = "none";
@@ -417,7 +497,7 @@
         btn.innerHTML = '<span class="loader"></span> Logging...';
         btn.disabled = true;
         try {
-            const result = await signInWithEmailAndPassword(auth, email, pwd);
+            await signInWithEmailAndPassword(auth, email, pwd);
             showToast("✅ Login successful!");
         } catch(error) {
             showToast(error.message, "error");
@@ -464,11 +544,109 @@
     };
     
     window.logout = async () => { 
+        if (chatUnsubscribe) chatUnsubscribe();
         await signOut(auth);
-        // Clear any persisted state
         localStorage.clear();
         sessionStorage.clear();
-        showToast("Logged out successfully. Please login again to continue.");
+        showToast("Logged out successfully.");
+    };
+    
+    window.openChatPage = function() {
+        changePage('chatPage', null);
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+    };
+    
+    window.sendMessage = async () => {
+        if (!currentUserData) return;
+        const msg = document.getElementById("chatInput").value.trim();
+        if (!msg) return showToast("Please enter a message", "error");
+        
+        await addDoc(collection(db, "supportMessages"), {
+            userId: currentUserData.uid,
+            userName: currentUserData.fullname,
+            userEmail: currentUserData.email,
+            message: msg,
+            role: currentUserData.role,
+            isRead: false,
+            createdAt: serverTimestamp()
+        });
+        document.getElementById("chatInput").value = "";
+        showToast("Message sent to Agent!");
+    };
+    
+    async function loadChatMessages() {
+        if (!currentUserData) return;
+        const q = query(collection(db, "supportMessages"), orderBy("createdAt", "asc"));
+        const snap = await getDocs(q);
+        const container = document.getElementById("chatMessages");
+        if (snap.empty) {
+            container.innerHTML = '<p style="text-align: center; color: #aaa;">No messages yet. Send a message to support!</p>';
+            return;
+        }
+        let html = "";
+        snap.docs.forEach(doc => {
+            const data = doc.data();
+            const isUser = data.userId === currentUserData.uid;
+            html += `<div class="message-item ${isUser ? 'message-user' : 'message-agent'}" style="align-self: ${isUser ? 'flex-start' : 'flex-end'};">
+                        <strong>${isUser ? 'You' : 'Agent'}:</strong><br>${data.message}
+                        <div style="font-size: 10px; opacity: 0.7; margin-top: 5px;">${data.createdAt?.toDate?.().toLocaleTimeString() || 'Just now'}</div>
+                     </div>`;
+        });
+        container.innerHTML = html;
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    async function loadAgentMessages() {
+        if (!currentUserData || currentUserData.role !== "agent") return;
+        const q = query(collection(db, "supportMessages"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        const unreadCount = snap.docs.filter(d => !d.data().isRead && d.data().role !== "agent").length;
+        const badge = document.getElementById("agentChatBadge");
+        if (unreadCount > 0) {
+            badge.style.display = "inline-block";
+            badge.innerText = unreadCount;
+        } else {
+            badge.style.display = "none";
+        }
+        
+        let html = "";
+        for (const docMsg of snap.docs) {
+            const data = docMsg.data();
+            if (data.role === "agent") continue;
+            html += `<div class="glass-card" style="padding: 12px; margin: 10px 0;">
+                        <strong>${data.userName} (${data.userEmail})</strong><br>
+                        <p>${data.message}</p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="approve-btn" onclick="replyToUser('${docMsg.id}', '${data.userId}')">Reply</button>
+                            <button class="view-btn" onclick="markAsRead('${docMsg.id}')">Mark as Read</button>
+                        </div>
+                        <div style="font-size: 10px; opacity: 0.7; margin-top: 5px;">${data.createdAt?.toDate?.().toLocaleString() || 'Just now'}</div>
+                     </div>`;
+        }
+        document.getElementById("agentMessagesList").innerHTML = html || "<p>No messages from users</p>";
+    }
+    
+    window.replyToUser = async (msgId, userId) => {
+        const reply = prompt("Type your reply to user:");
+        if (!reply) return;
+        await addDoc(collection(db, "supportMessages"), {
+            userId: userId,
+            userName: "Agent",
+            userEmail: "agent@nexora.com",
+            message: reply,
+            role: "agent",
+            isRead: true,
+            createdAt: serverTimestamp()
+        });
+        await updateDoc(doc(db, "supportMessages", msgId), { isRead: true });
+        showToast("Reply sent to user!");
+        loadAgentMessages();
+        if (currentUserData?.role === "agent") loadAgentMessages();
+    };
+    
+    window.markAsRead = async (msgId) => {
+        await updateDoc(doc(db, "supportMessages", msgId), { isRead: true });
+        loadAgentMessages();
     };
     
     window.changePage = function(pageId, element) {
@@ -480,6 +658,7 @@
         if (pageId === 'invitePage' && currentUserData) loadReferralStats();
         if (pageId === 'agentPanel' && currentUserData?.role === 'agent') loadAgentPanel();
         if (pageId === 'mePage' && currentUserData) loadMePage();
+        if (pageId === 'chatPage' && currentUserData) loadChatMessages();
     };
     
     function renderVipPlans() {
@@ -549,18 +728,39 @@
         if (!address) return showToast("Enter address", "error");
         if (amount < 20) return showToast("Minimum $20", "error");
         if ((currentUserData.balance || 0) < amount) return showToast("Insufficient balance", "error");
+        
+        let qrCode = "";
+        if (selectedWithdrawQr) {
+            const reader = new FileReader();
+            qrCode = await new Promise((resolve) => {
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(selectedWithdrawQr);
+            });
+        }
+        
         await addDoc(collection(db, "withdrawals"), {
             userId: currentUserData.uid, userName: currentUserData.fullname, userEmail: currentUserData.email,
-            method: document.getElementById("withdrawMethod").value, address, amount, status: "pending", createdAt: serverTimestamp()
+            method: document.getElementById("withdrawMethod").value, address, amount, qrCode, status: "pending", createdAt: serverTimestamp()
         });
         showToast("✅ Withdrawal request sent!");
         closeModal("withdrawModal");
+        document.getElementById("withdrawAddress").value = "";
+        document.getElementById("withdrawAmount").value = "";
+        document.getElementById("withdrawQrPreview").style.display = "none";
+        selectedWithdrawQr = null;
     };
     
     window.viewScreenshot = (screenshot) => {
         if (screenshot) {
             const win = window.open();
             win.document.write(`<img src="${screenshot}" style="max-width:100%;">`);
+        }
+    };
+    
+    window.viewWithdrawQr = (qrCode) => {
+        if (qrCode) {
+            const win = window.open();
+            win.document.write(`<img src="${qrCode}" style="max-width:100%;">`);
         }
     };
     
@@ -649,7 +849,7 @@
                         </td>
                     </tr>`;
                 });
-                html += `</tr>`;
+                html += `</table>`;
                 document.getElementById("pendingDepositsList").innerHTML = html;
             }
             
@@ -657,13 +857,15 @@
             if (wds.empty) {
                 document.getElementById("pendingWithdrawalsList").innerHTML = "<p>✅ No pending withdrawals</p>";
             } else {
-                let html = `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>Action</th></tr>`;
+                let html = `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>QR</th><th>Action</th></tr>`;
                 wds.docs.forEach(w => {
                     const data = w.data();
-                    html += `<td>
+                    const hasQR = data.qrCode && data.qrCode.length > 100;
+                    html += `<tr>
                         <td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td>
                         <td>$${data.amount}</td>
                         <td>${data.method}</td>
+                        <td>${hasQR ? `<button class="view-btn" onclick="viewWithdrawQr('${data.qrCode}')">View QR</button>` : 'No QR'}</td>
                         <td>
                             <button class="approve-btn" onclick="approveWithdrawal('${w.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button>
                             <button class="reject-btn" onclick="rejectWithdrawal('${w.id}', '${data.userEmail}')">Reject</button>
@@ -673,6 +875,8 @@
                 html += `</table>`;
                 document.getElementById("pendingWithdrawalsList").innerHTML = html;
             }
+            
+            await loadAgentMessages();
         } catch(error) {
             document.getElementById("pendingDepositsList").innerHTML = `<p style="color:#EF4444;">Error: ${error.message}</p>`;
         }
@@ -721,8 +925,6 @@
         if (banner) { bannerIdx = (bannerIdx + 1) % 3; banner.style.backgroundImage = `url('${bannerImages[bannerIdx]}')`; }
     }, 4000);
     
-    // IMPORTANT: No persistence - every time user must login manually
-    // We don't store any auth state in localStorage
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const snap = await getDoc(doc(db, "users", user.uid));
@@ -735,14 +937,18 @@
                 document.getElementById("roleBadge").innerHTML = currentUserData.role === "agent" ? "🤵 Agent" : "👤 User";
                 
                 const agentNavBtn = document.getElementById("agentNavBtn");
+                const supportIcon = document.getElementById("supportIcon");
                 if (currentUserData.role === "agent") {
                     agentNavBtn.style.display = "flex";
+                    supportIcon.style.display = "none";
                     changePage('agentPanel', agentNavBtn);
                     loadAgentPanel();
                     onSnapshot(collection(db, "deposits"), () => loadAgentPanel());
                     onSnapshot(collection(db, "withdrawals"), () => loadAgentPanel());
+                    onSnapshot(collection(db, "supportMessages"), () => loadAgentMessages());
                 } else {
                     agentNavBtn.style.display = "none";
+                    supportIcon.style.display = "flex";
                     changePage('userDashboard', document.querySelectorAll('.nav-item')[0]);
                     loadUserDashboard();
                     loadMePage();
@@ -753,10 +959,14 @@
                             if (s.exists()) { currentUserData = { uid: user.uid, ...s.data() }; loadUserDashboard(); loadMePage(); }
                         });
                     });
+                    if (chatUnsubscribe) chatUnsubscribe();
+                    chatUnsubscribe = onSnapshot(query(collection(db, "supportMessages"), orderBy("createdAt", "asc")), () => {
+                        if (document.getElementById("chatPage").classList.contains("active")) loadChatMessages();
+                    });
                 }
             }
         } else {
-            // Always show login screen, never auto-login
+            if (chatUnsubscribe) chatUnsubscribe();
             currentUser = null;
             currentUserData = null;
             document.getElementById("loginOverlay").classList.remove("hide");
