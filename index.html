@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>NEXORA CAPITAL | Premium Investment Platform</title>
+    <title>NEXORA CAPITAL | Real-Time Investment Platform</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -11,133 +11,33 @@
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0A0C15;
-            color: #F0F3FA;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Inter', sans-serif; background: #0A0C15; color: #F0F3FA; overflow-x: hidden; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #11161F; }
         ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #F5B041, #D4AF37); border-radius: 10px; }
 
-        .glass-card {
-            background: rgba(18, 25, 45, 0.7);
-            backdrop-filter: blur(14px);
-            border-radius: 28px;
-            border: 1px solid rgba(245, 176, 65, 0.25);
-            transition: all 0.4s ease;
-            box-shadow: 0 20px 35px -15px rgba(0,0,0,0.5);
-        }
-        .glass-card:hover {
-            border-color: rgba(245, 176, 65, 0.7);
-            transform: translateY(-6px);
-        }
-
-        .gold-text {
-            background: linear-gradient(135deg, #F5B041 0%, #E6B800 35%, #D4AF37 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .btn-gold {
-            background: linear-gradient(95deg, #F5B041 0%, #E6A800 100%);
-            border: none;
-            color: #0A0C15;
-            font-weight: 700;
-            padding: 12px 28px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 6px 20px rgba(245,176,65,0.4);
-        }
+        .glass-card { background: rgba(18, 25, 45, 0.7); backdrop-filter: blur(14px); border-radius: 28px; border: 1px solid rgba(245,176,65,0.25); transition: all 0.4s ease; box-shadow: 0 20px 35px -15px rgba(0,0,0,0.5); }
+        .glass-card:hover { border-color: rgba(245,176,65,0.7); transform: translateY(-6px); }
+        .gold-text { background: linear-gradient(135deg, #F5B041 0%, #E6B800 35%, #D4AF37 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .btn-gold { background: linear-gradient(95deg, #F5B041 0%, #E6A800 100%); border: none; color: #0A0C15; font-weight: 700; padding: 12px 28px; border-radius: 50px; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(245,176,65,0.4); }
         .btn-gold:hover { transform: scale(1.03); }
-
-        .btn-outline-gold {
-            background: transparent;
-            border: 1.5px solid #F5B041;
-            color: #F5B041;
-            font-weight: 600;
-            padding: 10px 24px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+        .btn-outline-gold { background: transparent; border: 1.5px solid #F5B041; color: #F5B041; font-weight: 600; padding: 10px 24px; border-radius: 50px; cursor: pointer; transition: 0.3s; }
         .btn-outline-gold:hover { background: rgba(245,176,65,0.15); }
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 5%;
-            background: rgba(10, 12, 21, 0.98);
-            backdrop-filter: blur(20px);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(245,176,65,0.3);
-        }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 5%; background: rgba(10,12,21,0.98); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(245,176,65,0.3); flex-wrap: wrap; gap: 15px; }
         .logo h2 { font-size: 1.8rem; font-weight: 800; }
         .logo p { font-size: 10px; opacity: 0.7; }
-        .nav-links { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
-        .nav-links a {
-            color: #E2E8F0;
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .nav-links { display: flex; gap: 25px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { color: #E2E8F0; text-decoration: none; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .nav-links a:hover { color: #F5B041; }
 
-        .banner-container {
-            width: 100%;
-            height: 320px;
-            position: relative;
-            overflow: hidden;
-        }
-        .banner-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
+        .banner-container { width: 100%; height: 320px; position: relative; overflow: hidden; }
+        .banner-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 1s ease-in-out; }
         .banner-slide.active { opacity: 1; }
-        .banner-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(125deg, rgba(5,8,20,0.6), rgba(0,0,0,0.4));
-        }
-        .banner-text {
-            position: absolute;
-            bottom: 30px;
-            left: 5%;
-            z-index: 10;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(10px);
-            padding: 12px 28px;
-            border-radius: 60px;
-            border-left: 3px solid #F5B041;
-        }
+        .banner-overlay { position: absolute; inset: 0; background: linear-gradient(125deg, rgba(5,8,20,0.6), rgba(0,0,0,0.4)); }
+        .banner-text { position: absolute; bottom: 30px; left: 5%; z-index: 10; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); padding: 12px 28px; border-radius: 60px; border-left: 3px solid #F5B041; }
 
-        .stats-bar {
-            background: linear-gradient(90deg, #10141F, #0A0C15);
-            padding: 12px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            border-bottom: 1px solid rgba(245,176,65,0.2);
-            font-size: 0.8rem;
-        }
+        .stats-bar { background: linear-gradient(90deg, #10141F, #0A0C15); padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid rgba(245,176,65,0.2); font-size: 0.8rem; }
         .stats-bar i { color: #F5B041; margin-right: 5px; }
 
         .app-main { padding: 40px 5%; display: none; }
@@ -146,82 +46,25 @@
         .stat-card i { font-size: 2.5rem; color: #F5B041; margin-bottom: 12px; }
 
         .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; margin: 35px 0; }
-        .plan-card {
-            background: linear-gradient(145deg, rgba(22, 30, 50, 0.95), rgba(14, 18, 32, 0.98));
-            border-radius: 28px;
-            padding: 1.8rem;
-            border: 1px solid rgba(245,176,65,0.35);
-            transition: all 0.35s;
-            position: relative;
-        }
+        .plan-card { background: linear-gradient(145deg, rgba(22,30,50,0.95), rgba(14,18,32,0.98)); border-radius: 28px; padding: 1.8rem; border: 1px solid rgba(245,176,65,0.35); transition: all 0.35s; position: relative; }
         .plan-card:hover { transform: translateY(-8px); border-color: #F5B041; }
         .plan-price { font-size: 2rem; font-weight: 800; color: #F5B041; margin: 12px 0; }
         .badge-owned { position: absolute; top: 15px; right: 15px; background: #F5B041; color: #0A0C15; padding: 5px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; }
         .badge-coming { position: absolute; top: 15px; right: 15px; background: #6B7280; color: white; padding: 5px 14px; border-radius: 30px; font-size: 11px; }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(16px);
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-        .modal-content {
-            background: #0F1422;
-            max-width: 550px;
-            width: 90%;
-            border-radius: 32px;
-            padding: 32px;
-            border: 1px solid #F5B041;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        input, select {
-            width: 100%;
-            padding: 14px 18px;
-            margin: 12px 0;
-            background: #1A1F30;
-            border: 1px solid #2A3148;
-            border-radius: 30px;
-            color: white;
-            font-size: 0.9rem;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(16px); justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: #0F1422; max-width: 550px; width: 90%; border-radius: 32px; padding: 32px; border: 1px solid #F5B041; max-height: 85vh; overflow-y: auto; }
+        input, select { width: 100%; padding: 14px 18px; margin: 12px 0; background: #1A1F30; border: 1px solid #2A3148; border-radius: 30px; color: white; font-size: 0.9rem; }
         input:focus { border-color: #F5B041; outline: none; }
 
-        .method-chip {
-            display: inline-block;
-            background: #1A1F30;
-            padding: 10px 18px;
-            margin: 5px;
-            border-radius: 50px;
-            cursor: pointer;
-            border: 1px solid #2A3148;
-            transition: 0.2s;
-        }
+        .method-chip { display: inline-block; background: #1A1F30; padding: 10px 18px; margin: 5px; border-radius: 50px; cursor: pointer; border: 1px solid #2A3148; transition: 0.2s; }
         .method-chip.active, .method-chip:hover { border-color: #F5B041; background: rgba(245,176,65,0.2); color: #F5B041; }
 
         .qr-big { text-align: center; margin: 15px 0; }
         .qr-big img { width: 180px; border-radius: 20px; background: white; padding: 10px; }
         .wallet-address { background: #0B0E18; padding: 12px; border-radius: 20px; text-align: center; font-family: monospace; word-break: break-all; margin: 10px 0; }
 
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #1E243C;
-            border-left: 5px solid #F5B041;
-            padding: 14px 24px;
-            border-radius: 16px;
-            z-index: 3000;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease;
-        }
+        .toast { position: fixed; bottom: 30px; right: 30px; background: #1E243C; border-left: 5px solid #F5B041; padding: 14px 24px; border-radius: 16px; z-index: 3000; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(80px); } to { opacity: 1; transform: translateX(0); } }
 
         .admin-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
@@ -230,33 +73,19 @@
         .action-btn { padding: 5px 12px; margin: 0 3px; border-radius: 20px; cursor: pointer; border: none; }
         .approve-btn { background: #10B981; color: white; }
         .reject-btn { background: #EF4444; color: white; }
-        .pending-badge { background: #F59E0B; color: white; padding: 2px 8px; border-radius: 20px; font-size: 11px; }
 
-        footer {
-            background: #070A12;
-            padding: 40px 5% 25px;
-            margin-top: 60px;
-            border-top: 1px solid #F5B04120;
-        }
+        footer { background: #070A12; padding: 40px 5% 25px; margin-top: 60px; border-top: 1px solid #F5B04120; }
         .footer-links { display: flex; justify-content: center; gap: 35px; flex-wrap: wrap; margin: 20px 0; }
         .footer-links a { color: #aaa; text-decoration: none; cursor: pointer; }
         .risk-warning { text-align: center; font-size: 0.7rem; color: #F5B04199; margin-top: 20px; }
 
         @media (max-width: 768px) {
-            .navbar { flex-direction: column; gap: 12px; }
+            .navbar { flex-direction: column; text-align: center; }
             .banner-container { height: 250px; }
             .stats-bar { flex-direction: column; text-align: center; }
             .stats-grid { grid-template-columns: 1fr; }
             .plans-grid { grid-template-columns: 1fr; }
-        }
-        
-        .notification-badge {
-            background: #EF4444;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 10px;
-            margin-left: 5px;
+            .nav-links { justify-content: center; }
         }
     </style>
 </head>
@@ -271,13 +100,13 @@
         <a onclick="showDashboard()" id="dashNav" style="display:none;"><i class="fas fa-chart-pie"></i> Dashboard</a>
         <a onclick="showInvestments()" id="investNav" style="display:none;"><i class="fas fa-crown"></i> VIP Plans</a>
         <a onclick="showReferrals()" id="refNav" style="display:none;"><i class="fas fa-link"></i> Referrals</a>
-        <a onclick="showAgentPanel()" id="agentNav" style="display:none;"><i class="fas fa-user-tie"></i> Agent Panel <span id="agentPendingBadge" style="display:none;" class="notification-badge">0</span></a>
+        <a onclick="showAgentPanel()" id="agentNav" style="display:none;"><i class="fas fa-user-tie"></i> Agent Panel</a>
         <a id="authBtn" onclick="openAuthModal()"><i class="fas fa-user-circle"></i> Login</a>
     </div>
 </div>
 
 <div class="stats-bar">
-    <div><i class="fas fa-chart-line"></i> Daily Profit 5-11% • 45 Days Cycle • Auto-credit 12:00 AM</div>
+    <div><i class="fas fa-chart-line"></i> Daily Profit 5-11% • 45 Days Cycle • Real-Time Sync</div>
     <div><i class="fas fa-database"></i> $21M+ AUM &nbsp;|&nbsp; <i class="fas fa-users"></i> 9,000+ Members &nbsp;|&nbsp; <i class="fas fa-shield-alt"></i> Secure</div>
 </div>
 
@@ -288,13 +117,12 @@
     <div class="banner-overlay"></div>
     <div class="banner-text">
         <h2 class="gold-text">Invest Smart. Grow Securely.</h2>
-        <p>Nexora Capital – Your Future Starts Today</p>
+        <p>Nexora Capital – Real-Time Multi-Device Platform</p>
         <button class="btn-gold" id="heroBtn" style="padding: 8px 20px; margin-top: 6px;">Start Investing →</button>
     </div>
 </div>
 
 <div class="app-main" id="appMain">
-    <!-- User Dashboard -->
     <div id="dashboardSection">
         <h2><i class="fas fa-tachometer-alt gold-text"></i> Dashboard</h2>
         <div class="stats-grid">
@@ -317,14 +145,12 @@
         </div>
     </div>
 
-    <!-- VIP Plans -->
     <div id="investSection" style="display: none;">
         <h2><i class="fas fa-gem gold-text"></i> VIP Investment Plans</h2>
         <p style="margin-bottom: 20px;">Each plan can be purchased only once • 45 days • Daily 5-11% ROI</p>
         <div class="plans-grid" id="plansGrid"></div>
     </div>
 
-    <!-- Referrals -->
     <div id="referralSection" style="display: none;">
         <div class="glass-card" style="padding: 35px;">
             <h3><i class="fas fa-link gold-text"></i> Referral Program</h3>
@@ -340,32 +166,21 @@
         </div>
     </div>
 
-    <!-- Agent Panel (For Deposit/Withdrawal Verification) -->
     <div id="agentSection" style="display: none;">
         <h2><i class="fas fa-user-tie gold-text"></i> Agent Verification Panel</h2>
-        <p style="margin-bottom: 20px;">Verify and approve user deposit & withdrawal requests</p>
-        
-        <!-- Pending Deposits for Agent -->
+        <p style="margin-bottom: 20px;">Real-time deposit & withdrawal verification</p>
         <div class="glass-card" style="padding: 25px; margin: 20px 0;">
-            <h3><i class="fas fa-download gold-text"></i> Pending Deposit Requests</h3>
+            <h3><i class="fas fa-download gold-text"></i> Pending Deposits</h3>
             <div id="agentPendingDeposits">Loading...</div>
         </div>
-        
-        <!-- Pending Withdrawals for Agent -->
         <div class="glass-card" style="padding: 25px; margin: 20px 0;">
-            <h3><i class="fas fa-upload gold-text"></i> Pending Withdrawal Requests</h3>
+            <h3><i class="fas fa-upload gold-text"></i> Pending Withdrawals</h3>
             <div id="agentPendingWithdrawals">Loading...</div>
-        </div>
-        
-        <!-- Recently Approved -->
-        <div class="glass-card" style="padding: 25px;">
-            <h3><i class="fas fa-check-circle gold-text"></i> Recently Verified</h3>
-            <div id="agentRecentActivity">No recent activity</div>
         </div>
     </div>
 </div>
 
-<!-- Deposit Modal -->
+<!-- Modals -->
 <div id="depositModal" class="modal">
     <div class="modal-content">
         <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('depositModal')">&times;</span>
@@ -382,14 +197,13 @@
             <div class="wallet-address" id="walletAddressDisplay"></div>
         </div>
         <input type="text" id="userWallet" placeholder="Your Wallet Address">
-        <input type="text" id="txnHash" placeholder="Transaction Hash (Optional)">
+        <input type="text" id="txnHash" placeholder="Transaction Hash">
         <input type="number" id="depositAmount" placeholder="Amount (USD)" value="100">
-        <button class="btn-gold" style="width:100%;" onclick="submitDeposit()">Submit Deposit Request</button>
-        <p class="risk-warning" style="margin-top: 12px;">Request will be verified by Agent. Funds added after approval.</p>
+        <button class="btn-gold" style="width:100%;" onclick="submitDepositRequest()">Submit Deposit</button>
+        <p class="risk-warning">Agent will verify your request in real-time</p>
     </div>
 </div>
 
-<!-- Withdraw Modal -->
 <div id="withdrawModal" class="modal">
     <div class="modal-content">
         <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('withdrawModal')">&times;</span>
@@ -397,12 +211,10 @@
         <select id="withdrawMethod"><option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option></select>
         <input type="text" id="withdrawAddress" placeholder="Withdrawal Address">
         <input type="number" id="withdrawAmount" placeholder="Amount (USD) - Min $20">
-        <button class="btn-gold" style="width:100%;" onclick="submitWithdraw()">Request Withdrawal</button>
-        <p class="risk-warning" style="margin-top: 12px;">Request will be verified by Agent before processing.</p>
+        <button class="btn-gold" style="width:100%;" onclick="submitWithdrawRequest()">Request Withdrawal</button>
     </div>
 </div>
 
-<!-- Auth Modal -->
 <div id="authModal" class="modal">
     <div class="modal-content">
         <span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('authModal')">&times;</span>
@@ -422,73 +234,329 @@
         <p style="margin-top: 15px; text-align:center;">
             <a href="#" onclick="toggleAuthMode()" id="toggleAuthLink">Don't have an account? Register</a>
         </p>
+        <p style="text-align:center; margin-top:10px;">
+            <a href="#" onclick="sendPasswordReset()">Forgot Password?</a> | 
+            <a href="#" onclick="signInWithGoogle()">Sign in with Google</a>
+        </p>
     </div>
 </div>
 
 <div id="toastContainer"></div>
 
 <footer>
-    <div style="text-align:center;"><h3 class="gold-text">NEXORA CAPITAL</h3><p>Global Fintech Ecosystem</p></div>
+    <div style="text-align:center;"><h3 class="gold-text">NEXORA CAPITAL</h3><p>Real-Time Multi-Device Platform</p></div>
     <div class="footer-links">
-        <a onclick="showLegalModal('terms')">Terms & Conditions</a>
-        <a onclick="showLegalModal('privacy')">Privacy Policy</a>
-        <a onclick="showLegalModal('risk')">Risk Disclosure</a>
+        <a onclick="showLegal('terms')">Terms & Conditions</a>
+        <a onclick="showLegal('privacy')">Privacy Policy</a>
+        <a onclick="showLegal('risk')">Risk Disclosure</a>
     </div>
-    <div class="risk-warning">⚠️ Investing involves risk. You may lose your capital.</div>
+    <div class="risk-warning">⚠️ Investing involves risk. You may lose your capital. Real-time data sync across all devices.</div>
     <div style="text-align:center; margin-top:25px;">© 2025 Nexora Capital — Premium Investment Platform</div>
 </footer>
 
-<script>
-    // ============ DATA STORAGE ============
-    let currentUser = JSON.parse(localStorage.getItem('nexora_current')) || null;
-    let users = JSON.parse(localStorage.getItem('nexora_users')) || [];
-    let deposits = JSON.parse(localStorage.getItem('nexora_deposits')) || [];
-    let withdrawals = JSON.parse(localStorage.getItem('nexora_withdrawals')) || [];
-    let investments = JSON.parse(localStorage.getItem('nexora_investments')) || [];
-    let referrals = JSON.parse(localStorage.getItem('nexora_referrals')) || [];
-    let profitLog = JSON.parse(localStorage.getItem('nexora_profit_log')) || {};
-
-    // Create Default Agent Account (Fixed Agent)
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyAxSWI_Uh_hYJvSBMhKLw-bvcoqwzvdhN4",
+        authDomain: "wallat-6fc9f.firebaseapp.com",
+        projectId: "wallat-6fc9f",
+        storageBucket: "wallat-6fc9f.firebasestorage.app",
+        messagingSenderId: "528621844279",
+        appId: "1:528621844279:web:7cec7ca51f3fb7cdfd0cb2",
+        measurementId: "G-1X4HPJD5VG"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
+    
+    let currentUserData = null;
+    let unsubscribeAgentDeposits = null;
+    let unsubscribeAgentWithdrawals = null;
+    
+    // Predefined accounts
     const AGENT_EMAIL = "agent@nexora.com";
-    const AGENT_PASSWORD = "Agent@123";
-    
-    // Check if agent exists, if not create
-    if (!users.find(u => u.email === AGENT_EMAIL)) {
-        users.push({
-            id: Date.now() + 1,
-            fullname: "Verification Agent",
-            email: AGENT_EMAIL,
-            password: AGENT_PASSWORD,
-            balance: 0,
-            refCode: "AGENT001",
-            referredBy: null,
-            purchasedPlans: [],
-            role: "agent",
-            createdAt: new Date()
-        });
-        localStorage.setItem('nexora_users', JSON.stringify(users));
-    }
-
-    // Create Default Admin Account
+    const AGENT_PASS = "Agent@123";
     const ADMIN_EMAIL = "admin@nexora.com";
-    const ADMIN_PASSWORD = "Admin@123";
+    const ADMIN_PASS = "Admin@123";
     
-    if (!users.find(u => u.email === ADMIN_EMAIL)) {
-        users.push({
-            id: Date.now() + 2,
-            fullname: "System Admin",
-            email: ADMIN_EMAIL,
-            password: ADMIN_PASSWORD,
-            balance: 0,
-            refCode: "ADMIN001",
-            referredBy: null,
-            purchasedPlans: [],
-            role: "admin",
-            createdAt: new Date()
-        });
-        localStorage.setItem('nexora_users', JSON.stringify(users));
+    async function createPredefinedUsers() {
+        try {
+            const agentCred = await createUserWithEmailAndPassword(auth, AGENT_EMAIL, AGENT_PASS);
+            await setDoc(doc(db, "users", agentCred.user.uid), {
+                fullname: "Verification Agent",
+                email: AGENT_EMAIL,
+                balance: 0,
+                refCode: "AGENT001",
+                role: "agent",
+                purchasedPlans: [],
+                createdAt: serverTimestamp()
+            });
+        } catch(e) {}
+        try {
+            const adminCred = await createUserWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASS);
+            await setDoc(doc(db, "users", adminCred.user.uid), {
+                fullname: "System Admin",
+                email: ADMIN_EMAIL,
+                balance: 0,
+                refCode: "ADMIN001",
+                role: "admin",
+                purchasedPlans: [],
+                createdAt: serverTimestamp()
+            });
+        } catch(e) {}
     }
-
+    createPredefinedUsers();
+    
+    function showToast(msg, type = "success") {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.innerHTML = `<i class="fas ${type === "success" ? "fa-check-circle" : "fa-exclamation-triangle"}" style="color:#F5B041;"></i> ${msg}`;
+        document.getElementById("toastContainer").appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    
+    window.signInWithGoogle = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            const userRef = doc(db, "users", user.uid);
+            const snap = await getDoc(userRef);
+            if (!snap.exists()) {
+                await setDoc(userRef, {
+                    fullname: user.displayName || user.email.split('@')[0],
+                    email: user.email,
+                    balance: 0,
+                    refCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
+                    role: "user",
+                    purchasedPlans: [],
+                    createdAt: serverTimestamp()
+                });
+            }
+            showToast("Google login successful!");
+        } catch(e) { showToast(e.message, "error"); }
+    };
+    
+    window.sendPasswordReset = async () => {
+        const email = prompt("Enter your email:");
+        if (email) {
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showToast("Reset email sent!");
+            } catch(e) { showToast(e.message, "error"); }
+        }
+    };
+    
+    async function updateUI() {
+        const appMain = document.getElementById("appMain");
+        const authBtn = document.getElementById("authBtn");
+        const dashNav = document.getElementById("dashNav");
+        const investNav = document.getElementById("investNav");
+        const refNav = document.getElementById("refNav");
+        const agentNav = document.getElementById("agentNav");
+        
+        if (currentUserData) {
+            appMain.style.display = "block";
+            authBtn.innerHTML = `<i class="fas fa-user-check"></i> ${currentUserData.fullname || currentUserData.email.split('@')[0]}`;
+            dashNav.style.display = "flex";
+            investNav.style.display = "flex";
+            refNav.style.display = "flex";
+            
+            if (currentUserData.role === "agent") {
+                agentNav.style.display = "flex";
+                dashNav.style.display = "none";
+                investNav.style.display = "none";
+                refNav.style.display = "none";
+                showAgentPanel();
+            } else if (currentUserData.role === "admin") {
+                agentNav.style.display = "none";
+                showDashboard();
+            } else {
+                agentNav.style.display = "none";
+                showDashboard();
+            }
+        } else {
+            appMain.style.display = "none";
+            authBtn.innerHTML = '<i class="fas fa-user-circle"></i> Login';
+            dashNav.style.display = "none";
+            investNav.style.display = "none";
+            refNav.style.display = "none";
+            agentNav.style.display = "none";
+        }
+    }
+    
+    window.login = async (email, password) => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            showToast("Login successful!");
+            closeModal("authModal");
+        } catch(e) { showToast(e.message, "error"); }
+    };
+    
+    window.register = async (name, email, password, confirm, refCode) => {
+        if (password !== confirm) return showToast("Passwords don't match", "error");
+        try {
+            const result = await createUserWithEmailAndPassword(auth, email, password);
+            let referredBy = null;
+            if (refCode) {
+                const q = query(collection(db, "users"), where("refCode", "==", refCode));
+                const snap = await getDocs(q);
+                if (!snap.empty) referredBy = snap.docs[0].id;
+            }
+            await setDoc(doc(db, "users", result.user.uid), {
+                fullname: name,
+                email: email,
+                balance: 0,
+                refCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
+                referredBy: referredBy,
+                role: "user",
+                purchasedPlans: [],
+                createdAt: serverTimestamp()
+            });
+            showToast("Registration successful!");
+            closeModal("authModal");
+        } catch(e) { showToast(e.message, "error"); }
+    };
+    
+    window.logout = async () => {
+        await signOut(auth);
+        showToast("Logged out");
+    };
+    
+    window.submitDepositRequest = async () => {
+        if (!currentUserData || !selectedMethod.address) return showToast("Select payment method", "error");
+        const userWallet = document.getElementById("userWallet").value;
+        if (!userWallet) return showToast("Enter wallet address", "error");
+        const amount = parseFloat(document.getElementById("depositAmount").value) || 100;
+        if (amount < 50) return showToast("Minimum $50", "error");
+        
+        await addDoc(collection(db, "deposits"), {
+            userId: currentUserData.uid,
+            userEmail: currentUserData.email,
+            userName: currentUserData.fullname,
+            method: selectedMethod.name,
+            depositAddress: selectedMethod.address,
+            userWallet: userWallet,
+            txnHash: document.getElementById("txnHash").value,
+            amount: amount,
+            status: "pending",
+            createdAt: serverTimestamp()
+        });
+        showToast("Deposit request sent! Agent will verify.");
+        closeModal("depositModal");
+        document.getElementById("userWallet").value = "";
+        document.getElementById("txnHash").value = "";
+    };
+    
+    window.submitWithdrawRequest = async () => {
+        if (!currentUserData) return;
+        const method = document.getElementById("withdrawMethod").value;
+        const address = document.getElementById("withdrawAddress").value;
+        const amount = parseFloat(document.getElementById("withdrawAmount").value);
+        if (!address || amount < 20) return showToast("Min $20", "error");
+        if ((currentUserData.balance || 0) < amount) return showToast("Insufficient balance", "error");
+        
+        await addDoc(collection(db, "withdrawals"), {
+            userId: currentUserData.uid,
+            userEmail: currentUserData.email,
+            userName: currentUserData.fullname,
+            method: method,
+            address: address,
+            amount: amount,
+            status: "pending",
+            createdAt: serverTimestamp()
+        });
+        showToast("Withdrawal request sent! Agent will verify.");
+        closeModal("withdrawModal");
+    };
+    
+    window.approveDeposit = async (id, userId, amount) => {
+        await updateDoc(doc(db, "deposits", id), { status: "approved" });
+        await updateDoc(doc(db, "users", userId), { balance: increment(amount) });
+        showToast(`Deposit $${amount} approved!`);
+    };
+    
+    window.rejectDeposit = async (id) => {
+        await updateDoc(doc(db, "deposits", id), { status: "rejected" });
+        showToast("Deposit rejected", "error");
+    };
+    
+    window.approveWithdrawal = async (id, userId, amount) => {
+        await updateDoc(doc(db, "withdrawals", id), { status: "approved" });
+        await updateDoc(doc(db, "users", userId), { balance: increment(-amount) });
+        showToast(`Withdrawal $${amount} approved!`);
+    };
+    
+    window.rejectWithdrawal = async (id) => {
+        await updateDoc(doc(db, "withdrawals", id), { status: "rejected" });
+        showToast("Withdrawal rejected", "error");
+    };
+    
+    window.buyPlan = async (amount, planName) => {
+        if (!currentUserData) return;
+        if (currentUserData.purchasedPlans?.includes(planName)) return showToast(`${planName} already purchased!`, "error");
+        if ((currentUserData.balance || 0) < amount) return showToast(`Need $${amount}`, "error");
+        
+        await updateDoc(doc(db, "users", currentUserData.uid), {
+            balance: increment(-amount),
+            purchasedPlans: arrayUnion(planName)
+        });
+        await addDoc(collection(db, "investments"), {
+            userId: currentUserData.uid,
+            plan: planName,
+            amount: amount,
+            status: "active",
+            profitEarned: 0,
+            startDate: serverTimestamp()
+        });
+        showToast(`Invested $${amount} in ${planName}!`);
+    };
+    
+    async function loadUserDashboard() {
+        if (!currentUserData || currentUserData.role !== "user") return;
+        document.getElementById("totalBalance").innerText = `$${(currentUserData.balance || 0).toFixed(2)}`;
+        const q = query(collection(db, "investments"), where("userId", "==", currentUserData.uid), where("status", "==", "active"));
+        const snap = await getDocs(q);
+        const investmentsList = snap.docs.map(d => d.data());
+        document.getElementById("activeCount").innerText = investmentsList.length;
+        const dailyEst = investmentsList.reduce((s, i) => s + (i.amount * 0.007), 0);
+        document.getElementById("dailyEstimate").innerText = `$${dailyEst.toFixed(2)}`;
+        
+        let html = investmentsList.map(i => `<div class="glass-card" style="padding:12px; margin:8px 0;">💼 ${i.plan} - $${i.amount} | Daily ~$${(i.amount * 0.007).toFixed(2)}</div>`).join("");
+        document.getElementById("investHistoryList").innerHTML = html || "<p>No active investments.</p>";
+        
+        const ctx = document.getElementById("profitChart")?.getContext("2d");
+        if (ctx) {
+            new Chart(ctx, {
+                type: "line",
+                data: { labels: ["Day1", "Day2", "Day3", "Day4", "Day5", "Day6", "Day7"], 
+                        datasets: [{ label: "Projected Profit ($)", data: [12, 27, 45, 68, 95, 128, 168], borderColor: "#F5B041", borderWidth: 3, fill: true, backgroundColor: "rgba(245,176,65,0.1)" }] }
+            });
+        }
+    }
+    
+    async function loadAgentPanel() {
+        if (!currentUserData || currentUserData.role !== "agent") return;
+        const depositsSnap = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending")));
+        const withdrawalsSnap = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending")));
+        
+        document.getElementById("agentPendingDeposits").innerHTML = depositsSnap.empty ? "<p>No pending deposits</p>" :
+            `<table class="admin-table"><tr><th>User</th><th>Method</th><th>Amount</th><th>Action</th></tr>
+            ${depositsSnap.docs.map(d => `<tr><td>${d.data().userName || d.data().userEmail}</td><td>${d.data().method}</td><td>$${d.data().amount}</td>
+            <td><button class="action-btn approve-btn" onclick="approveDeposit('${d.id}', '${d.data().userId}', ${d.data().amount})">Approve</button>
+            <button class="action-btn reject-btn" onclick="rejectDeposit('${d.id}')">Reject</button></td></tr>`).join("")}</table>`;
+        
+        document.getElementById("agentPendingWithdrawals").innerHTML = withdrawalsSnap.empty ? "<p>No pending withdrawals</p>" :
+            `<table class="admin-table"><tr><th>User</th><th>Method</th><th>Amount</th><th>Action</th></tr>
+            ${withdrawalsSnap.docs.map(w => `<tr><td>${w.data().userName || w.data().userEmail}</td><td>${w.data().method}</td><td>$${w.data().amount}</td>
+            <td><button class="action-btn approve-btn" onclick="approveWithdrawal('${w.id}', '${w.data().userId}', ${w.data().amount})">Approve</button>
+            <button class="action-btn reject-btn" onclick="rejectWithdrawal('${w.id}')">Reject</button></td></tr>`).join("")}</table>`;
+    }
+    
     const plans = [
         { name: "VIP 1", amount: 20, duration: 45, roi: "5-11%" },
         { name: "VIP 2", amount: 82, duration: 45, roi: "5-11%" },
@@ -499,541 +567,127 @@
         { name: "VIP 7", amount: 5000, coming: true },
         { name: "VIP 8", amount: 10000, coming: true }
     ];
-
-    let selectedMethod = { name: '', address: '', qr: '' };
-
-    function saveData() {
-        localStorage.setItem('nexora_users', JSON.stringify(users));
-        localStorage.setItem('nexora_deposits', JSON.stringify(deposits));
-        localStorage.setItem('nexora_withdrawals', JSON.stringify(withdrawals));
-        localStorage.setItem('nexora_investments', JSON.stringify(investments));
-        localStorage.setItem('nexora_referrals', JSON.stringify(referrals));
-        localStorage.setItem('nexora_profit_log', JSON.stringify(profitLog));
-        if (currentUser) localStorage.setItem('nexora_current', JSON.stringify(currentUser));
-        else localStorage.removeItem('nexora_current');
+    
+    function renderPlans() {
+        const purchased = currentUserData?.purchasedPlans || [];
+        document.getElementById("plansGrid").innerHTML = plans.map(p => {
+            if (p.coming) return `<div class="plan-card"><span class="badge-coming">Coming Soon</span><h3>${p.name}</h3><div class="plan-price">$${p.amount}+</div><button class="btn-outline-gold" disabled>Coming Soon</button></div>`;
+            const owned = purchased.includes(p.name);
+            return `<div class="plan-card">${owned ? '<span class="badge-owned">ACTIVE</span>' : ''}<h3>${p.name}</h3><div class="plan-price">$${p.amount}</div><p>⏱️ ${p.duration} days</p><p>📈 Daily ROI: ${p.roi}</p>${!owned ? `<button class="btn-gold" style="width:100%; margin-top:15px;" onclick="buyPlan(${p.amount}, '${p.name}')">Invest Now →</button>` : `<button class="btn-outline-gold" disabled>Already Purchased</button>`}</div>`;
+        }).join("");
     }
-
-    function showToast(msg, type = 'success') {
-        let toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}" style="color:#F5B041;"></i> ${msg}`;
-        document.getElementById('toastContainer').appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-        
-        // Update agent badge if agent is logged in
-        if (currentUser?.role === 'agent') {
-            updateAgentBadge();
+    
+    async function loadReferralData() {
+        if (!currentUserData) return;
+        document.getElementById("refLinkInput").value = `https://nexora.com/ref/${currentUserData.refCode}`;
+        const q = query(collection(db, "users"), where("referredBy", "==", currentUserData.uid));
+        const snap = await getDocs(q);
+        document.getElementById("refCount").innerText = snap.size;
+    }
+    
+    window.showDashboard = () => {
+        document.getElementById("dashboardSection").style.display = "block";
+        document.getElementById("investSection").style.display = "none";
+        document.getElementById("referralSection").style.display = "none";
+        document.getElementById("agentSection").style.display = "none";
+        loadUserDashboard();
+    };
+    window.showInvestments = () => {
+        document.getElementById("investSection").style.display = "block";
+        document.getElementById("dashboardSection").style.display = "none";
+        document.getElementById("referralSection").style.display = "none";
+        document.getElementById("agentSection").style.display = "none";
+        renderPlans();
+    };
+    window.showReferrals = () => {
+        document.getElementById("referralSection").style.display = "block";
+        document.getElementById("dashboardSection").style.display = "none";
+        document.getElementById("investSection").style.display = "none";
+        document.getElementById("agentSection").style.display = "none";
+        loadReferralData();
+    };
+    window.showAgentPanel = () => {
+        document.getElementById("agentSection").style.display = "block";
+        document.getElementById("dashboardSection").style.display = "none";
+        document.getElementById("investSection").style.display = "none";
+        document.getElementById("referralSection").style.display = "none";
+        loadAgentPanel();
+    };
+    
+    window.copyRefLink = () => {
+        const inp = document.getElementById("refLinkInput");
+        inp.select();
+        document.execCommand("copy");
+        showToast("Link copied!");
+    };
+    
+    let selectedMethod = { name: "", address: "", qr: "" };
+    window.selectMethod = (name, address, qr) => {
+        selectedMethod = { name, address, qr };
+        document.getElementById("qrDisplay").style.display = "block";
+        document.getElementById("qrImage").src = qr;
+        document.getElementById("walletAddressDisplay").innerHTML = `<strong>Send to:</strong><br>${address}`;
+    };
+    
+    window.openDepositModal = () => { if (currentUserData) document.getElementById("depositModal").style.display = "flex"; else openAuthModal(); };
+    window.openWithdrawModal = () => { if (currentUserData) document.getElementById("withdrawModal").style.display = "flex"; else openAuthModal(); };
+    window.openAuthModal = () => document.getElementById("authModal").style.display = "flex";
+    window.closeModal = (id) => document.getElementById(id).style.display = "none";
+    window.showLegal = (type) => alert({ terms: "Terms & Conditions...", privacy: "Privacy Policy...", risk: "Risk Disclosure..." }[type]);
+    
+    let isLogin = true;
+    window.toggleAuthMode = () => {
+        isLogin = !isLogin;
+        document.getElementById("authTitle").innerText = isLogin ? "Login to Nexora" : "Create Account";
+        document.getElementById("loginForm").style.display = isLogin ? "block" : "none";
+        document.getElementById("registerForm").style.display = isLogin ? "none" : "block";
+        document.getElementById("authActionBtn").innerText = isLogin ? "Login" : "Register";
+    };
+    
+    window.handleAuth = () => {
+        if (isLogin) {
+            login(document.getElementById("loginEmail").value, document.getElementById("loginPassword").value);
+        } else {
+            register(document.getElementById("regName").value, document.getElementById("regEmail").value, 
+                     document.getElementById("regPassword").value, document.getElementById("regConfirm").value, 
+                     document.getElementById("regRefCode").value);
         }
-    }
-
-    // Update agent pending count badge
-    function updateAgentBadge() {
-        if (currentUser?.role === 'agent') {
-            let pendingDeposits = deposits.filter(d => d.status === 'pending').length;
-            let pendingWithdrawals = withdrawals.filter(w => w.status === 'pending').length;
-            let total = pendingDeposits + pendingWithdrawals;
-            const badge = document.getElementById('agentPendingBadge');
-            if (badge) {
-                if (total > 0) {
-                    badge.style.display = 'inline-block';
-                    badge.innerText = total;
-                } else {
-                    badge.style.display = 'none';
+    };
+    
+    let slides = document.querySelectorAll(".banner-slide");
+    let idx = 0;
+    setInterval(() => {
+        slides[idx].classList.remove("active");
+        idx = (idx + 1) % slides.length;
+        slides[idx].classList.add("active");
+    }, 4000);
+    
+    document.getElementById("heroBtn").onclick = () => { if (currentUserData) showInvestments(); else openAuthModal(); };
+    
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userRef = doc(db, "users", user.uid);
+            const snap = await getDoc(userRef);
+            if (snap.exists()) {
+                currentUserData = { uid: user.uid, ...snap.data() };
+                updateUI();
+                if (currentUserData.role === "user") {
+                    const qDep = query(collection(db, "deposits"), where("userId", "==", user.uid));
+                    const qWd = query(collection(db, "withdrawals"), where("userId", "==", user.uid));
+                    onSnapshot(qDep, () => loadUserDashboard());
+                    onSnapshot(qWd, () => loadUserDashboard());
+                    onSnapshot(userRef, () => getDoc(userRef).then(s => { currentUserData = { uid: user.uid, ...s.data() }; loadUserDashboard(); }));
+                }
+                if (currentUserData.role === "agent") {
+                    onSnapshot(collection(db, "deposits"), () => loadAgentPanel());
+                    onSnapshot(collection(db, "withdrawals"), () => loadAgentPanel());
                 }
             }
-        }
-    }
-
-    // ============ AUTHENTICATION ============
-    let isLogin = true;
-    function toggleAuthMode() {
-        isLogin = !isLogin;
-        document.getElementById('authTitle').innerText = isLogin ? "Login to Nexora" : "Create Account";
-        document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
-        document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
-        document.getElementById('authActionBtn').innerText = isLogin ? "Login" : "Register";
-        document.getElementById('toggleAuthLink').innerHTML = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
-    }
-
-    function handleAuth() {
-        if (isLogin) {
-            let email = document.getElementById('loginEmail').value;
-            let pwd = document.getElementById('loginPassword').value;
-            let user = users.find(u => u.email === email && u.password === pwd);
-            if (user) {
-                currentUser = { ...user };
-                saveData();
-                closeModal('authModal');
-                showToast(`Welcome ${user.fullname || user.email}`);
-                updateUI();
-            } else showToast("Invalid credentials", "error");
         } else {
-            let name = document.getElementById('regName').value;
-            let email = document.getElementById('regEmail').value;
-            let pwd = document.getElementById('regPassword').value;
-            let confirm = document.getElementById('regConfirm').value;
-            let refCode = document.getElementById('regRefCode').value;
-            
-            if (!name || !email || !pwd || !confirm) return showToast("All fields required", "error");
-            if (pwd !== confirm) return showToast("Passwords don't match", "error");
-            if (users.find(u => u.email === email)) return showToast("Email already exists", "error");
-            
-            let referrer = null;
-            if (refCode) referrer = users.find(u => u.refCode === refCode);
-            
-            let newUser = {
-                id: Date.now(),
-                fullname: name,
-                email: email,
-                password: pwd,
-                balance: 0,
-                refCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
-                referredBy: referrer ? referrer.id : null,
-                purchasedPlans: [],
-                role: email === ADMIN_EMAIL ? 'admin' : 'user'
-            };
-            users.push(newUser);
-            currentUser = newUser;
-            saveData();
-            closeModal('authModal');
-            showToast("Registration successful!");
+            currentUserData = null;
             updateUI();
         }
-    }
-
-    function logout() {
-        currentUser = null;
-        saveData();
-        updateUI();
-        showToast("Logged out");
-    }
-
-    function updateUI() {
-        const appMain = document.getElementById('appMain');
-        const authBtn = document.getElementById('authBtn');
-        const agentNav = document.getElementById('agentNav');
-        
-        if (currentUser) {
-            appMain.style.display = 'block';
-            authBtn.innerHTML = `<i class="fas fa-user-check"></i> ${currentUser.fullname || currentUser.email.split('@')[0]}`;
-            document.getElementById('dashNav').style.display = 'flex';
-            document.getElementById('investNav').style.display = 'flex';
-            document.getElementById('refNav').style.display = 'flex';
-            
-            if (currentUser.role === 'agent') {
-                agentNav.style.display = 'flex';
-                document.getElementById('agentNav').style.display = 'flex';
-                document.getElementById('dashNav').style.display = 'none';
-                document.getElementById('investNav').style.display = 'none';
-                document.getElementById('refNav').style.display = 'none';
-                showAgentPanel();
-                updateAgentBadge();
-            } else if (currentUser.role === 'admin') {
-                agentNav.style.display = 'none';
-                showDashboard();
-            } else {
-                agentNav.style.display = 'none';
-                showDashboard();
-            }
-            loadDashboard();
-            renderPlans();
-            loadReferralData();
-            checkDailyProfit();
-            // Start real-time sync
-            startRealTimeSync();
-        } else {
-            appMain.style.display = 'none';
-            authBtn.innerHTML = '<i class="fas fa-user-circle"></i> Login';
-            document.getElementById('dashNav').style.display = 'none';
-            document.getElementById('investNav').style.display = 'none';
-            document.getElementById('refNav').style.display = 'none';
-            agentNav.style.display = 'none';
-        }
-    }
-
-    // Real-time sync simulation (checks for updates every 2 seconds)
-    let syncInterval;
-    function startRealTimeSync() {
-        if (syncInterval) clearInterval(syncInterval);
-        syncInterval = setInterval(() => {
-            if (currentUser) {
-                // Reload data from localStorage (simulating real-time sync across devices)
-                let freshUser = users.find(u => u.id === currentUser.id);
-                if (freshUser) {
-                    let oldBalance = currentUser.balance;
-                    currentUser = { ...freshUser };
-                    if (oldBalance !== currentUser.balance) {
-                        loadDashboard();
-                        showToast(`Balance updated: $${currentUser.balance.toFixed(2)}`);
-                    }
-                    saveData();
-                }
-                // Reload deposits, withdrawals, investments
-                deposits = JSON.parse(localStorage.getItem('nexora_deposits')) || [];
-                withdrawals = JSON.parse(localStorage.getItem('nexora_withdrawals')) || [];
-                investments = JSON.parse(localStorage.getItem('nexora_investments')) || [];
-                
-                if (currentUser.role === 'agent') {
-                    loadAgentPanelData();
-                    updateAgentBadge();
-                } else if (currentUser.role === 'user') {
-                    loadDashboard();
-                }
-            }
-        }, 3000);
-    }
-
-    // ============ DASHBOARD ============
-    let chart;
-    function loadDashboard() {
-        if (!currentUser || currentUser.role !== 'user') return;
-        let userInvestments = investments.filter(i => i.userId === currentUser.id && i.status === 'active');
-        let totalBalance = currentUser.balance || 0;
-        let dailyEst = userInvestments.reduce((sum, inv) => sum + (inv.amount * 0.007), 0);
-        document.getElementById('totalBalance').innerText = `$${totalBalance.toFixed(2)}`;
-        document.getElementById('activeCount').innerText = userInvestments.length;
-        document.getElementById('dailyEstimate').innerText = `$${dailyEst.toFixed(2)}`;
-        
-        let historyHtml = userInvestments.map(inv => `<div class="glass-card" style="padding:12px; margin:8px 0;">💼 ${inv.plan} - $${inv.amount} | Daily ~$${(inv.amount * 0.007).toFixed(2)}</div>`).join('');
-        document.getElementById('investHistoryList').innerHTML = historyHtml || "<p>No active investments.</p>";
-        
-        let ctx = document.getElementById('profitChart')?.getContext('2d');
-        if (ctx) {
-            if (chart) chart.destroy();
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: ['Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6', 'Day7'], 
-                        datasets: [{ label: 'Projected Profit ($)', data: [12, 27, 45, 68, 95, 128, 168], borderColor: '#F5B041', borderWidth: 3, fill: true, backgroundColor: 'rgba(245,176,65,0.1)' }] }
-            });
-        }
-    }
-
-    // ============ INVESTMENT PLANS ============
-    function renderPlans() {
-        let container = document.getElementById('plansGrid');
-        let purchased = currentUser?.purchasedPlans || [];
-        container.innerHTML = plans.map(plan => {
-            if (plan.coming) {
-                return `<div class="plan-card"><span class="badge-coming">Coming Soon</span><h3>${plan.name}</h3><div class="plan-price">$${plan.amount}+</div><p>✨ Premium Tier</p><button class="btn-outline-gold" disabled style="width:100%;">Coming Soon</button></div>`;
-            }
-            let owned = purchased.includes(plan.name);
-            return `<div class="plan-card">${owned ? '<span class="badge-owned">ACTIVE</span>' : ''}<h3>${plan.name}</h3><div class="plan-price">$${plan.amount}</div><p>⏱️ ${plan.duration} days</p><p>📈 Daily ROI: ${plan.roi}</p>${!owned ? `<button class="btn-gold" style="width:100%; margin-top:15px;" onclick="buyPlan(${plan.amount}, '${plan.name}')">Invest Now →</button>` : `<button class="btn-outline-gold" disabled style="width:100%;">Already Purchased</button>`}</div>`;
-        }).join('');
-    }
-
-    function buyPlan(amount, planName) {
-        if (!currentUser) { openAuthModal(); return; }
-        if (currentUser.purchasedPlans?.includes(planName)) return showToast(`${planName} already purchased!`, "error");
-        if ((currentUser.balance || 0) < amount) return showToast(`Insufficient balance! Need $${amount}`, "error");
-        
-        currentUser.balance -= amount;
-        if (!currentUser.purchasedPlans) currentUser.purchasedPlans = [];
-        currentUser.purchasedPlans.push(planName);
-        
-        let newInvest = { id: Date.now(), userId: currentUser.id, plan: planName, amount: amount, startDate: new Date(), status: 'active', profitEarned: 0, lastProfitDate: null };
-        investments.push(newInvest);
-        
-        // Update user in users array
-        let userIndex = users.findIndex(u => u.id === currentUser.id);
-        if (userIndex !== -1) users[userIndex] = currentUser;
-        
-        saveData();
-        loadDashboard();
-        renderPlans();
-        showToast(`🎉 Invested $${amount} in ${planName}!`);
-    }
-
-    // ============ DEPOSIT (Goes to Agent for Verification) ============
-    function selectMethod(name, address, qrUrl) {
-        selectedMethod = { name, address, qr: qrUrl };
-        document.getElementById('qrDisplay').style.display = 'block';
-        document.getElementById('qrImage').src = qrUrl;
-        document.getElementById('walletAddressDisplay').innerHTML = `<strong>Send to:</strong><br>${address}`;
-        document.querySelectorAll('.method-chip').forEach(el => el.classList.remove('active'));
-        event.target.classList.add('active');
-    }
-
-    function submitDeposit() {
-        if (!currentUser) return;
-        if (!selectedMethod.address) return showToast("Select a payment method", "error");
-        let userWallet = document.getElementById('userWallet').value;
-        if (!userWallet) return showToast("Enter your wallet address", "error");
-        let amount = parseFloat(document.getElementById('depositAmount').value) || 100;
-        if (amount < 50) return showToast("Minimum deposit is $50", "error");
-        
-        let newDep = { 
-            id: Date.now(), 
-            userId: currentUser.id, 
-            userEmail: currentUser.email,
-            userName: currentUser.fullname,
-            method: selectedMethod.name, 
-            userWallet: userWallet, 
-            txnHash: document.getElementById('txnHash').value, 
-            amount: amount, 
-            status: 'pending',
-            createdAt: new Date().toLocaleString()
-        };
-        deposits.push(newDep);
-        saveData();
-        showToast("Deposit request submitted! Waiting for Agent verification.");
-        
-        closeModal('depositModal');
-        document.getElementById('userWallet').value = '';
-        document.getElementById('txnHash').value = '';
-        
-        // Notify if agent is logged in (real-time)
-        if (users.find(u => u.role === 'agent')) {
-            showToast("📢 Agent notified! Verification pending.");
-        }
-    }
-
-    // ============ WITHDRAWAL (Goes to Agent for Verification) ============
-    function submitWithdraw() {
-        if (!currentUser) return;
-        let method = document.getElementById('withdrawMethod').value;
-        let address = document.getElementById('withdrawAddress').value;
-        let amount = parseFloat(document.getElementById('withdrawAmount').value);
-        if (!address || amount < 20) return showToast("Min withdrawal $20", "error");
-        if ((currentUser.balance || 0) < amount) return showToast("Insufficient balance", "error");
-        
-        let newWd = { 
-            id: Date.now(), 
-            userId: currentUser.id,
-            userEmail: currentUser.email,
-            userName: currentUser.fullname,
-            method: method, 
-            address: address, 
-            amount: amount, 
-            status: 'pending',
-            createdAt: new Date().toLocaleString()
-        };
-        withdrawals.push(newWd);
-        saveData();
-        showToast("Withdrawal request submitted! Waiting for Agent verification.");
-        
-        closeModal('withdrawModal');
-        document.getElementById('withdrawAddress').value = '';
-        document.getElementById('withdrawAmount').value = '';
-    }
-
-    // ============ AGENT PANEL (Verification System) ============
-    function showAgentPanel() {
-        if (!currentUser || currentUser.role !== 'agent') return;
-        document.getElementById('dashboardSection').style.display = 'none';
-        document.getElementById('investSection').style.display = 'none';
-        document.getElementById('referralSection').style.display = 'none';
-        document.getElementById('agentSection').style.display = 'block';
-        loadAgentPanelData();
-    }
-
-    function loadAgentPanelData() {
-        // Pending Deposits
-        let pendingDeps = deposits.filter(d => d.status === 'pending');
-        document.getElementById('agentPendingDeposits').innerHTML = pendingDeps.length ? 
-            `<table class="admin-table">
-                <tr><th>User</th><th>Method</th><th>Amount</th><th>Wallet</th><th>Time</th><th>Action</th></tr>
-                ${pendingDeps.map(d => `
-                    <tr>
-                        <td>${d.userName || d.userEmail || 'Unknown'}</td>
-                        <td>${d.method}</td>
-                        <td>$${d.amount}</td>
-                        <td><small>${d.userWallet?.substring(0, 15)}...</small></td>
-                        <td><small>${d.createdAt || 'Now'}</small></td>
-                        <td>
-                            <button class="action-btn approve-btn" onclick="approveDeposit(${d.id})">✅ Approve</button>
-                            <button class="action-btn reject-btn" onclick="rejectDeposit(${d.id})">❌ Reject</button>
-                        </td>
-                    </tr>
-                `).join('')}
-            </table>` : '<p style="padding:20px; text-align:center;">✅ No pending deposits</p>';
-        
-        // Pending Withdrawals
-        let pendingWds = withdrawals.filter(w => w.status === 'pending');
-        document.getElementById('agentPendingWithdrawals').innerHTML = pendingWds.length ?
-            `<table class="admin-table">
-                <tr><th>User</th><th>Method</th><th>Amount</th><th>Address</th><th>Time</th><th>Action</th></tr>
-                ${pendingWds.map(w => `
-                    <tr>
-                        <td>${w.userName || w.userEmail || 'Unknown'}</td>
-                        <td>${w.method}</td>
-                        <td>$${w.amount}</td>
-                        <td><small>${w.address?.substring(0, 15)}...</small></td>
-                        <td><small>${w.createdAt || 'Now'}</small></td>
-                        <td>
-                            <button class="action-btn approve-btn" onclick="approveWithdrawal(${w.id})">✅ Approve</button>
-                            <button class="action-btn reject-btn" onclick="rejectWithdrawal(${w.id})">❌ Reject</button>
-                        </td>
-                    </tr>
-                `).join('')}
-            </table>` : '<p style="padding:20px; text-align:center;">✅ No pending withdrawals</p>';
-        
-        // Recent Activity
-        let recentApproved = [...deposits.filter(d => d.status === 'approved'), ...withdrawals.filter(w => w.status === 'approved')]
-            .sort((a, b) => b.id - a.id).slice(0, 5);
-        document.getElementById('agentRecentActivity').innerHTML = recentApproved.length ?
-            recentApproved.map(r => `<div class="glass-card" style="padding:10px; margin:8px 0;">✓ ${r.userName || r.userEmail} - ${r.amount ? `$${r.amount}` : ''} ${r.method || r.address ? 'Withdrawal' : 'Deposit'} approved</div>`).join('') :
-            '<p>No recent activity</p>';
-    }
-
-    // Agent Approve/Reject Functions
-    function approveDeposit(id) {
-        let dep = deposits.find(d => d.id === id);
-        if (dep && dep.status === 'pending') {
-            dep.status = 'approved';
-            let user = users.find(u => u.id === dep.userId);
-            if (user) {
-                user.balance = (user.balance || 0) + dep.amount;
-                // Update currentUser if it's the same user
-                if (currentUser && currentUser.id === user.id) currentUser.balance = user.balance;
-                showToast(`✅ Deposit $${dep.amount} approved for ${user.email}`);
-            }
-            saveData();
-            loadAgentPanelData();
-            updateAgentBadge();
-            
-            // Real-time notification simulation
-            showToast(`📢 Deposit request approved! Funds added.`);
-        }
-    }
-
-    function rejectDeposit(id) {
-        let dep = deposits.find(d => d.id === id);
-        if (dep) { 
-            dep.status = 'rejected'; 
-            saveData(); 
-            loadAgentPanelData();
-            updateAgentBadge();
-            showToast(`❌ Deposit rejected`, "error");
-        }
-    }
-
-    function approveWithdrawal(id) {
-        let wd = withdrawals.find(w => w.id === id);
-        if (wd && wd.status === 'pending') {
-            wd.status = 'approved';
-            let user = users.find(u => u.id === wd.userId);
-            if (user) {
-                user.balance = (user.balance || 0) - wd.amount;
-                if (currentUser && currentUser.id === user.id) currentUser.balance = user.balance;
-                showToast(`✅ Withdrawal $${wd.amount} approved for ${user.email}`);
-            }
-            saveData();
-            loadAgentPanelData();
-            updateAgentBadge();
-        }
-    }
-
-    function rejectWithdrawal(id) {
-        let wd = withdrawals.find(w => w.id === id);
-        if (wd) { 
-            wd.status = 'rejected'; 
-            saveData(); 
-            loadAgentPanelData();
-            updateAgentBadge();
-            showToast(`❌ Withdrawal rejected`, "error");
-        }
-    }
-
-    // ============ REFERRAL ============
-    function loadReferralData() {
-        if (!currentUser) return;
-        let refLink = `https://nexora.com/ref/${currentUser.refCode}`;
-        document.getElementById('refLinkInput').value = refLink;
-        let referredUsers = users.filter(u => u.referredBy === currentUser.id);
-        let totalEarn = referrals.filter(r => r.userId === currentUser.id).reduce((s, r) => s + r.amount, 0);
-        document.getElementById('refCount').innerText = referredUsers.length;
-        document.getElementById('refEarnings').innerText = `$${totalEarn.toFixed(2)}`;
-    }
-
-    function copyRefLink() {
-        let inp = document.getElementById('refLinkInput');
-        inp.select();
-        document.execCommand('copy');
-        showToast("Referral link copied!");
-    }
-
-    // ============ DAILY PROFIT ============
-    function checkDailyProfit() {
-        if (!currentUser || currentUser.role !== 'user') return;
-        let today = new Date().toDateString();
-        if (profitLog[currentUser.id] === today) return;
-        profitLog[currentUser.id] = today;
-        
-        let userInvests = investments.filter(i => i.userId === currentUser.id && i.status === 'active');
-        let totalProfit = 0;
-        userInvests.forEach(inv => {
-            let randomPercent = (Math.random() * (11 - 5) + 5).toFixed(2);
-            let profit = inv.amount * (randomPercent / 100);
-            inv.profitEarned = (inv.profitEarned || 0) + profit;
-            currentUser.balance = (currentUser.balance || 0) + profit;
-            totalProfit += profit;
-        });
-        if (totalProfit > 0) {
-            let userIndex = users.findIndex(u => u.id === currentUser.id);
-            if (userIndex !== -1) users[userIndex] = currentUser;
-            saveData();
-            loadDashboard();
-            showToast(`✨ Daily profit credited: +$${totalProfit.toFixed(2)}`);
-        }
-    }
-
-    // ============ LEGAL ============
-    function showLegalModal(type) {
-        let content = '';
-        if (type === 'terms') content = 'Terms & Conditions: By using Nexora Capital, you agree to our terms. Investing involves risk. You must be 18+.';
-        else if (type === 'privacy') content = 'Privacy Policy: Your data is encrypted and secure. We do not share personal information.';
-        else content = 'Risk Disclosure: Cryptocurrency investments are highly volatile. You may lose your entire capital. Only invest what you can afford to lose.';
-        alert(content);
-    }
-
-    // ============ NAVIGATION ============
-    function showDashboard() { 
-        if (currentUser?.role === 'user') {
-            document.getElementById('dashboardSection').style.display = 'block'; 
-            document.getElementById('investSection').style.display = 'none'; 
-            document.getElementById('referralSection').style.display = 'none'; 
-            document.getElementById('agentSection').style.display = 'none';
-            loadDashboard(); 
-        } else if (currentUser?.role === 'agent') {
-            showAgentPanel();
-        }
-    }
-    function showInvestments() { 
-        if (currentUser?.role === 'user') {
-            document.getElementById('investSection').style.display = 'block'; 
-            document.getElementById('dashboardSection').style.display = 'none'; 
-            document.getElementById('referralSection').style.display = 'none'; 
-            document.getElementById('agentSection').style.display = 'none';
-            renderPlans(); 
-        }
-    }
-    function showReferrals() { 
-        if (currentUser?.role === 'user') {
-            document.getElementById('referralSection').style.display = 'block'; 
-            document.getElementById('dashboardSection').style.display = 'none'; 
-            document.getElementById('investSection').style.display = 'none'; 
-            document.getElementById('agentSection').style.display = 'none';
-            loadReferralData(); 
-        }
-    }
-    function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
-    function openDepositModal() { if (!currentUser) openAuthModal(); else document.getElementById('depositModal').style.display = 'flex'; }
-    function openWithdrawModal() { if (!currentUser) openAuthModal(); else document.getElementById('withdrawModal').style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    // Banner Slider
-    let slides = document.querySelectorAll('.banner-slide');
-    let slideIndex = 0;
-    setInterval(() => {
-        slides[slideIndex].classList.remove('active');
-        slideIndex = (slideIndex + 1) % slides.length;
-        slides[slideIndex].classList.add('active');
-    }, 4000);
-
-    document.getElementById('heroBtn').onclick = () => { if (currentUser) showInvestments(); else openAuthModal(); };
-    setInterval(() => { if (currentUser && currentUser.role === 'user') checkDailyProfit(); }, 60000);
-    
-    updateUI();
+    });
 </script>
 </body>
 </html>
