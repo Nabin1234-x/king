@@ -2,14 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#F5B041">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NEXORA CAPITAL">
+    <link rel="manifest" href="data:application/manifest+json,{
+      %22name%22: %22NEXORA CAPITAL%22,
+      %22short_name%22: %22Nexora%22,
+      %22start_url%22: %22/%22,
+      %22display%22: %22standalone%22,
+      %22background_color%22: %220A0E1A%22,
+      %22theme_color%22: %22F5B041%22
+    }">
     <title>NEXORA CAPITAL | Premium Investment Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -22,50 +32,79 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: #0A0E1A;
+            background: linear-gradient(135deg, #0A0E1A 0%, #0F1428 50%, #0A0E1A 100%);
             color: #FFFFFF;
             overflow-x: hidden;
             padding-bottom: 70px;
             font-size: 16px;
             -webkit-font-smoothing: antialiased;
+            transition: background 0.3s ease;
         }
         
-        /* Disable zoom on inputs for mobile */
-        input, select, textarea, button {
-            font-size: 16px;
-            -webkit-appearance: none;
-            appearance: none;
+        body.light-theme {
+            background: linear-gradient(135deg, #F8F9FA 0%, #E8ECF1 100%);
+            color: #1A1F3A;
+        }
+        body.light-theme .glass-card {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        body.light-theme input, body.light-theme select, body.light-theme textarea {
+            background: white;
+            border: 1px solid #ddd;
+            color: #1A1F3A;
         }
         
-        /* Smooth Transitions */
         .glass-card {
             background: rgba(18, 25, 45, 0.75);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px);
             border-radius: 28px;
-            border: 1px solid rgba(245, 176, 65, 0.25);
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            will-change: transform;
+            border: 1px solid rgba(245, 176, 65, 0.2);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            position: relative;
+            overflow: hidden;
         }
-        .glass-card:active { transform: scale(0.99); }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #F5B041, transparent);
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
         
         .gold-text {
-            background: linear-gradient(135deg, #F5B041, #D4AF37);
+            background: linear-gradient(135deg, #F5B041, #FFD166, #F5B041);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            animation: gradientShift 3s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
-        .btn-gold, .btn-primary, .btn-outline, .approve-btn, .reject-btn {
-            transition: all 0.12s ease;
+        .btn-gold, .btn-primary, .btn-outline {
+            transition: all 0.2s ease;
             cursor: pointer;
-            will-change: transform;
+            position: relative;
+            overflow: hidden;
         }
-        .btn-gold:active, .btn-primary:active, .approve-btn:active, .reject-btn:active {
+        .btn-gold:active, .btn-primary:active {
             transform: scale(0.96);
         }
-        
         .btn-gold {
-            background: linear-gradient(95deg, #F5B041, #E6A800);
+            background: linear-gradient(95deg, #F5B041, #FFD166, #F5B041);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
             border: none;
             color: #0A0E1A;
             font-weight: 700;
@@ -80,7 +119,6 @@
             border-radius: 40px;
         }
         
-        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -123,13 +161,12 @@
         .avatar {
             width: 42px;
             height: 42px;
-            background: linear-gradient(135deg, #F5B041, #D4AF37);
+            background: linear-gradient(135deg, #F5B041, #FFD166);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.12s ease;
         }
         .avatar:active { transform: scale(0.95); }
         
@@ -153,9 +190,7 @@
             border-radius: 20px;
             padding: 15px;
             text-align: center;
-            transition: transform 0.12s ease;
         }
-        .stat-item:active { transform: scale(0.98); }
         .stat-value { font-size: 20px; font-weight: 700; color: #F5B041; }
         
         .modal {
@@ -195,14 +230,10 @@
             border: 1px solid #2A3148;
             border-radius: 30px;
             color: white;
-            font-size: 16px;
+            font-size: 16px !important;
             transition: all 0.12s ease;
         }
-        input:focus {
-            border-color: #F5B041;
-            outline: none;
-            transform: scale(1.01);
-        }
+        input:focus { border-color: #F5B041; outline: none; }
         
         .method-chip {
             display: inline-block;
@@ -212,9 +243,7 @@
             border-radius: 30px;
             cursor: pointer;
             font-size: 13px;
-            transition: all 0.12s ease;
         }
-        .method-chip:active { transform: scale(0.95); }
         .method-chip.active { background: #F5B041; color: #0A0E1A; }
         
         .qr-preview {
@@ -238,7 +267,6 @@
             z-index: 9999;
             animation: toastFade 0.2s ease;
             white-space: nowrap;
-            z-index: 10000;
         }
         @keyframes toastFade {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
@@ -287,9 +315,7 @@
             justify-content: center;
             gap: 8px;
             font-weight: 600;
-            transition: transform 0.12s ease;
         }
-        .telegram-btn:active { transform: scale(0.98); }
         
         .support-icon {
             position: fixed;
@@ -305,11 +331,8 @@
             cursor: pointer;
             z-index: 99;
             box-shadow: 0 4px 15px rgba(245,176,65,0.4);
-            transition: transform 0.12s ease;
         }
-        .support-icon:active { transform: scale(0.9); }
         
-        /* Chat Styles - WhatsApp Style */
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -322,12 +345,7 @@
             padding: 10px 14px;
             border-radius: 20px;
             max-width: 80%;
-            animation: msgFade 0.15s ease;
             word-wrap: break-word;
-        }
-        @keyframes msgFade {
-            from { opacity: 0; transform: translateX(10px); }
-            to { opacity: 1; transform: translateX(0); }
         }
         .message-user {
             background: #1A2340;
@@ -341,25 +359,9 @@
             margin-left: auto;
             border-bottom-right-radius: 4px;
         }
-        .message-time {
-            font-size: 10px;
-            opacity: 0.6;
-            margin-top: 4px;
-            text-align: right;
-        }
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            align-items: flex-end;
-        }
-        .chat-input-area textarea {
-            flex: 1;
-            margin: 0;
-            resize: none;
-            border-radius: 25px;
-            padding: 12px 16px;
-        }
+        .message-time { font-size: 10px; opacity: 0.6; margin-top: 4px; text-align: right; }
+        .chat-input-area { display: flex; gap: 10px; margin-top: 15px; align-items: flex-end; }
+        .chat-input-area textarea { flex: 1; margin: 0; resize: none; border-radius: 25px; padding: 12px 16px; }
         
         .balance-row { display: flex; justify-content: space-between; gap: 15px; margin-top: 15px; }
         .balance-item { flex: 1; text-align: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 20px; }
@@ -397,11 +399,6 @@
             width: 90%;
             max-width: 440px;
             border: 1px solid rgba(245, 176, 65, 0.4);
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
         }
         
         .login-input {
@@ -412,19 +409,14 @@
             border: 1.5px solid rgba(245, 176, 65, 0.3);
             border-radius: 50px;
             color: white;
-            font-size: 16px;
-            transition: all 0.12s ease;
+            font-size: 16px !important;
         }
-        .login-input:focus {
-            border-color: #F5B041;
-            outline: none;
-            transform: scale(1.01);
-        }
+        .login-input:focus { border-color: #F5B041; outline: none; }
         
         .btn-primary {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #F5B041, #D4AF37);
+            background: linear-gradient(135deg, #F5B041, #FFD166);
             border: none;
             border-radius: 50px;
             color: #0A0E1A;
@@ -432,9 +424,14 @@
             font-size: 16px;
             cursor: pointer;
             margin-top: 15px;
-            transition: transform 0.12s ease;
         }
-        .btn-primary:active { transform: scale(0.98); }
+        
+        .google-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            margin-top: 10px;
+        }
         
         .auth-switch { text-align: center; margin-top: 15px; color: #8A8F9E; font-size: 13px; }
         .auth-switch a { color: #F5B041; cursor: pointer; text-decoration: none; }
@@ -455,15 +452,14 @@
         .history-item { padding: 12px; border-bottom: 1px solid #2A3148; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .badge-success { background: #10B981; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
         .badge-pending { background: #F59E0B; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+        .badge-verified { background: #10B981; padding: 3px 10px; border-radius: 20px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; }
         .vip-card {
             background: linear-gradient(145deg, #1A2340, #11172A);
             border-radius: 24px;
             padding: 18px;
             margin: 10px 0;
             border: 1px solid rgba(245, 176, 65, 0.2);
-            transition: transform 0.12s ease;
         }
-        .vip-card:active { transform: scale(0.98); }
         .vip-price { font-size: 28px; font-weight: 800; color: #F5B041; }
         
         .loader {
@@ -486,18 +482,59 @@
             text-align: center;
             margin: 10px 0;
             cursor: pointer;
-            transition: background 0.12s ease;
         }
-        .file-upload:active { background: rgba(245,176,65,0.1); }
         
-        /* Close button for modals */
         .close-modal {
             float: right;
             font-size: 28px;
             cursor: pointer;
-            transition: transform 0.12s ease;
         }
-        .close-modal:active { transform: scale(0.9); }
+        
+        .progress-bar-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            height: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #F5B041, #FFD166);
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .summary-card {
+            background: rgba(18,25,45,0.8);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(245,176,65,0.2);
+        }
+        .summary-card .value { font-size: 24px; font-weight: 800; color: #F5B041; }
+        
+        /* Profit Chart */
+        .chart-container {
+            background: rgba(18,25,45,0.6);
+            border-radius: 20px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .investment-summary {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(245,176,65,0.1);
+            border-radius: 20px;
+            padding: 15px;
+            margin: 10px 0;
+        }
         
         @media (max-width: 480px) {
             .stats-row { grid-template-columns: 1fr 1fr; }
@@ -505,28 +542,30 @@
             .toast { white-space: normal; text-align: center; width: 90%; }
             .banner-slide { height: 140px; }
             .balance-row { flex-direction: column; }
-            .message-item { max-width: 90%; }
-            .admin-table { font-size: 10px; }
-            .admin-table th, .admin-table td { padding: 6px 3px; }
+            .investment-summary { flex-direction: column; gap: 10px; text-align: center; }
         }
         
         .forgot-card { background: linear-gradient(135deg, #1A2340, #0F1428); padding: 20px; border-radius: 24px; text-align: center; margin-bottom: 15px; }
         .verify-success-icon { font-size: 60px; color: #10B981; margin-bottom: 15px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .welcome-message { font-size: 18px; font-weight: 600; color: #F5B041; margin-bottom: 10px; }
-        .duplicate-error { color: #EF4444; font-size: 12px; margin-top: -8px; margin-bottom: 8px; display: none; }
         
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #1A1F30; }
         ::-webkit-scrollbar-thumb { background: #F5B041; border-radius: 10px; }
+        
+        .refresh-indicator {
+            text-align: center;
+            padding: 10px;
+            color: #F5B041;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
 
-<div class="security-badge"><i class="fas fa-shield-alt"></i> Secure Platform</div>
+<div class="security-badge"><i class="fas fa-shield-alt"></i> Real-Time Multi-Device</div>
 
-<!-- LOGIN OVERLAY -->
 <div id="loginOverlay" class="login-overlay">
     <div class="login-box">
         <div class="login-logo"><h1><span class="gold-text">NEXORA</span> CAPITAL</h1><p>Premium Investment Platform</p></div>
@@ -534,6 +573,7 @@
             <input type="email" id="loginEmail" class="login-input" placeholder="📧 Email Address">
             <input type="password" id="loginPassword" class="login-input" placeholder="🔒 Password">
             <button class="btn-primary" id="loginBtn" onclick="handleLogin()">Login</button>
+            <button class="btn-primary google-btn" onclick="googleLogin()"><i class="fab fa-google"></i> Continue with Google</button>
             <div class="auth-switch"><a onclick="showRegister()">📝 Create Account</a> | <a onclick="showForgot()">🔑 Forgot Password?</a></div>
         </div>
         <div id="registerForm" style="display:none;">
@@ -543,6 +583,7 @@
             <input type="password" id="regConfirm" class="login-input" placeholder="✓ Confirm">
             <input type="text" id="regRefCode" class="login-input" placeholder="🎁 Referral Code">
             <button class="btn-primary" onclick="handleRegister()">Register</button>
+            <button class="btn-primary google-btn" onclick="googleLogin()"><i class="fab fa-google"></i> Sign up with Google</button>
             <div class="auth-switch"><a onclick="showLogin()">← Back</a></div>
         </div>
         <div id="forgotForm" style="display:none;">
@@ -560,65 +601,119 @@
     </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="mainApp" class="main-app" style="display:none;">
     <div class="top-header">
         <div class="logo-small"><h2><span class="gold-text">NEXORA</span> CAPITAL</h2></div>
-        <div class="user-info"><a href="https://t.me/NexoraCapitalSupport" target="_blank" style="color:#F5B041; font-size:20px;"><i class="fab fa-telegram"></i></a>
-        <div class="avatar" id="avatarIcon" onclick="openMe()"><i class="fas fa-user" style="color:#0A0E1A;"></i></div><span id="roleBadge" class="role-badge"></span></div>
+        <div class="user-info">
+            <button onclick="toggleTheme()" style="background:transparent; border:none; color:#F5B041; font-size:18px;"><i class="fas fa-moon"></i></button>
+            <a href="https://t.me/NexoraCapitalSupport" target="_blank" style="color:#F5B041; font-size:20px;"><i class="fab fa-telegram"></i></a>
+            <div class="avatar" id="avatarIcon" onclick="openMe()"><i class="fas fa-user" style="color:#0A0E1A;"></i></div>
+            <span id="roleBadge" class="role-badge"></span>
+        </div>
     </div>
     <div style="margin:10px 16px;"><div id="bannerSlide" class="banner-slide" style="background-image:url('https://i.postimg.cc/J79RmYCT/company-countr.png');"></div></div>
 
-    <!-- User Dashboard -->
+    <!-- USER DASHBOARD -->
     <div id="userDashboard" class="page active">
         <div class="wallet-card" style="margin:0 16px;">
             <div><i class="fas fa-wallet"></i> Electronic Wallet (USDT)</div>
             <div class="wallet-amount" id="userBalance">$0.00</div>
-            <div class="balance-row"><div class="balance-item"><div class="balance-label">Today's Profit</div><div class="balance-value" id="todayProfit">$0.00</div></div>
-            <div class="balance-item"><div class="balance-label">Est. Daily</div><div class="balance-value" id="dailyEstimate">$0.00</div></div></div>
-            <div style="display:flex; gap:15px; margin-top:15px;"><button class="btn-gold" style="flex:1;" onclick="openDeposit()"><i class="fas fa-plus-circle"></i> Deposit</button>
-            <button class="btn-outline" style="flex:1;" onclick="openWithdraw()"><i class="fas fa-hand-holding-usd"></i> Withdraw</button></div>
+            <div class="balance-row">
+                <div class="balance-item"><div class="balance-label">Today's Profit</div><div class="balance-value" id="todayProfit">$0.00</div></div>
+                <div class="balance-item"><div class="balance-label">Est. Daily</div><div class="balance-value" id="dailyEstimate">$0.00</div></div>
+                <div class="balance-item"><div class="balance-label">Total Profit</div><div class="balance-value" id="totalProfitValue">$0.00</div></div>
+            </div>
+            <div style="display:flex; gap:15px; margin-top:15px;">
+                <button class="btn-gold" style="flex:1;" onclick="openDeposit()"><i class="fas fa-plus-circle"></i> Deposit</button>
+                <button class="btn-outline" style="flex:1;" onclick="openWithdraw()"><i class="fas fa-hand-holding-usd"></i> Withdraw</button>
+            </div>
         </div>
-        <div class="stats-row" style="padding:0 16px;"><div class="stat-item"><i class="fas fa-chart-line"></i><div>Total Income</div><div class="stat-value" id="totalIncome">$0</div></div>
-        <div class="stat-item"><i class="fas fa-users"></i><div>Commission</div><div class="stat-value" id="totalCommission">$0</div></div>
-        <div class="stat-item"><i class="fas fa-download"></i><div>Recharge</div><div class="stat-value" id="totalDeposits">$0</div></div>
-        <div class="stat-item"><i class="fas fa-upload"></i><div>Withdrawn</div><div class="stat-value" id="totalWithdrawals">$0</div></div></div>
-        <div class="glass-card" style="padding:16px; margin:0 16px;"><div><h3><i class="fas fa-crown gold-text"></i> VIP Plans</h3></div><div id="vipPreview"></div></div>
+        
+        <!-- Investment Summary -->
+        <div class="investment-summary">
+            <div><strong>💰 Total Investment:</strong> $<span id="totalInvestmentAmount">0</span></div>
+            <div><strong>📈 Expected Return:</strong> $<span id="expectedReturn">0</span></div>
+            <div><strong>⏱️ Days Left:</strong> <span id="daysLeft">0</span> days</div>
+        </div>
+        
+        <!-- Profit Chart -->
+        <div class="chart-container">
+            <h4><i class="fas fa-chart-line gold-text"></i> Profit Forecast (Next 7 Days)</h4>
+            <canvas id="profitForecastChart" height="150" style="max-height: 180px;"></canvas>
+        </div>
+        
+        <div class="stats-row" style="padding:0 16px;">
+            <div class="stat-item"><i class="fas fa-chart-line"></i><div>Total Income</div><div class="stat-value" id="totalIncome">$0</div></div>
+            <div class="stat-item"><i class="fas fa-users"></i><div>Commission</div><div class="stat-value" id="totalCommission">$0</div></div>
+            <div class="stat-item"><i class="fas fa-download"></i><div>Recharge</div><div class="stat-value" id="totalDeposits">$0</div></div>
+            <div class="stat-item"><i class="fas fa-upload"></i><div>Withdrawn</div><div class="stat-value" id="totalWithdrawals">$0</div></div>
+        </div>
+        
+        <div class="glass-card" style="padding:16px; margin:0 16px;">
+            <h3><i class="fas fa-chart-line gold-text"></i> Active Investments</h3>
+            <div id="activeInvestmentsList"></div>
+        </div>
+        
+        <div class="glass-card" style="padding:16px; margin:16px;">
+            <div><h3><i class="fas fa-crown gold-text"></i> VIP Plans</h3></div>
+            <div id="vipPreview"></div>
+        </div>
         <div class="telegram-btn" style="margin:16px;" onclick="window.open('https://t.me/NexoraCapitalSupport','_blank')"><i class="fab fa-telegram"></i> 24/7 Support</div>
     </div>
 
-    <div id="vipPage" class="page"><h2 class="gold-text" style="padding:0 16px;">VIP Plans</h2><div id="vipList" style="padding:0 16px;"></div></div>
-    <div id="invitePage" class="page"><div class="glass-card" style="padding:20px; margin:0 16px; text-align:center;"><i class="fas fa-gift" style="font-size:50px; color:#F5B041;"></i><h3>Invite & Earn 8%</h3>
-        <div style="display:flex; gap:10px; margin:20px 0;"><input type="text" id="refLink" readonly style="flex:1;"><button class="btn-gold" onclick="copyLink()">Copy</button></div>
-        <div class="stats-row"><div class="stat-item"><div>Referrals</div><div class="stat-value" id="refCount">0</div></div><div class="stat-item"><div>Earnings</div><div class="stat-value" id="refEarn">$0</div></div></div></div></div>
+    <div id="vipPage" class="page"><h2 class="gold-text" style="padding:0 16px;">VIP Investment Plans</h2><div id="vipList" style="padding:0 16px;"></div></div>
+    <div id="invitePage" class="page">
+        <div class="glass-card" style="padding:20px; margin:0 16px; text-align:center;">
+            <i class="fas fa-gift" style="font-size:50px; color:#F5B041;"></i>
+            <h3>Invite & Earn 8%</h3>
+            <div style="display:flex; gap:10px; margin:20px 0;"><input type="text" id="refLink" readonly style="flex:1;"><button class="btn-gold" onclick="copyLink()">Copy</button></div>
+            <div id="referralQR" style="margin:15px 0;"></div>
+            <div class="stats-row"><div class="stat-item"><div>Referrals</div><div class="stat-value" id="refCount">0</div></div><div class="stat-item"><div>Earnings</div><div class="stat-value" id="refEarn">$0</div></div></div>
+        </div>
+    </div>
 
-    <div id="mePage" class="page"><div class="glass-card" style="padding:20px; margin:0 16px; text-align:center;"><div class="avatar" style="width:80px; height:80px; margin:0 auto;"><i class="fas fa-user" style="font-size:35px;"></i></div>
-        <div class="welcome-message" id="welcomeMsg"></div><h3 id="userName"></h3><p id="userEmailShow"></p>
-        <div class="user-details"><p><i class="fas fa-code gold-text"></i> Referral Code: <span id="userRef"></span> <i class="fas fa-copy" onclick="copyUserCode()" style="cursor:pointer;"></i></p>
-        <p><i class="fas fa-calendar gold-text"></i> Member Since: <span id="memberDate"></span></p>
-        <p><i class="fas fa-coins gold-text"></i> Total Invested: $<span id="totInvested">0</span></p>
-        <p><i class="fas fa-chart-line gold-text"></i> Total Profit: $<span id="totProfit">0</span></p></div></div>
+    <div id="mePage" class="page">
+        <div class="glass-card" style="padding:20px; margin:0 16px; text-align:center;">
+            <div class="avatar" style="width:80px; height:80px; margin:0 auto;"><i class="fas fa-user" style="font-size:35px;"></i></div>
+            <div class="welcome-message" id="welcomeMsg"></div>
+            <h3 id="userName"></h3>
+            <p id="userEmailShow"></p>
+            <div class="user-details">
+                <p><i class="fas fa-code gold-text"></i> Referral Code: <span id="userRef"></span> <i class="fas fa-copy" onclick="copyUserCode()" style="cursor:pointer;"></i></p>
+                <p><i class="fas fa-calendar gold-text"></i> Member Since: <span id="memberDate"></span></p>
+                <p><i class="fas fa-coins gold-text"></i> Total Invested: $<span id="totInvested">0</span></p>
+                <p><i class="fas fa-chart-line gold-text"></i> Total Profit: $<span id="totProfit">0</span></p>
+                <p><i class="fas fa-id-card gold-text"></i> KYC Status: <span id="kycStatusDisplay">Not Submitted</span></p>
+            </div>
+            <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="showKYC()"><i class="fas fa-id-card"></i> Submit KYC</button>
+        </div>
         <div class="glass-card" style="padding:16px; margin:16px;"><h4>Investment History</h4><div id="invHistory"></div></div>
         <div class="glass-card" style="padding:16px; margin:0 16px;"><h4>Transaction History</h4><div id="transHistory"></div></div>
         <div class="glass-card" style="padding:16px; margin:16px;"><button class="btn-outline" style="width:100%; padding:14px; color:#EF4444;" onclick="logout()">Logout</button></div>
     </div>
 
-    <!-- Chat Page - WhatsApp Style -->
     <div id="chatPage" class="page">
         <div class="glass-card" style="padding:16px; margin:0 16px;">
-            <div class="chat-container" id="chatMsgs" style="height:400px; overflow-y:auto;">
-                <p style="text-align:center; color:#aaa;">No messages</p>
-            </div>
-            <div class="chat-input-area">
-                <textarea id="chatInput" placeholder="Type message..." rows="1" style="flex:1;"></textarea>
-                <button class="btn-gold" onclick="sendMsg()" style="padding:12px 20px;"><i class="fas fa-paper-plane"></i></button>
-            </div>
+            <div class="chat-container" id="chatMsgs" style="height:400px; overflow-y:auto;"><p style="text-align:center; color:#aaa;">No messages</p></div>
+            <div class="chat-input-area"><textarea id="chatInput" placeholder="Type message..." rows="1" style="flex:1;"></textarea><button class="btn-gold" onclick="sendMsg()" style="padding:12px 20px;"><i class="fas fa-paper-plane"></i></button></div>
         </div>
     </div>
 
-    <!-- Agent Panel -->
+    <!-- AGENT PANEL -->
     <div id="agentPanel" class="page">
         <h2 class="gold-text" style="padding:0 16px;">🤵 Agent Panel</h2>
+        <div class="summary-cards" style="padding:0 16px;">
+            <div class="summary-card"><h4>💰 Pending Deposits</h4><div class="value" id="summaryPendingDeposits">$0</div></div>
+            <div class="summary-card"><h4>📤 Pending Withdrawals</h4><div class="value" id="summaryPendingWithdrawals">$0</div></div>
+            <div class="summary-card"><h4>👥 Total Users</h4><div class="value" id="summaryTotalUsers">0</div></div>
+            <div class="summary-card"><h4>✅ Pending KYC</h4><div class="value" id="summaryPendingKYC">0</div></div>
+        </div>
+        
+        <div class="glass-card" style="padding:16px; margin:0 16px 16px;">
+            <h3><i class="fas fa-id-card gold-text"></i> Pending KYC Requests</h3>
+            <div id="pendingKYCList">Loading...</div>
+        </div>
+        
         <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3>📥 Pending Deposits</h3><div id="pendingDeposits">Loading...</div></div>
         <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3>📤 Pending Withdrawals</h3><div id="pendingWithdrawals">Loading...</div></div>
         <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3><i class="fas fa-comments"></i> Support</h3><div id="agentMessages" style="max-height:300px; overflow-y:auto;"><p>No messages</p></div></div>
@@ -636,7 +731,7 @@
     </div>
 </div>
 
-<!-- Deposit Modal -->
+<!-- Modals -->
 <div id="depositModal" class="modal"><div class="modal-content">
     <span class="close-modal" onclick="closeModal('depositModal')">&times;</span>
     <h3>Deposit Funds</h3>
@@ -650,7 +745,6 @@
     <div id="qrShow" class="qr-preview" style="display:none;"><img id="qrImg"><p>Scan QR</p></div>
     <input type="text" id="depositWallet" placeholder="Your Wallet Address">
     <input type="text" id="depositTxn" placeholder="Transaction Hash (Unique)">
-    <div id="txnError" class="duplicate-error">❌ This Transaction Hash already used!</div>
     <input type="number" id="depositAmt" placeholder="Amount (USD)" value="100">
     <div class="file-upload" onclick="document.getElementById('ssFile').click()">📸 Upload Screenshot</div>
     <input type="file" id="ssFile" accept="image/*" style="display:none;" onchange="previewSS(this)">
@@ -658,24 +752,47 @@
     <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitDeposit()">Submit</button>
 </div></div>
 
-<!-- Withdraw Modal -->
 <div id="withdrawModal" class="modal"><div class="modal-content">
     <span class="close-modal" onclick="closeModal('withdrawModal')">&times;</span>
     <h3>Withdraw Funds</h3>
     <select id="withdrawMethod"><option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option></select>
     <input type="text" id="withdrawAddr" placeholder="Withdrawal Address">
     <input type="number" id="withdrawAmt" placeholder="Amount (USD)">
-    <div class="file-upload" onclick="document.getElementById('wdQrFile').click()">📸 Upload Wallet QR</div>
+    <div class="file-upload" onclick="document.getElementById('wdQrFile').click()">📸 Upload QR</div>
     <input type="file" id="wdQrFile" accept="image/*" style="display:none;" onchange="previewWDQr(this)">
     <div id="wdQrPreview" style="display:none;"></div>
     <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitWithdraw()">Request</button>
+</div></div>
+
+<div id="kycModal" class="modal"><div class="modal-content">
+    <span class="close-modal" onclick="closeModal('kycModal')">&times;</span>
+    <h3><i class="fas fa-id-card gold-text"></i> KYC Verification</h3>
+    <input type="text" id="kycFullName" placeholder="Full Name as per ID">
+    <input type="date" id="kycDob" placeholder="Date of Birth">
+    <div class="file-upload" onclick="document.getElementById('kycFrontFile').click()">📸 Upload ID Front Side</div>
+    <input type="file" id="kycFrontFile" accept="image/*" style="display:none;" onchange="previewKYCFront(this)">
+    <div id="kycFrontPreview" style="display:none;"></div>
+    <div class="file-upload" onclick="document.getElementById('kycBackFile').click()">📸 Upload ID Back Side</div>
+    <input type="file" id="kycBackFile" accept="image/*" style="display:none;" onchange="previewKYCBack(this)">
+    <div id="kycBackPreview" style="display:none;"></div>
+    <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitKYC()">Submit KYC</button>
+</div></div>
+
+<div id="kycDetailModal" class="modal"><div class="modal-content">
+    <span class="close-modal" onclick="closeModal('kycDetailModal')">&times;</span>
+    <h3>KYC Details</h3>
+    <div id="kycDetailContent"></div>
+    <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="approve-btn" id="kycApproveBtn" onclick="approveKYC()">✓ Approve KYC</button>
+        <button class="reject-btn" id="kycRejectBtn" onclick="rejectKYC()">✗ Reject KYC</button>
+    </div>
 </div></div>
 
 <div id="toastContainer"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, sendEmailVerification, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, query, where, getDocs, onSnapshot, addDoc, serverTimestamp, increment, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
     const firebaseConfig = {
@@ -691,27 +808,44 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
     
     let currentUser = null, currentData = null, selectedMethod = null, selectedSS = null, selectedWDQr = null, chatUnsub = null, profitInt = null, pendingReg = null;
+    let profitChart = null;
+    let currentKYCDocId = null;
+    let pendingKYCFront = null, pendingKYCBack = null;
+    let currentPageDeposits = 1, currentPageWithdrawals = 1;
+    const itemsPerPage = 5;
+    
+    // Fixed Daily Profit Rates (No Random)
+    const dailyProfitRates = {
+        "VIP 1": 10,     // $20 → $2/day
+        "VIP 2": 9.15,   // $82 → $7.50/day
+        "VIP 3": 10,     // $350 → $35/day
+        "VIP 4": 10.45,  // $555 → $58/day
+        "VIP 5": 10.8,   // $1111 → $120/day
+        "VIP 6": 11      // $2000 → $220/day
+    };
     
     async function createAgent() {
         try {
             const cred = await createUserWithEmailAndPassword(auth, "agent@nexora.com", "Agent@123");
             await setDoc(doc(db, "users", cred.user.uid), {
                 fullname: "Support Agent", email: "agent@nexora.com", balance: 0, refCode: "AGENT001", role: "agent",
-                purchasedPlans: [], totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0, createdAt: serverTimestamp()
+                purchasedPlans: [], totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0,
+                kycStatus: "verified", createdAt: serverTimestamp()
             });
         } catch(e) {}
     }
     createAgent();
     
     const vipPlans = [
-        { level: "VIP 1", price: 20, daily: 2, days: 45, total: 90 },
-        { level: "VIP 2", price: 82, daily: 7.5, days: 45, total: 337 },
-        { level: "VIP 3", price: 350, daily: 35, days: 45, total: 1575 },
-        { level: "VIP 4", price: 555, daily: 58, days: 45, total: 2610 },
-        { level: "VIP 5", price: 1111, daily: 120, days: 45, total: 5400 },
-        { level: "VIP 6", price: 2000, daily: 220, days: 60, total: 13200 }
+        { level: "VIP 1", price: 20, daily: 2, days: 45, total: 90, commission: 1.6, rate: 10 },
+        { level: "VIP 2", price: 82, daily: 7.5, days: 45, total: 337, commission: 6.56, rate: 9.15 },
+        { level: "VIP 3", price: 350, daily: 35, days: 45, total: 1575, commission: 28, rate: 10 },
+        { level: "VIP 4", price: 555, daily: 58, days: 45, total: 2610, commission: 44.4, rate: 10.45 },
+        { level: "VIP 5", price: 1111, daily: 120, days: 45, total: 5400, commission: 88.88, rate: 10.8 },
+        { level: "VIP 6", price: 2000, daily: 220, days: 60, total: 13200, commission: 160, rate: 11 }
     ];
     
     function showToast(msg, type = "success") {
@@ -722,49 +856,123 @@
         setTimeout(() => t.remove(), 3000);
     }
     
-    async function checkDuplicateTransaction(txnHash) {
-        if (!txnHash || txnHash.trim() === "") return false;
-        const q = query(collection(db, "deposits"), where("txnHash", "==", txnHash));
-        const snap = await getDocs(q);
-        return !snap.empty;
-    }
+    window.toggleTheme = () => {
+        document.body.classList.toggle('light-theme');
+        localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+    };
     
-    // Real-time duplicate check
-    const txnInput = document.getElementById("depositTxn");
-    if (txnInput) {
-        txnInput.addEventListener("input", async function() {
-            const txn = this.value.trim();
-            const errorDiv = document.getElementById("txnError");
-            if (txn.length > 5) {
-                const exists = await checkDuplicateTransaction(txn);
-                errorDiv.style.display = exists ? "block" : "none";
-            } else {
-                errorDiv.style.display = "none";
+    if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
+    if ("Notification" in window) Notification.requestPermission();
+    
+    window.googleLogin = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            const userRef = doc(db, "users", user.uid);
+            const snap = await getDoc(userRef);
+            if (!snap.exists()) {
+                await setDoc(userRef, {
+                    fullname: user.displayName || user.email.split('@')[0],
+                    email: user.email,
+                    balance: 0,
+                    refCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
+                    role: "user",
+                    purchasedPlans: [],
+                    kycStatus: "none",
+                    totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0,
+                    createdAt: serverTimestamp()
+                });
             }
-        });
-    }
+            showToast("✅ Google login successful!");
+        } catch(e) { showToast(e.message, "error"); }
+    };
     
-    window.previewSS = function(i) {
-        if (i.files && i.files[0]) {
-            selectedSS = i.files[0];
-            const r = new FileReader();
-            r.onload = e => {
-                document.getElementById("ssPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px;">`;
-                document.getElementById("ssPreview").style.display = "block";
+    // KYC Functions
+    window.previewKYCFront = function(input) {
+        if (input.files && input.files[0]) {
+            pendingKYCFront = input.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById("kycFrontPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px;">`;
+                document.getElementById("kycFrontPreview").style.display = "block";
             };
-            r.readAsDataURL(i.files[0]);
+            reader.readAsDataURL(input.files[0]);
         }
     };
     
-    window.previewWDQr = function(i) {
-        if (i.files && i.files[0]) {
-            selectedWDQr = i.files[0];
-            const r = new FileReader();
-            r.onload = e => {
-                document.getElementById("wdQrPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px;">`;
-                document.getElementById("wdQrPreview").style.display = "block";
+    window.previewKYCBack = function(input) {
+        if (input.files && input.files[0]) {
+            pendingKYCBack = input.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById("kycBackPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px;">`;
+                document.getElementById("kycBackPreview").style.display = "block";
             };
-            r.readAsDataURL(i.files[0]);
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+    
+    window.showKYC = () => { document.getElementById("kycModal").style.display = "flex"; };
+    
+    window.submitKYC = async () => {
+        const fullname = document.getElementById("kycFullName").value;
+        if (!fullname) { showToast("Please enter full name", "error"); return; }
+        let frontImg = "", backImg = "";
+        if (pendingKYCFront) {
+            frontImg = await new Promise(resolve => { const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(pendingKYCFront); });
+        }
+        if (pendingKYCBack) {
+            backImg = await new Promise(resolve => { const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(pendingKYCBack); });
+        }
+        await addDoc(collection(db, "kycRequests"), {
+            userId: currentData.uid, userEmail: currentData.email, userName: currentData.fullname,
+            fullname: fullname, dob: document.getElementById("kycDob").value,
+            frontImage: frontImg, backImage: backImg, status: "pending", createdAt: serverTimestamp()
+        });
+        await updateDoc(doc(db, "users", currentData.uid), { kycStatus: "pending" });
+        showToast("✅ KYC submitted for verification!");
+        closeModal("kycModal");
+        loadMe();
+    };
+    
+    window.viewKYCDetails = async (id, userId) => {
+        const docSnap = await getDoc(doc(db, "kycRequests", id));
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            currentKYCDocId = id;
+            document.getElementById("kycDetailContent").innerHTML = `
+                <div style="padding:10px;">
+                    <p><strong>User:</strong> ${data.userName}</p>
+                    <p><strong>Email:</strong> ${data.userEmail}</p>
+                    <p><strong>Full Name:</strong> ${data.fullname}</p>
+                    <p><strong>DOB:</strong> ${data.dob}</p>
+                    <p><strong>Front ID:</strong> ${data.frontImage ? `<button class="view-btn" onclick="window.open('${data.frontImage}')">View</button>` : 'No'}</p>
+                    <p><strong>Back ID:</strong> ${data.backImage ? `<button class="view-btn" onclick="window.open('${data.backImage}')">View</button>` : 'No'}</p>
+                </div>
+            `;
+            document.getElementById("kycDetailModal").style.display = "flex";
+        }
+    };
+    
+    window.approveKYC = async () => {
+        if (currentKYCDocId) {
+            await updateDoc(doc(db, "kycRequests", currentKYCDocId), { status: "approved" });
+            const kycSnap = await getDoc(doc(db, "kycRequests", currentKYCDocId));
+            await updateDoc(doc(db, "users", kycSnap.data().userId), { kycStatus: "verified" });
+            showToast("✅ KYC approved!");
+            closeModal("kycDetailModal");
+            if (currentData?.role === "agent") loadAgentPanel();
+        }
+    };
+    
+    window.rejectKYC = async () => {
+        if (currentKYCDocId) {
+            await updateDoc(doc(db, "kycRequests", currentKYCDocId), { status: "rejected" });
+            const kycSnap = await getDoc(doc(db, "kycRequests", currentKYCDocId));
+            await updateDoc(doc(db, "users", kycSnap.data().userId), { kycStatus: "rejected" });
+            showToast("❌ KYC rejected", "error");
+            closeModal("kycDetailModal");
+            if (currentData?.role === "agent") loadAgentPanel();
         }
     };
     
@@ -861,6 +1069,7 @@
                 fullname: pendingReg.name, email: pendingReg.cred.user.email, balance: 0,
                 refCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
                 referredBy: referredBy, role: "user", purchasedPlans: [],
+                kycStatus: "none",
                 totalDeposits: 0, totalWithdrawals: 0, totalCommission: 0, totalIncome: 0, createdAt: serverTimestamp()
             });
             showToast("Email verified! Please login.");
@@ -918,11 +1127,7 @@
         container.scrollTop = container.scrollHeight;
     }
     
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+    function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
     
     async function loadAgentMsgs() {
         if (!currentData || currentData.role !== "agent") return;
@@ -952,7 +1157,6 @@
         });
         showToast("Reply sent!");
         loadAgentMsgs();
-        if (currentData?.role === "user") loadChat();
     };
     
     window.changePage = function(id, el) {
@@ -962,7 +1166,7 @@
         if (el) el.classList.add('active');
         if (id === 'vipPage') renderVIP();
         if (id === 'invitePage' && currentData) loadReferral();
-        if (id === 'agentPanel' && currentData?.role === 'agent') loadAgent();
+        if (id === 'agentPanel' && currentData?.role === 'agent') loadAgentPanel();
         if (id === 'mePage' && currentData) loadMe();
         if (id === 'chatPage' && currentData) loadChat();
         if (id === 'userDashboard' && currentData) { loadUser(); loadMe(); }
@@ -972,20 +1176,33 @@
         const purchased = currentData?.purchasedPlans || [];
         document.getElementById("vipList").innerHTML = vipPlans.map(v => `
             <div class="vip-card"><div class="vip-price">$${v.price}</div>
-            <div><i class="fas fa-chart-line"></i> Daily: $${v.daily} USDT</div>
+            <div><i class="fas fa-chart-line"></i> Daily: $${v.daily} USDT (${v.rate}%)</div>
             <div><i class="fas fa-calendar"></i> ${v.days} Days</div>
             <div><i class="fas fa-coins"></i> Total: $${v.total} USDT</div>
-            ${!purchased.includes(v.level) ? `<button class="btn-gold" style="width:100%; margin-top:12px;" onclick="buyVIP(${v.price}, '${v.level}')">Unlock</button>` : '<button class="btn-outline" disabled>✅ Purchased</button>'}
+            <div><i class="fas fa-gift"></i> Referral Commission: $${v.commission}</div>
+            ${!purchased.includes(v.level) ? `<button class="btn-gold" style="width:100%; margin-top:12px;" onclick="buyVIP(${v.price}, '${v.level}', ${v.commission})">Unlock Now</button>` : '<button class="btn-outline" disabled>✅ Already Purchased</button>'}
             </div>`).join("");
     }
     
-    window.buyVIP = async (amt, lvl) => {
+    window.buyVIP = async (amt, lvl, commission) => {
         if (!currentData || currentData.role !== "user") return;
         if (currentData.purchasedPlans?.includes(lvl)) return showToast("Already purchased!", "error");
         if ((currentData.balance || 0) < amt) return showToast(`Need $${amt}`, "error");
+        
         await updateDoc(doc(db, "users", currentData.uid), { balance: increment(-amt), purchasedPlans: arrayUnion(lvl) });
         await addDoc(collection(db, "investments"), { userId: currentData.uid, plan: lvl, amount: amt, status: "active", profitEarned: 0, startDate: serverTimestamp() });
-        showToast(`✅ Unlocked ${lvl}!`);
+        
+        if (currentData.referredBy) {
+            const referrerRef = doc(db, "users", currentData.referredBy);
+            const referrerSnap = await getDoc(referrerRef);
+            if (referrerSnap.exists()) {
+                const commissionAmount = amt * 0.08;
+                await updateDoc(referrerRef, { balance: increment(commissionAmount), totalCommission: increment(commissionAmount) });
+                await addDoc(collection(db, "referralCommissions"), { userId: currentData.referredBy, fromUserId: currentData.uid, amount: commissionAmount, createdAt: serverTimestamp() });
+                showToast(`🎉 Referrer earned $${commissionAmount.toFixed(2)} commission!`);
+            }
+        }
+        showToast(`✅ Unlocked ${lvl}! Start earning daily profits.`);
         loadUser(); renderVIP(); loadMe();
     };
     
@@ -997,6 +1214,37 @@
         event.target.classList.add("active");
     };
     
+    async function checkDuplicateTransaction(txnHash) {
+        if (!txnHash) return false;
+        const q = query(collection(db, "deposits"), where("txnHash", "==", txnHash));
+        const snap = await getDocs(q);
+        return !snap.empty;
+    }
+    
+    window.previewSS = function(i) {
+        if (i.files && i.files[0]) {
+            selectedSS = i.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById("ssPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px;">`;
+                document.getElementById("ssPreview").style.display = "block";
+            };
+            reader.readAsDataURL(i.files[0]);
+        }
+    };
+    
+    window.previewWDQr = function(i) {
+        if (i.files && i.files[0]) {
+            selectedWDQr = i.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById("wdQrPreview").innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:120px; border-radius:12px;">`;
+                document.getElementById("wdQrPreview").style.display = "block";
+            };
+            reader.readAsDataURL(i.files[0]);
+        }
+    };
+    
     window.submitDeposit = async () => {
         if (!currentData || currentData.role !== "user") return;
         if (!selectedMethod) return showToast("Select method", "error");
@@ -1006,18 +1254,12 @@
         if (!txn) return showToast("Enter Transaction Hash", "error");
         
         const duplicate = await checkDuplicateTransaction(txn);
-        if (duplicate) {
-            showToast("❌ This Transaction Hash already used!", "error");
-            return;
-        }
+        if (duplicate) { showToast("❌ This Transaction Hash already used!", "error"); return; }
         
         const amt = parseFloat(document.getElementById("depositAmt").value);
         if (amt < 50) return showToast("Minimum $50", "error");
         let ss = "";
-        if (selectedSS) {
-            const r = new FileReader();
-            ss = await new Promise(resolve => { r.onload = e => resolve(e.target.result); r.readAsDataURL(selectedSS); });
-        }
+        if (selectedSS) { ss = await new Promise(resolve => { const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(selectedSS); }); }
         
         await addDoc(collection(db, "deposits"), {
             userId: currentData.uid, userName: currentData.fullname, userEmail: currentData.email,
@@ -1042,10 +1284,7 @@
         if (amt < 20) return showToast("Minimum $20", "error");
         if ((currentData.balance || 0) < amt) return showToast("Insufficient balance", "error");
         let qr = "";
-        if (selectedWDQr) {
-            const r = new FileReader();
-            qr = await new Promise(resolve => { r.onload = e => resolve(e.target.result); r.readAsDataURL(selectedWDQr); });
-        }
+        if (selectedWDQr) { qr = await new Promise(resolve => { const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(selectedWDQr); }); }
         await addDoc(collection(db, "withdrawals"), {
             userId: currentData.uid, userName: currentData.fullname, userEmail: currentData.email,
             method: document.getElementById("withdrawMethod").value, address: addr, amount: amt, qrCode: qr, status: "pending", createdAt: serverTimestamp()
@@ -1065,18 +1304,18 @@
         await updateDoc(doc(db, "deposits", id), { status: "approved" });
         await updateDoc(doc(db, "users", uid), { balance: increment(amt), totalDeposits: increment(amt), totalIncome: increment(amt) });
         showToast(`✅ Deposit $${amt} approved for ${email}!`);
-        loadAgent();
+        loadAgentPanel();
     };
-    window.rejectDeposit = async (id, email) => { await updateDoc(doc(db, "deposits", id), { status: "rejected" }); showToast(`❌ Deposit rejected`, "error"); loadAgent(); };
+    window.rejectDeposit = async (id, email) => { await updateDoc(doc(db, "deposits", id), { status: "rejected" }); showToast(`❌ Deposit rejected`, "error"); loadAgentPanel(); };
     window.approveWithdraw = async (id, uid, amt, email) => {
         await updateDoc(doc(db, "withdrawals", id), { status: "approved" });
         await updateDoc(doc(db, "users", uid), { balance: increment(-amt), totalWithdrawals: increment(amt) });
         showToast(`✅ Withdrawal $${amt} approved for ${email}!`);
-        loadAgent();
+        loadAgentPanel();
     };
-    window.rejectWithdraw = async (id, email) => { await updateDoc(doc(db, "withdrawals", id), { status: "rejected" }); showToast(`❌ Withdrawal rejected`, "error"); loadAgent(); };
+    window.rejectWithdraw = async (id, email) => { await updateDoc(doc(db, "withdrawals", id), { status: "rejected" }); showToast(`❌ Withdrawal rejected`, "error"); loadAgentPanel(); };
     
-    // Daily Profit - Once per day based on package duration
+    // FIXED DAILY PROFIT - NO RANDOM
     async function checkDailyProfit() {
         if (!currentData || currentData.role !== "user") return;
         const today = new Date().toDateString();
@@ -1093,32 +1332,29 @@
         
         let totalProfit = 0;
         let dailyProfitAmount = 0;
-        let hasProfit = false;
         
         for (const docSnap of investmentsSnap.docs) {
             const inv = docSnap.data();
             const plan = vipPlans.find(p => p.level === inv.plan);
             if (!plan) continue;
             
-            // Check if investment is still within duration
+            // Check if investment still active
             const startDate = inv.startDate.toDate();
             const daysSinceStart = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
             if (daysSinceStart >= plan.days) {
-                // Investment completed
                 await updateDoc(doc(db, "investments", docSnap.id), { status: "completed" });
                 continue;
             }
             
-            // Calculate daily profit (5-11% random)
-            const percent = (Math.random() * 6 + 5).toFixed(2);
-            const profit = inv.amount * (percent / 100);
+            // FIXED PROFIT RATE (No Random)
+            const fixedRate = dailyProfitRates[inv.plan] || 10;
+            const profit = inv.amount * (fixedRate / 100);
             totalProfit += profit;
             dailyProfitAmount += profit;
-            hasProfit = true;
             await updateDoc(doc(db, "investments", docSnap.id), { profitEarned: increment(profit) });
         }
         
-        if (hasProfit && totalProfit > 0) {
+        if (totalProfit > 0) {
             await updateDoc(doc(db, "users", currentData.uid), { 
                 balance: increment(totalProfit), 
                 totalIncome: increment(totalProfit) 
@@ -1142,16 +1378,81 @@
         document.getElementById("totalCommission").innerHTML = `$${(currentData.totalCommission || 0).toFixed(2)}`;
         document.getElementById("totalDeposits").innerHTML = `$${(currentData.totalDeposits || 0).toFixed(2)}`;
         document.getElementById("totalWithdrawals").innerHTML = `$${(currentData.totalWithdrawals || 0).toFixed(2)}`;
+        document.getElementById("totalProfitValue").innerHTML = `$${(currentData.totalIncome || 0).toFixed(2)}`;
+        
         const profitRef = doc(db, "userDailyProfit", currentData.uid);
         const profitSnap = await getDoc(profitRef);
         if (profitSnap.exists()) {
             document.getElementById("todayProfit").innerHTML = `$${(profitSnap.data().todayProfit || 0).toFixed(2)}`;
         }
+        
         const inv = await getDocs(query(collection(db, "investments"), where("userId", "==", currentData.uid), where("status", "==", "active")));
-        const est = inv.docs.reduce((s, i) => s + (i.data().amount * 0.007), 0);
+        const est = inv.docs.reduce((s, i) => s + (i.data().amount * (dailyProfitRates[i.data().plan] || 10) / 100), 0);
         document.getElementById("dailyEstimate").innerHTML = `$${est.toFixed(2)}`;
+        
+        // Calculate total investment and expected return
+        let totalInvestment = 0, totalExpectedReturn = 0, minDaysLeft = 999;
+        for (const docSnap of inv.docs) {
+            const invData = docSnap.data();
+            const plan = vipPlans.find(p => p.level === invData.plan);
+            if (plan) {
+                totalInvestment += invData.amount;
+                totalExpectedReturn += plan.total;
+                const startDate = invData.startDate.toDate();
+                const daysPassed = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
+                const daysLeft = Math.max(0, plan.days - daysPassed);
+                minDaysLeft = Math.min(minDaysLeft, daysLeft);
+            }
+        }
+        document.getElementById("totalInvestmentAmount").innerHTML = totalInvestment;
+        document.getElementById("expectedReturn").innerHTML = totalExpectedReturn;
+        document.getElementById("daysLeft").innerHTML = minDaysLeft === 999 ? 0 : minDaysLeft;
+        
+        // Active Investments List with Progress Bar
+        let activeHtml = "";
+        for (const docSnap of inv.docs) {
+            const invData = docSnap.data();
+            const plan = vipPlans.find(p => p.level === invData.plan);
+            if (plan) {
+                const startDate = invData.startDate.toDate();
+                const daysPassed = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
+                const progress = Math.min(100, (daysPassed / plan.days) * 100);
+                const dailyProfitAmount = invData.amount * (dailyProfitRates[invData.plan] / 100);
+                activeHtml += `<div style="margin:10px 0;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span><i class="fas fa-star gold-text"></i> ${invData.plan}</span>
+                        <span>$${invData.amount}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" style="width: ${progress}%;"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px;">
+                        <span>Day ${daysPassed}/${plan.days}</span>
+                        <span>Daily Profit: $${dailyProfitAmount.toFixed(2)}</span>
+                        <span>Total Profit: $${(invData.profitEarned || 0).toFixed(2)}</span>
+                    </div>
+                </div>`;
+            }
+        }
+        document.getElementById("activeInvestmentsList").innerHTML = activeHtml || "<p>No active investments</p>";
+        
         const prev = inv.docs.slice(0,2).map(d => `<div class="glass-card" style="padding:10px; margin:5px 0;">⭐ ${d.data().plan} - $${d.data().amount}</div>`).join("");
         document.getElementById("vipPreview").innerHTML = prev || "<p>No active VIP</p>";
+        
+        // Update Profit Chart
+        if (profitChart) profitChart.destroy();
+        const forecastData = [0, 1, 2, 3, 4, 5, 6].map(day => est * (day + 1));
+        const ctx = document.getElementById("profitForecastChart")?.getContext("2d");
+        if (ctx) {
+            profitChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+                    datasets: [{ label: 'Projected Profit ($)', data: forecastData, borderColor: '#F5B041', borderWidth: 3, fill: true, backgroundColor: 'rgba(245,176,65,0.1)', tension: 0.3 }]
+                },
+                options: { responsive: true, maintainAspectRatio: true }
+            });
+        }
     }
     
     async function loadMe() {
@@ -1161,6 +1462,13 @@
         document.getElementById("userEmailShow").innerHTML = currentData.email;
         document.getElementById("userRef").innerHTML = currentData.refCode;
         document.getElementById("memberDate").innerHTML = currentData.createdAt?.toDate?.().toLocaleDateString() || "Today";
+        
+        let kycHtml = '';
+        if (currentData.kycStatus === 'verified') kycHtml = '<span class="badge-verified"><i class="fas fa-check-circle"></i> Verified</span>';
+        else if (currentData.kycStatus === 'pending') kycHtml = '<span class="badge-pending"><i class="fas fa-clock"></i> Pending</span>';
+        else kycHtml = '<span class="badge-pending">Not Submitted</span>';
+        document.getElementById("kycStatusDisplay").innerHTML = kycHtml;
+        
         const inv = await getDocs(query(collection(db, "investments"), where("userId", "==", currentData.uid)));
         let tInv = 0, tProf = 0;
         inv.docs.forEach(d => { tInv += d.data().amount; tProf += d.data().profitEarned || 0; });
@@ -1177,48 +1485,34 @@
         document.getElementById("transHistory").innerHTML = th || "<div>No transactions</div>";
     }
     
-    async function loadAgent() {
+    async function loadAgentPanel() {
         if (!currentData || currentData.role !== "agent") return;
         try {
-            const dep = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending")));
-            if (dep.empty) { document.getElementById("pendingDeposits").innerHTML = "<p>✅ No pending deposits</p>"; }
-            else {
-                let h = `<div style="overflow-x:auto;"><table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>TXN</th><th>SS</th><th>Action</th></tr>`;
-                dep.docs.forEach(d => {
-                    const data = d.data();
-                    const has = data.screenshot && data.screenshot.length > 100;
-                    h += `<tr>
-                        <td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td>
-                        <td>$${data.amount}</td>
-                        <td>${data.method}</td>
-                        <td><small>${data.txnHash?.substring(0, 8)}...</small></td>
-                        <td>${has ? `<button class="view-btn" onclick="viewSS('${data.screenshot}')">View</button>` : 'No'}</td>
-                        <td><button class="approve-btn" onclick="approveDeposit('${d.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button>
-                        <button class="reject-btn" onclick="rejectDeposit('${d.id}', '${data.userEmail}')">Reject</button></td>
-                    </tr>`;
-                });
-                h += `</table></div>`;
-                document.getElementById("pendingDeposits").innerHTML = h;
-            }
-            const wd = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending")));
-            if (wd.empty) { document.getElementById("pendingWithdrawals").innerHTML = "<p>✅ No pending withdrawals</p>"; }
-            else {
-                let h = `<div style="overflow-x:auto;"><table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>QR</th><th>Action</th></tr>`;
-                wd.docs.forEach(w => {
-                    const data = w.data();
-                    const has = data.qrCode && data.qrCode.length > 100;
-                    h += `<tr>
-                        <td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td>
-                        <td>$${data.amount}</td>
-                        <td>${data.method}</td>
-                        <td>${has ? `<button class="view-btn" onclick="viewQR('${data.qrCode}')">View</button>` : 'No'}</td>
-                        <td><button class="approve-btn" onclick="approveWithdraw('${w.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button>
-                        <button class="reject-btn" onclick="rejectWithdraw('${w.id}', '${data.userEmail}')">Reject</button></td>
-                    </tr>`;
-                });
-                h += `</table></div>`;
-                document.getElementById("pendingWithdrawals").innerHTML = h;
-            }
+            const deps = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending")));
+            let depositsList = [];
+            deps.docs.forEach(d => depositsList.push({ id: d.id, ...d.data() }));
+            const startIdx = (currentPageDeposits - 1) * itemsPerPage;
+            const paginatedDeposits = depositsList.slice(startIdx, startIdx + itemsPerPage);
+            document.getElementById("pendingDeposits").innerHTML = depositsList.length === 0 ? "<p>✅ No pending deposits</p>" :
+                `<div style="overflow-x:auto;"><table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>Action</th><tr>${paginatedDeposits.map(d => `<tr><td><strong>${d.userName}</strong><br><small>${d.userEmail}</small></td><td>$${d.amount}</td><td>${d.method}</td><td><button class="approve-btn" onclick="approveDeposit('${d.id}', '${d.userId}', ${d.amount}, '${d.userEmail}')">Approve</button><button class="reject-btn" onclick="rejectDeposit('${d.id}', '${d.userEmail}')">Reject</button></td></tr>`).join("")}</table></div>`;
+            
+            const wds = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending")));
+            let withdrawalsList = [];
+            wds.docs.forEach(w => withdrawalsList.push({ id: w.id, ...w.data() }));
+            const startWdIdx = (currentPageWithdrawals - 1) * itemsPerPage;
+            const paginatedWithdrawals = withdrawalsList.slice(startWdIdx, startWdIdx + itemsPerPage);
+            document.getElementById("pendingWithdrawals").innerHTML = withdrawalsList.length === 0 ? "<p>✅ No pending withdrawals</p>" :
+                `<div style="overflow-x:auto;"><table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>Action</th></tr>${paginatedWithdrawals.map(w => `<tr><td><strong>${w.userName}</strong><br><small>${w.userEmail}</small></td><td>$${w.amount}</td><td>${w.method}</td><td><button class="approve-btn" onclick="approveWithdraw('${w.id}', '${w.userId}', ${w.amount}, '${w.userEmail}')">Approve</button><button class="reject-btn" onclick="rejectWithdraw('${w.id}', '${w.userEmail}')">Reject</button></td></tr>`).join("")}</table></div>`;
+            
+            const kycRequests = await getDocs(query(collection(db, "kycRequests"), where("status", "==", "pending")));
+            document.getElementById("pendingKYCList").innerHTML = kycRequests.empty ? "<p>✅ No pending KYC</p>" :
+                `<div style="overflow-x:auto;"><table class="admin-table"><tr><th>User</th><th>Name</th><th>Action</th></tr>${kycRequests.docs.map(k => `<tr><td><strong>${k.data().userName}</strong><br><small>${k.data().userEmail}</small></td><td>${k.data().fullname}</td><td><button class="view-btn" onclick="viewKYCDetails('${k.id}', '${k.data().userId}')">View & Verify</button></td></tr>`).join("")}</table></div>`;
+            
+            document.getElementById("summaryPendingDeposits").innerHTML = `$${depositsList.reduce((s, d) => s + d.amount, 0).toFixed(2)}`;
+            document.getElementById("summaryPendingWithdrawals").innerHTML = `$${withdrawalsList.reduce((s, w) => s + w.amount, 0).toFixed(2)}`;
+            const usersSnap = await getDocs(collection(db, "users"));
+            document.getElementById("summaryTotalUsers").innerHTML = usersSnap.size;
+            document.getElementById("summaryPendingKYC").innerHTML = kycRequests.size;
             await loadAgentMsgs();
         } catch(e) { document.getElementById("pendingDeposits").innerHTML = `<p style="color:#EF4444;">Error loading</p>`; }
     }
@@ -1229,6 +1523,8 @@
         document.getElementById("refCount").innerHTML = r.size;
         document.getElementById("refEarn").innerHTML = `$${(currentData.totalCommission || 0).toFixed(2)}`;
         document.getElementById("refLink").value = `https://nexora.com/ref/${currentData.refCode}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(document.getElementById("refLink").value)}`;
+        document.getElementById("referralQR").innerHTML = `<img src="${qrUrl}" style="width:100px; border-radius:12px;"><br><small>Scan to share</small>`;
     }
     
     window.copyLink = () => { const i = document.getElementById("refLink"); i.select(); document.execCommand("copy"); showToast("Link copied!"); };
@@ -1270,9 +1566,10 @@
                     navInvite.style.display = "none";
                     navMe.style.display = "none";
                     changePage('agentPanel', agentNav);
-                    loadAgent();
-                    onSnapshot(collection(db, "deposits"), () => loadAgent());
-                    onSnapshot(collection(db, "withdrawals"), () => loadAgent());
+                    loadAgentPanel();
+                    onSnapshot(collection(db, "deposits"), () => loadAgentPanel());
+                    onSnapshot(collection(db, "withdrawals"), () => loadAgentPanel());
+                    onSnapshot(collection(db, "kycRequests"), () => loadAgentPanel());
                     onSnapshot(collection(db, "supportMessages"), () => loadAgentMsgs());
                 } else {
                     agentNav.style.display = "none";
