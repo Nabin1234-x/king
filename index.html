@@ -7,30 +7,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NEXORA CAPITAL">
-    <link rel="manifest" href="data:application/manifest+json,{
-      %22name%22: %22NEXORA CAPITAL%22,
-      %22short_name%22: %22Nexora%22,
-      %22description%22: %22Premium Investment Platform%22,
-      %22start_url%22: %22/%22,
-      %22display%22: %22standalone%22,
-      %22background_color%22: %220A0E1A%22,
-      %22theme_color%22: %22F5B041%22,
-      %22icons%22: [
-        {%22src%22: %22https://i.postimg.cc/J79RmYCT/company-countr.png%22, %22sizes%22: %22192x192%22, %22type%22: %22image/png%22},
-        {%22src%22: %22https://i.postimg.cc/J79RmYCT/company-countr.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}
-      ]
-    }">
     <title>NEXORA CAPITAL | Premium Investment Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
+            -webkit-text-size-adjust: 100%;
+            touch-action: manipulation;
         }
         
         body {
@@ -39,7 +26,15 @@
             color: #FFFFFF;
             overflow-x: hidden;
             padding-bottom: 70px;
+            font-size: 16px;
             -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Disable zoom on inputs for mobile */
+        input, select, textarea, button {
+            font-size: 16px;
+            -webkit-appearance: none;
+            appearance: none;
         }
         
         /* Smooth Transitions */
@@ -48,10 +43,10 @@
             backdrop-filter: blur(12px);
             border-radius: 28px;
             border: 1px solid rgba(245, 176, 65, 0.25);
-            transition: transform 0.15s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             will-change: transform;
         }
-        .glass-card:active { transform: scale(0.98); }
+        .glass-card:active { transform: scale(0.99); }
         
         .gold-text {
             background: linear-gradient(135deg, #F5B041, #D4AF37);
@@ -61,7 +56,7 @@
         }
         
         .btn-gold, .btn-primary, .btn-outline, .approve-btn, .reject-btn {
-            transition: transform 0.12s ease;
+            transition: all 0.12s ease;
             cursor: pointer;
             will-change: transform;
         }
@@ -85,6 +80,7 @@
             border-radius: 40px;
         }
         
+        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -106,7 +102,7 @@
             color: #6B7280;
             cursor: pointer;
             font-size: 11px;
-            transition: color 0.15s, transform 0.12s;
+            transition: all 0.15s ease;
         }
         .nav-item:active { transform: translateY(-2px); }
         .nav-item i { font-size: 22px; }
@@ -133,7 +129,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.12s;
+            transition: transform 0.12s ease;
         }
         .avatar:active { transform: scale(0.95); }
         
@@ -157,7 +153,7 @@
             border-radius: 20px;
             padding: 15px;
             text-align: center;
-            transition: transform 0.12s;
+            transition: transform 0.12s ease;
         }
         .stat-item:active { transform: scale(0.98); }
         .stat-value { font-size: 20px; font-weight: 700; color: #F5B041; }
@@ -200,7 +196,7 @@
             border-radius: 30px;
             color: white;
             font-size: 16px;
-            transition: all 0.12s;
+            transition: all 0.12s ease;
         }
         input:focus {
             border-color: #F5B041;
@@ -216,7 +212,7 @@
             border-radius: 30px;
             cursor: pointer;
             font-size: 13px;
-            transition: all 0.12s;
+            transition: all 0.12s ease;
         }
         .method-chip:active { transform: scale(0.95); }
         .method-chip.active { background: #F5B041; color: #0A0E1A; }
@@ -242,6 +238,7 @@
             z-index: 9999;
             animation: toastFade 0.2s ease;
             white-space: nowrap;
+            z-index: 10000;
         }
         @keyframes toastFade {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
@@ -260,12 +257,22 @@
         }
         .page.active { display: block; }
         
-        .admin-table { width: 100%; font-size: 12px; border-collapse: collapse; }
-        .admin-table th, .admin-table td { padding: 10px 6px; text-align: left; border-bottom: 1px solid #2A3148; }
+        .admin-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
+        }
+        .admin-table th, .admin-table td {
+            padding: 10px 6px;
+            text-align: left;
+            border-bottom: 1px solid #2A3148;
+        }
         .admin-table th { background: rgba(245,176,65,0.15); color: #F5B041; }
-        .approve-btn { background: #10B981; color: white; border: none; padding: 5px 12px; border-radius: 25px; margin: 2px; font-size: 11px; }
-        .reject-btn { background: #EF4444; color: white; border: none; padding: 5px 12px; border-radius: 25px; margin: 2px; font-size: 11px; }
-        .view-btn { background: #3B82F6; color: white; border: none; padding: 5px 10px; border-radius: 25px; font-size: 10px; }
+        .approve-btn { background: #10B981; color: white; border: none; padding: 5px 12px; border-radius: 25px; margin: 2px; font-size: 11px; cursor: pointer; }
+        .reject-btn { background: #EF4444; color: white; border: none; padding: 5px 12px; border-radius: 25px; margin: 2px; font-size: 11px; cursor: pointer; }
+        .view-btn { background: #3B82F6; color: white; border: none; padding: 5px 10px; border-radius: 25px; font-size: 10px; cursor: pointer; }
         
         .telegram-btn {
             background: linear-gradient(135deg, #0088cc, #00aaff);
@@ -280,7 +287,7 @@
             justify-content: center;
             gap: 8px;
             font-weight: 600;
-            transition: transform 0.12s;
+            transition: transform 0.12s ease;
         }
         .telegram-btn:active { transform: scale(0.98); }
         
@@ -298,29 +305,60 @@
             cursor: pointer;
             z-index: 99;
             box-shadow: 0 4px 15px rgba(245,176,65,0.4);
-            transition: transform 0.12s;
+            transition: transform 0.12s ease;
         }
         .support-icon:active { transform: scale(0.9); }
         
-        .message-item {
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 20px;
-            max-width: 85%;
-            animation: msgFade 0.15s ease;
-        }
-        @keyframes msgFade {
-            from { opacity: 0; transform: translateX(10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .message-user { background: #1A2340; align-self: flex-start; }
-        .message-agent { background: #F5B041; color: #0A0E1A; align-self: flex-end; margin-left: auto; }
+        /* Chat Styles - WhatsApp Style */
         .chat-container {
             display: flex;
             flex-direction: column;
             max-height: 400px;
             overflow-y: auto;
             padding: 10px;
+            gap: 8px;
+        }
+        .message-item {
+            padding: 10px 14px;
+            border-radius: 20px;
+            max-width: 80%;
+            animation: msgFade 0.15s ease;
+            word-wrap: break-word;
+        }
+        @keyframes msgFade {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .message-user {
+            background: #1A2340;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .message-agent {
+            background: #F5B041;
+            color: #0A0E1A;
+            align-self: flex-end;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .message-time {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-top: 4px;
+            text-align: right;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: flex-end;
+        }
+        .chat-input-area textarea {
+            flex: 1;
+            margin: 0;
+            resize: none;
+            border-radius: 25px;
+            padding: 12px 16px;
         }
         
         .balance-row { display: flex; justify-content: space-between; gap: 15px; margin-top: 15px; }
@@ -375,7 +413,7 @@
             border-radius: 50px;
             color: white;
             font-size: 16px;
-            transition: all 0.12s;
+            transition: all 0.12s ease;
         }
         .login-input:focus {
             border-color: #F5B041;
@@ -394,7 +432,7 @@
             font-size: 16px;
             cursor: pointer;
             margin-top: 15px;
-            transition: transform 0.12s;
+            transition: transform 0.12s ease;
         }
         .btn-primary:active { transform: scale(0.98); }
         
@@ -423,10 +461,11 @@
             padding: 18px;
             margin: 10px 0;
             border: 1px solid rgba(245, 176, 65, 0.2);
-            transition: transform 0.12s;
+            transition: transform 0.12s ease;
         }
         .vip-card:active { transform: scale(0.98); }
         .vip-price { font-size: 28px; font-weight: 800; color: #F5B041; }
+        
         .loader {
             display: inline-block;
             width: 18px;
@@ -447,9 +486,18 @@
             text-align: center;
             margin: 10px 0;
             cursor: pointer;
-            transition: background 0.12s;
+            transition: background 0.12s ease;
         }
         .file-upload:active { background: rgba(245,176,65,0.1); }
+        
+        /* Close button for modals */
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.12s ease;
+        }
+        .close-modal:active { transform: scale(0.9); }
         
         @media (max-width: 480px) {
             .stats-row { grid-template-columns: 1fr 1fr; }
@@ -457,12 +505,21 @@
             .toast { white-space: normal; text-align: center; width: 90%; }
             .banner-slide { height: 140px; }
             .balance-row { flex-direction: column; }
+            .message-item { max-width: 90%; }
+            .admin-table { font-size: 10px; }
+            .admin-table th, .admin-table td { padding: 6px 3px; }
         }
         
         .forgot-card { background: linear-gradient(135deg, #1A2340, #0F1428); padding: 20px; border-radius: 24px; text-align: center; margin-bottom: 15px; }
         .verify-success-icon { font-size: 60px; color: #10B981; margin-bottom: 15px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .welcome-message { font-size: 18px; font-weight: 600; color: #F5B041; margin-bottom: 10px; }
+        .duplicate-error { color: #EF4444; font-size: 12px; margin-top: -8px; margin-bottom: 8px; display: none; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #1A1F30; }
+        ::-webkit-scrollbar-thumb { background: #F5B041; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -546,14 +603,22 @@
         <div class="glass-card" style="padding:16px; margin:16px;"><button class="btn-outline" style="width:100%; padding:14px; color:#EF4444;" onclick="logout()">Logout</button></div>
     </div>
 
-    <div id="chatPage" class="page"><h2 class="gold-text" style="padding:0 16px;"><i class="fas fa-headset"></i> Support Chat</h2>
-        <div class="glass-card" style="padding:16px; margin:0 16px;"><div class="chat-container" id="chatMsgs" style="height:400px; overflow-y:auto; display:flex; flex-direction:column;"><p style="text-align:center; color:#aaa;">No messages</p></div>
-        <div style="display:flex; gap:10px; margin-top:15px;"><textarea id="chatInput" placeholder="Type message..." rows="2" style="flex:1;"></textarea><button class="btn-gold" onclick="sendMsg()" style="padding:10px 20px;">Send</button></div></div>
+    <!-- Chat Page - WhatsApp Style -->
+    <div id="chatPage" class="page">
+        <div class="glass-card" style="padding:16px; margin:0 16px;">
+            <div class="chat-container" id="chatMsgs" style="height:400px; overflow-y:auto;">
+                <p style="text-align:center; color:#aaa;">No messages</p>
+            </div>
+            <div class="chat-input-area">
+                <textarea id="chatInput" placeholder="Type message..." rows="1" style="flex:1;"></textarea>
+                <button class="btn-gold" onclick="sendMsg()" style="padding:12px 20px;"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
     </div>
 
     <!-- Agent Panel -->
     <div id="agentPanel" class="page">
-        <h2 class="gold-text" style="padding:0 16px;">🤵 Agent Verification Panel</h2>
+        <h2 class="gold-text" style="padding:0 16px;">🤵 Agent Panel</h2>
         <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3>📥 Pending Deposits</h3><div id="pendingDeposits">Loading...</div></div>
         <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3>📤 Pending Withdrawals</h3><div id="pendingWithdrawals">Loading...</div></div>
         <div class="glass-card" style="padding:16px; margin:0 16px 16px;"><h3><i class="fas fa-comments"></i> Support</h3><div id="agentMessages" style="max-height:300px; overflow-y:auto;"><p>No messages</p></div></div>
@@ -572,11 +637,20 @@
 </div>
 
 <!-- Deposit Modal -->
-<div id="depositModal" class="modal"><div class="modal-content"><span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('depositModal')">&times;</span><h3>Deposit Funds</h3>
-    <div style="display:flex; flex-wrap:wrap; gap:8px;"><span class="method-chip" onclick="selectPay('TRC20','https://i.postimg.cc/VNBFsVhR/trc20.jpg')">TRC20</span><span class="method-chip" onclick="selectPay('SOL','https://i.postimg.cc/Jz3XjBQb/solona-SOL.jpg')">SOL</span><span class="method-chip" onclick="selectPay('ERC20','https://i.postimg.cc/T3x08x7D/erc20.jpg')">ERC20</span><span class="method-chip" onclick="selectPay('BTC','https://i.postimg.cc/52pwZCQn/BTC.jpg')">BTC</span><span class="method-chip" onclick="selectPay('BEP20','https://i.postimg.cc/Z5YNF5sP/BEP-20.jpg')">BEP20</span></div>
+<div id="depositModal" class="modal"><div class="modal-content">
+    <span class="close-modal" onclick="closeModal('depositModal')">&times;</span>
+    <h3>Deposit Funds</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <span class="method-chip" onclick="selectPay('TRC20','https://i.postimg.cc/VNBFsVhR/trc20.jpg')">TRC20</span>
+        <span class="method-chip" onclick="selectPay('SOL','https://i.postimg.cc/Jz3XjBQb/solona-SOL.jpg')">SOL</span>
+        <span class="method-chip" onclick="selectPay('ERC20','https://i.postimg.cc/T3x08x7D/erc20.jpg')">ERC20</span>
+        <span class="method-chip" onclick="selectPay('BTC','https://i.postimg.cc/52pwZCQn/BTC.jpg')">BTC</span>
+        <span class="method-chip" onclick="selectPay('BEP20','https://i.postimg.cc/Z5YNF5sP/BEP-20.jpg')">BEP20</span>
+    </div>
     <div id="qrShow" class="qr-preview" style="display:none;"><img id="qrImg"><p>Scan QR</p></div>
     <input type="text" id="depositWallet" placeholder="Your Wallet Address">
-    <input type="text" id="depositTxn" placeholder="Transaction Hash">
+    <input type="text" id="depositTxn" placeholder="Transaction Hash (Unique)">
+    <div id="txnError" class="duplicate-error">❌ This Transaction Hash already used!</div>
     <input type="number" id="depositAmt" placeholder="Amount (USD)" value="100">
     <div class="file-upload" onclick="document.getElementById('ssFile').click()">📸 Upload Screenshot</div>
     <input type="file" id="ssFile" accept="image/*" style="display:none;" onchange="previewSS(this)">
@@ -585,11 +659,13 @@
 </div></div>
 
 <!-- Withdraw Modal -->
-<div id="withdrawModal" class="modal"><div class="modal-content"><span style="float:right; font-size:28px; cursor:pointer;" onclick="closeModal('withdrawModal')">&times;</span><h3>Withdraw Funds</h3>
+<div id="withdrawModal" class="modal"><div class="modal-content">
+    <span class="close-modal" onclick="closeModal('withdrawModal')">&times;</span>
+    <h3>Withdraw Funds</h3>
     <select id="withdrawMethod"><option>TRC20</option><option>ERC20</option><option>BTC</option><option>SOL</option></select>
     <input type="text" id="withdrawAddr" placeholder="Withdrawal Address">
     <input type="number" id="withdrawAmt" placeholder="Amount (USD)">
-    <div class="file-upload" onclick="document.getElementById('wdQrFile').click()">📸 Upload QR</div>
+    <div class="file-upload" onclick="document.getElementById('wdQrFile').click()">📸 Upload Wallet QR</div>
     <input type="file" id="wdQrFile" accept="image/*" style="display:none;" onchange="previewWDQr(this)">
     <div id="wdQrPreview" style="display:none;"></div>
     <button class="btn-gold" style="width:100%; margin-top:15px;" onclick="submitWithdraw()">Request</button>
@@ -644,6 +720,28 @@
         t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${msg}`;
         document.getElementById("toastContainer").appendChild(t);
         setTimeout(() => t.remove(), 3000);
+    }
+    
+    async function checkDuplicateTransaction(txnHash) {
+        if (!txnHash || txnHash.trim() === "") return false;
+        const q = query(collection(db, "deposits"), where("txnHash", "==", txnHash));
+        const snap = await getDocs(q);
+        return !snap.empty;
+    }
+    
+    // Real-time duplicate check
+    const txnInput = document.getElementById("depositTxn");
+    if (txnInput) {
+        txnInput.addEventListener("input", async function() {
+            const txn = this.value.trim();
+            const errorDiv = document.getElementById("txnError");
+            if (txn.length > 5) {
+                const exists = await checkDuplicateTransaction(txn);
+                errorDiv.style.display = exists ? "block" : "none";
+            } else {
+                errorDiv.style.display = "none";
+            }
+        });
     }
     
     window.previewSS = function(i) {
@@ -810,13 +908,20 @@
         snap.docs.forEach(d => {
             const data = d.data();
             const isUser = data.userId === currentData.uid;
-            html += `<div class="message-item ${isUser ? 'message-user' : 'message-agent'}" style="align-self: ${isUser ? 'flex-start' : 'flex-end'};">
-                        <strong>${isUser ? 'You' : 'Agent'}:</strong><br>${data.message}
-                        <div style="font-size:10px;">${data.createdAt?.toDate?.().toLocaleTimeString() || 'Now'}</div>
+            const time = data.createdAt?.toDate?.().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'Now';
+            html += `<div class="message-item ${isUser ? 'message-user' : 'message-agent'}">
+                        <strong>${isUser ? 'You' : 'Agent'}:</strong><br>${escapeHtml(data.message)}
+                        <div class="message-time">${time}</div>
                      </div>`;
         });
         container.innerHTML = html;
         container.scrollTop = container.scrollHeight;
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
     
     async function loadAgentMsgs() {
@@ -827,9 +932,11 @@
         for (const d of snap.docs) {
             const data = d.data();
             if (data.role === "agent") continue;
+            const time = data.createdAt?.toDate?.().toLocaleString() || 'Now';
             html += `<div class="glass-card" style="padding:12px; margin:10px 0;">
-                        <strong>${data.userName}</strong><br><small>${data.userEmail}</small>
-                        <p style="margin-top:5px;">${data.message}</p>
+                        <strong>${escapeHtml(data.userName)}</strong><br><small>${data.userEmail}</small>
+                        <p style="margin-top:5px;">${escapeHtml(data.message)}</p>
+                        <div style="font-size:10px; opacity:0.7;">${time}</div>
                         <button class="approve-btn" onclick="replyMsg('${d.id}', '${data.userId}')" style="margin-top:8px;">Reply</button>
                      </div>`;
         }
@@ -845,6 +952,7 @@
         });
         showToast("Reply sent!");
         loadAgentMsgs();
+        if (currentData?.role === "user") loadChat();
     };
     
     window.changePage = function(id, el) {
@@ -864,8 +972,10 @@
         const purchased = currentData?.purchasedPlans || [];
         document.getElementById("vipList").innerHTML = vipPlans.map(v => `
             <div class="vip-card"><div class="vip-price">$${v.price}</div>
-            <div>Daily: $${v.daily} USDT</div><div>${v.days} Days</div><div>Total: $${v.total} USDT</div>
-            ${!purchased.includes(v.level) ? `<button class="btn-gold" style="width:100%; margin-top:12px;" onclick="buyVIP(${v.price}, '${v.level}')">Unlock</button>` : '<button class="btn-outline" disabled>Purchased</button>'}
+            <div><i class="fas fa-chart-line"></i> Daily: $${v.daily} USDT</div>
+            <div><i class="fas fa-calendar"></i> ${v.days} Days</div>
+            <div><i class="fas fa-coins"></i> Total: $${v.total} USDT</div>
+            ${!purchased.includes(v.level) ? `<button class="btn-gold" style="width:100%; margin-top:12px;" onclick="buyVIP(${v.price}, '${v.level}')">Unlock</button>` : '<button class="btn-outline" disabled>✅ Purchased</button>'}
             </div>`).join("");
     }
     
@@ -892,6 +1002,15 @@
         if (!selectedMethod) return showToast("Select method", "error");
         const wallet = document.getElementById("depositWallet").value.trim();
         if (!wallet) return showToast("Enter wallet", "error");
+        const txn = document.getElementById("depositTxn").value.trim();
+        if (!txn) return showToast("Enter Transaction Hash", "error");
+        
+        const duplicate = await checkDuplicateTransaction(txn);
+        if (duplicate) {
+            showToast("❌ This Transaction Hash already used!", "error");
+            return;
+        }
+        
         const amt = parseFloat(document.getElementById("depositAmt").value);
         if (amt < 50) return showToast("Minimum $50", "error");
         let ss = "";
@@ -899,14 +1018,16 @@
             const r = new FileReader();
             ss = await new Promise(resolve => { r.onload = e => resolve(e.target.result); r.readAsDataURL(selectedSS); });
         }
+        
         await addDoc(collection(db, "deposits"), {
             userId: currentData.uid, userName: currentData.fullname, userEmail: currentData.email,
-            method: selectedMethod.method, userWallet: wallet, txnHash: document.getElementById("depositTxn").value,
+            method: selectedMethod.method, userWallet: wallet, txnHash: txn,
             amount: amt, screenshot: ss, status: "pending", createdAt: serverTimestamp()
         });
         showToast("✅ Deposit sent to Agent!");
         closeModal("depositModal");
         document.getElementById("depositWallet").value = "";
+        document.getElementById("depositTxn").value = "";
         document.getElementById("qrShow").style.display = "none";
         document.getElementById("ssPreview").style.display = "none";
         selectedSS = null;
@@ -932,6 +1053,7 @@
         showToast("✅ Withdrawal request sent!");
         closeModal("withdrawModal");
         document.getElementById("withdrawAddr").value = "";
+        document.getElementById("withdrawAmt").value = "";
         document.getElementById("wdQrPreview").style.display = "none";
         selectedWDQr = null;
     };
@@ -954,31 +1076,62 @@
     };
     window.rejectWithdraw = async (id, email) => { await updateDoc(doc(db, "withdrawals", id), { status: "rejected" }); showToast(`❌ Withdrawal rejected`, "error"); loadAgent(); };
     
-    async function checkDaily() {
+    // Daily Profit - Once per day based on package duration
+    async function checkDailyProfit() {
         if (!currentData || currentData.role !== "user") return;
         const today = new Date().toDateString();
-        const ref = doc(db, "userDailyProfit", currentData.uid);
-        const snap = await getDoc(ref);
-        if (snap.exists() && snap.data().lastProfitDate === today) {
-            document.getElementById("todayProfit").innerHTML = `$${(snap.data().todayProfit || 0).toFixed(2)}`;
+        const profitRef = doc(db, "userDailyProfit", currentData.uid);
+        const profitSnap = await getDoc(profitRef);
+        
+        if (profitSnap.exists() && profitSnap.data().lastProfitDate === today) {
+            document.getElementById("todayProfit").innerHTML = `$${(profitSnap.data().todayProfit || 0).toFixed(2)}`;
             return;
         }
-        const inv = await getDocs(query(collection(db, "investments"), where("userId", "==", currentData.uid), where("status", "==", "active")));
-        if (inv.empty) return;
-        let total = 0, dailyAmt = 0;
-        for (const d of inv.docs) {
-            const data = d.data();
-            const pct = (Math.random() * 6 + 5).toFixed(2);
-            const profit = data.amount * (pct / 100);
-            total += profit;
-            dailyAmt += profit;
-            await updateDoc(doc(db, "investments", d.id), { profitEarned: increment(profit) });
+        
+        const investmentsSnap = await getDocs(query(collection(db, "investments"), where("userId", "==", currentData.uid), where("status", "==", "active")));
+        if (investmentsSnap.empty) return;
+        
+        let totalProfit = 0;
+        let dailyProfitAmount = 0;
+        let hasProfit = false;
+        
+        for (const docSnap of investmentsSnap.docs) {
+            const inv = docSnap.data();
+            const plan = vipPlans.find(p => p.level === inv.plan);
+            if (!plan) continue;
+            
+            // Check if investment is still within duration
+            const startDate = inv.startDate.toDate();
+            const daysSinceStart = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
+            if (daysSinceStart >= plan.days) {
+                // Investment completed
+                await updateDoc(doc(db, "investments", docSnap.id), { status: "completed" });
+                continue;
+            }
+            
+            // Calculate daily profit (5-11% random)
+            const percent = (Math.random() * 6 + 5).toFixed(2);
+            const profit = inv.amount * (percent / 100);
+            totalProfit += profit;
+            dailyProfitAmount += profit;
+            hasProfit = true;
+            await updateDoc(doc(db, "investments", docSnap.id), { profitEarned: increment(profit) });
         }
-        if (total > 0) {
-            await updateDoc(doc(db, "users", currentData.uid), { balance: increment(total), totalIncome: increment(total) });
-            await setDoc(ref, { userId: currentData.uid, lastProfitDate: today, todayProfit: dailyAmt, updatedAt: serverTimestamp() });
-            showToast(`✨ Daily profit: +$${total.toFixed(2)}`);
+        
+        if (hasProfit && totalProfit > 0) {
+            await updateDoc(doc(db, "users", currentData.uid), { 
+                balance: increment(totalProfit), 
+                totalIncome: increment(totalProfit) 
+            });
+            await setDoc(profitRef, { 
+                userId: currentData.uid, 
+                lastProfitDate: today, 
+                todayProfit: dailyProfitAmount,
+                updatedAt: serverTimestamp()
+            });
+            showToast(`✨ Daily profit credited: +$${totalProfit.toFixed(2)}`);
             loadUser();
+            loadMe();
         }
     }
     
@@ -989,9 +1142,11 @@
         document.getElementById("totalCommission").innerHTML = `$${(currentData.totalCommission || 0).toFixed(2)}`;
         document.getElementById("totalDeposits").innerHTML = `$${(currentData.totalDeposits || 0).toFixed(2)}`;
         document.getElementById("totalWithdrawals").innerHTML = `$${(currentData.totalWithdrawals || 0).toFixed(2)}`;
-        const ref = doc(db, "userDailyProfit", currentData.uid);
-        const snap = await getDoc(ref);
-        if (snap.exists()) document.getElementById("todayProfit").innerHTML = `$${(snap.data().todayProfit || 0).toFixed(2)}`;
+        const profitRef = doc(db, "userDailyProfit", currentData.uid);
+        const profitSnap = await getDoc(profitRef);
+        if (profitSnap.exists()) {
+            document.getElementById("todayProfit").innerHTML = `$${(profitSnap.data().todayProfit || 0).toFixed(2)}`;
+        }
         const inv = await getDocs(query(collection(db, "investments"), where("userId", "==", currentData.uid), where("status", "==", "active")));
         const est = inv.docs.reduce((s, i) => s + (i.data().amount * 0.007), 0);
         document.getElementById("dailyEstimate").innerHTML = `$${est.toFixed(2)}`;
@@ -1012,7 +1167,7 @@
         document.getElementById("totInvested").innerHTML = tInv;
         document.getElementById("totProfit").innerHTML = tProf.toFixed(2);
         let ih = "";
-        inv.docs.forEach(d => { ih += `<div class="history-item">💰 ${d.data().plan} - $${d.data().amount} - <span class="badge-success">Active</span></div>`; });
+        inv.docs.forEach(d => { ih += `<div class="history-item">💰 ${d.data().plan} - $${d.data().amount} - <span class="badge-success">${d.data().status}</span></div>`; });
         document.getElementById("invHistory").innerHTML = ih || "<div>No investments</div>";
         const dep = await getDocs(query(collection(db, "deposits"), where("userId", "==", currentData.uid)));
         const wd = await getDocs(query(collection(db, "withdrawals"), where("userId", "==", currentData.uid)));
@@ -1028,7 +1183,7 @@
             const dep = await getDocs(query(collection(db, "deposits"), where("status", "==", "pending")));
             if (dep.empty) { document.getElementById("pendingDeposits").innerHTML = "<p>✅ No pending deposits</p>"; }
             else {
-                let h = `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>SS</th><th>Action</th></tr>`;
+                let h = `<div style="overflow-x:auto;"><table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>TXN</th><th>SS</th><th>Action</th></tr>`;
                 dep.docs.forEach(d => {
                     const data = d.data();
                     const has = data.screenshot && data.screenshot.length > 100;
@@ -1036,18 +1191,19 @@
                         <td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td>
                         <td>$${data.amount}</td>
                         <td>${data.method}</td>
+                        <td><small>${data.txnHash?.substring(0, 8)}...</small></td>
                         <td>${has ? `<button class="view-btn" onclick="viewSS('${data.screenshot}')">View</button>` : 'No'}</td>
                         <td><button class="approve-btn" onclick="approveDeposit('${d.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button>
-                        <button class="reject-btn" onclick="rejectDeposit('${d.id}', '${data.userEmail}')">Reject</button>NonNull
+                        <button class="reject-btn" onclick="rejectDeposit('${d.id}', '${data.userEmail}')">Reject</button></td>
                     </tr>`;
                 });
-                h += `</table>`;
+                h += `</table></div>`;
                 document.getElementById("pendingDeposits").innerHTML = h;
             }
             const wd = await getDocs(query(collection(db, "withdrawals"), where("status", "==", "pending")));
             if (wd.empty) { document.getElementById("pendingWithdrawals").innerHTML = "<p>✅ No pending withdrawals</p>"; }
             else {
-                let h = `<table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>QR</th><th>Action</th><table>`;
+                let h = `<div style="overflow-x:auto;"><table class="admin-table"><tr><th>User</th><th>Amount</th><th>Method</th><th>QR</th><th>Action</th></tr>`;
                 wd.docs.forEach(w => {
                     const data = w.data();
                     const has = data.qrCode && data.qrCode.length > 100;
@@ -1055,12 +1211,12 @@
                         <td><strong>${data.userName}</strong><br><small>${data.userEmail}</small></td>
                         <td>$${data.amount}</td>
                         <td>${data.method}</td>
-                        <td>${has ? `<button class="view-btn" onclick="viewQR('${data.qrCode}')">View QR</button>` : 'No'}</td>
+                        <td>${has ? `<button class="view-btn" onclick="viewQR('${data.qrCode}')">View</button>` : 'No'}</td>
                         <td><button class="approve-btn" onclick="approveWithdraw('${w.id}', '${data.userId}', ${data.amount}, '${data.userEmail}')">Approve</button>
-                        <button class="reject-btn" onclick="rejectWithdraw('${w.id}', '${data.userEmail}')">Reject</button>NonNull
+                        <button class="reject-btn" onclick="rejectWithdraw('${w.id}', '${data.userEmail}')">Reject</button></td>
                     </tr>`;
                 });
-                h += `</table>`;
+                h += `</table></div>`;
                 document.getElementById("pendingWithdrawals").innerHTML = h;
             }
             await loadAgentMsgs();
@@ -1086,10 +1242,7 @@
     let bidx = 0;
     setInterval(() => { const b = document.getElementById("bannerSlide"); if (b) { bidx = (bidx + 1) % 3; b.style.backgroundImage = `url('${banners[bidx]}')`; } }, 4000);
     
-    // Service Worker for PWA
-    if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/sw.js").catch(() => {});
-    }
+    if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/sw.js").catch(() => {}); }
     
     onAuthStateChanged(auth, async (user) => {
         if (user && (user.emailVerified || user.email === "agent@nexora.com")) {
@@ -1131,9 +1284,9 @@
                     changePage('userDashboard', document.querySelectorAll('.nav-item')[0]);
                     loadUser();
                     loadMe();
-                    setTimeout(() => checkDaily(), 2000);
+                    setTimeout(() => checkDailyProfit(), 2000);
                     if (profitInt) clearInterval(profitInt);
-                    profitInt = setInterval(() => checkDaily(), 3600000);
+                    profitInt = setInterval(() => checkDailyProfit(), 3600000);
                     onSnapshot(doc(db, "users", user.uid), () => { getDoc(doc(db, "users", user.uid)).then(s => { if (s.exists()) { currentData = { uid: user.uid, ...s.data() }; loadUser(); loadMe(); } }); });
                     onSnapshot(doc(db, "userDailyProfit", user.uid), () => { loadUser(); });
                     if (chatUnsub) chatUnsub();
